@@ -1116,4 +1116,97 @@ document.addEventListener('DOMContentLoaded', function() {
 
         parseCron();
     }
+    // =========================================================
+    // 17. Herramienta: DNS Lookup (Cloudflare DoH)
+    // =========================================================
+    const dnsDomain = document.getElementById('dns-domain');
+    if (dnsDomain) {
+        const dnsType = document.getElementById('dns-type');
+        const dnsBtn = document.getElementById('btn-dns-lookup');
+        const dnsStatus = document.getElementById('dns-status');
+        const dnsResults = document.getElementById('dns-results');
+
+        const TYPE_NAMES = { 1:'A', 2:'NS', 5:'CNAME', 6:'SOA', 12:'PTR', 15:'MX', 16:'TXT', 28:'AAAA', 33:'SRV', 257:'CAA' };
+
+        function setDnsStatus(msg) {
+            dnsStatus.style.display = 'block';
+            dnsStatus.innerHTML = `<span style="color:var(--cyan)">⚡</span> ${msg}`;
+        }
+
+        async function fetchDns(domain, type) {
+            const url = `https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(domain)}&type=${encodeURIComponent(type)}`;
+            const response = await fetch(url, { headers: { 'Accept': 'application/dns-json' } });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            return response.json();
+        }
+
+        function renderDnsTable(label, answers) {
+            if (!answers || !answers.length) return '';
+            let rows = answers.map(a => {
+                const val = a.data || '';
+                return `<tr>
+                    <td style="width: 80px; color:var(--gray-dark);">${a.TTL}s</td>
+                    <td>${val}</td>
+                    <td style="width: 40px; text-align:right;">
+                        <button class="copy-btn-mini" data-copy="${val}">📋</button>
+                    </td>
+                </tr>`;
+            }).join('');
+
+            return `<div style="margin-bottom:1.5rem;">
+                <div class="info-card-label" style="color:var(--cyan); margin-bottom:0.5rem;">Registro ${label}</div>
+                <table class="dns-table">
+                    <thead><tr><th>TTL</th><th>${LANG === 'es' ? 'VALOR' : 'VALUE'}</th><th></th></tr></thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            </div>`;
+        }
+
+        async function startLookup() {
+            let domain = dnsDomain.value.trim().replace(/^https?:\/\//, '').replace(/\/.*/, '');
+            const type = dnsType.value;
+            if (!domain) { setDnsStatus(LANG === 'es' ? 'Introduce un dominio.' : 'Enter a domain.'); return; }
+
+            dnsResults.innerHTML = '';
+            setDnsStatus(LANG === 'es' ? `Consultando ${domain}...` : `Querying ${domain}...`);
+
+            try {
+                let queryTypes = type === 'ALL' ? ['A', 'AAAA', 'MX', 'TXT', 'NS', 'CNAME', 'SOA', 'CAA'] : [type];
+                if (type === 'DMARC') { domain = `_dmarc.${domain}`; queryTypes = ['TXT']; }
+
+                let finalHtml = '';
+                for (const t of queryTypes) {
+                    const data = await fetchDns(domain, t);
+                    const filtered = (data.Answer || []).filter(a => TYPE_NAMES[a.type] === t || type === 'DMARC');
+                    if (filtered.length) finalHtml += renderDnsTable(t, filtered);
+                }
+
+                dnsResults.innerHTML = finalHtml || `<p style="color:var(--gray); font-family:var(--mono);">${LANG === 'es' ? 'No se encontraron registros.' : 'No records found.'}</p>`;
+                dnsStatus.style.display = 'none';
+
+                // Activar botones de copia dinámicos
+                document.querySelectorAll('.copy-btn-mini').forEach(b => {
+                    b.addEventListener('click', function() {
+                        copyToClipboard(this.dataset.copy, this);
+                        this.textContent = '✅';
+                        setTimeout(() => this.textContent = '📋', 1500);
+                    });
+                });
+
+            } catch (err) {
+                setDnsStatus(`Error: ${err.message}`);
+            }
+        }
+
+        dnsBtn.addEventListener('click', startLookup);
+        dnsDomain.addEventListener('keydown', (e) => { if (e.key === 'Enter') startLookup(); });
+
+        // Botones rápidos
+        document.querySelectorAll('.dns-quick-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                dnsType.value = btn.dataset.type;
+                startLookup();
+            });
+        });
+    }
 });

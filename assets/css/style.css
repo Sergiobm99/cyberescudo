@@ -1125,3 +1125,57 @@ nav ul li a, .submenu-toggle {
         grid-template-columns: repeat(3, 1fr);
     }
 }
+/* ─── HERRAMIENTA DNS LOOKUP ─── */
+.dns-input-grid {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.dns-quick-btn {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border);
+    color: var(--gray);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    padding: 0.35rem 0.8rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.dns-quick-btn:hover {
+    border-color: var(--cyan);
+    color: var(--white);
+    background: var(--cyan-faint);
+}
+
+.dns-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.dns-table th {
+    padding: 0.6rem 0.75rem;
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--gray-dark);
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+}
+
+.dns-table td {
+    padding: 0.75rem;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.85);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    word-break: break-all;
+}
