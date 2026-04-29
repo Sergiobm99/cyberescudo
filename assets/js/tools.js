@@ -1441,4 +1441,190 @@ document.addEventListener('DOMContentLoaded', function() {
         btnGenerate.addEventListener('click', generateWordlist);
         btnDownload.addEventListener('click', downloadWordlist);
     }
+    // =========================================================
+    // 20. Herramienta: Multi Decoder (CTF)
+    // =========================================================
+    const mdInput = document.getElementById('md-input');
+    if (mdInput) {
+        const btnDecode = document.getElementById('btn-md-decode');
+        const btnAutoChain = document.getElementById('btn-md-autochain');
+        const mdChain = document.getElementById('md-chain');
+        const modeBtns = document.querySelectorAll('.md-mode-btn');
+        const exampleBtns = document.querySelectorAll('.md-example-btn');
+        
+        let activeMode = 'auto';
+        const lang = window.LANG || 'es';
+
+        // Selección de modo
+        modeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                activeMode = btn.dataset.mode;
+                modeBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+
+        // Diccionario de decoders
+        const DECODERS = {
+            base64: function(s) {
+                try {
+                    const clean = s.replace(/[\s]/g, '');
+                    const decoded = decodeURIComponent(escape(atob(clean)));
+                    return decoded !== s ? decoded : null;
+                } catch(e) { return null; }
+            },
+            url: function(s) {
+                try { const d = decodeURIComponent(s); return d !== s ? d : null; } 
+                catch(e) { return null; }
+            },
+            html: function(s) {
+                const d = document.createElement('div'); 
+                d.innerHTML = s;
+                const t = d.textContent; 
+                return t !== s ? t : null;
+            },
+            hex: function(s) {
+                const clean = s.replace(/\s|0x|\\x/g, '');
+                if (!/^[0-9a-fA-F]+$/.test(clean) || clean.length % 2 !== 0) return null;
+                let r = '';
+                for (let i = 0; i < clean.length; i += 2) r += String.fromCharCode(parseInt(clean.substr(i, 2), 16));
+                return r !== s ? r : null;
+            },
+            rot13: function(s) {
+                const r = s.replace(/[a-zA-Z]/g, c => {
+                    return String.fromCharCode((c <= 'Z' ? 90 : 122) >= (c = c.charCodeAt(0) + 13) ? c : c - 26);
+                });
+                return r !== s ? r : null;
+            },
+            unicode: function(s) {
+                try {
+                    const d = s.replace(/\\u([0-9a-fA-F]{4})/g, (m, p) => String.fromCharCode(parseInt(p, 16)));
+                    return d !== s ? d : null;
+                } catch(e) { return null; }
+            },
+            jwt: function(s) {
+                const parts = s.split('.');
+                if (parts.length < 2) return null;
+                function dec(str) {
+                    str = str.replace(/-/g, '+').replace(/_/g, '/');
+                    const pad = str.length % 4; 
+                    if (pad) str += '===='.slice(pad);
+                    return JSON.stringify(JSON.parse(decodeURIComponent(escape(atob(str)))), null, 2);
+                }
+                try { return 'Header:\n' + dec(parts[0]) + '\n\nPayload:\n' + dec(parts[1]); } 
+                catch(e) { return null; }
+            }
+        };
+
+        // Motor de autodescubrimiento
+        function detectEncoding(s) {
+            const order = ['jwt', 'url', 'base64', 'html', 'unicode', 'hex', 'rot13'];
+            for (let i = 0; i < order.length; i++) {
+                try { 
+                    const r = DECODERS[order[i]](s); 
+                    if (r !== null && r !== s) return { type: order[i], result: r }; 
+                } catch(e) {}
+            }
+            return null;
+        }
+
+        function escapeHTML(s) {
+            const d = document.createElement('div');
+            d.textContent = String(s || '');
+            return d.innerHTML;
+        }
+
+        function renderStepHtml(step, idx) {
+            return `
+            <div class="md-step-card">
+                <div class="md-step-header">
+                    <span class="md-step-badge">${step.type.toUpperCase()}</span>
+                    <span style="font-family:var(--mono); font-size:0.75rem; color:var(--gray-dark);">
+                        ${lang === 'es' ? 'Capa' : 'Layer'} ${idx + 1}
+                    </span>
+                    <button class="copy-btn-mini" data-copy="${escapeHTML(step.result)}" style="margin-left:auto;">📋</button>
+                </div>
+                <pre style="padding:1rem; font-family:var(--mono); font-size:0.85rem; color:rgba(255,255,255,0.9); white-space:pre-wrap; word-break:break-all; margin:0; max-height:250px; overflow-y:auto;">${escapeHTML(step.result)}</pre>
+            </div>`;
+        }
+
+        function attachCopyEvents() {
+            document.querySelectorAll('#md-chain .copy-btn-mini').forEach(b => {
+                b.addEventListener('click', function() {
+                    copyToClipboard(this.dataset.copy, this);
+                    this.textContent = '✅';
+                    setTimeout(() => this.textContent = '📋', 1500);
+                });
+            });
+        }
+
+        // Ejecutar decodificación simple
+        btnDecode.addEventListener('click', () => {
+            const s = mdInput.value;
+            if (!s) return;
+            
+            let result = null, type = null;
+            if (activeMode !== 'auto') {
+                try { result = DECODERS[activeMode](s); type = activeMode; } catch(e) {}
+            } else {
+                const d = detectEncoding(s);
+                if (d) { result = d.result; type = d.type; }
+            }
+
+            if (result !== null && result !== undefined) {
+                mdChain.innerHTML = renderStepHtml({ type, result }, 0);
+                attachCopyEvents();
+            } else {
+                mdChain.innerHTML = `<p style="color:var(--gray); font-family:var(--mono); margin-top:1rem;">${lang === 'es' ? 'No se pudo decodificar con el modo seleccionado.' : 'Could not decode with the selected mode.'}</p>`;
+            }
+        });
+
+        // Ejecutar Auto-Chain (Desencadenado)
+        btnAutoChain.addEventListener('click', () => {
+            const s = mdInput.value.trim();
+            if (!s) return;
+            
+            let steps = [], current = s, max = 10;
+            while (steps.length < max) {
+                const d = detectEncoding(current);
+                if (!d || d.result === current) break;
+                steps.push(d);
+                current = d.result;
+            }
+
+            if (!steps.length) {
+                mdChain.innerHTML = `<p style="color:var(--gray); font-family:var(--mono); margin-top:1rem;">${lang === 'es' ? 'No se detectaron encodings conocidos.' : 'No known encodings detected.'}</p>`;
+                return;
+            }
+
+            const arrow = `<div class="md-arrow">↓</div>`;
+            
+            let html = `
+            <div class="md-step-card" style="border-color: rgba(0,255,255,0.2);">
+                <div class="md-step-header" style="background: rgba(0,255,255,0.05);">
+                    <span style="font-family:var(--mono); font-size:0.75rem; color:var(--cyan); font-weight:bold;">${lang === 'es' ? 'TEXTO ORIGINAL' : 'ORIGINAL TEXT'}</span>
+                </div>
+                <pre style="padding:1rem; font-family:var(--mono); font-size:0.85rem; color:var(--gray); white-space:pre-wrap; word-break:break-all; margin:0;">${escapeHTML(s.slice(0, 500))}${s.length > 500 ? '...' : ''}</pre>
+            </div>${arrow}`;
+
+            steps.forEach((st, i) => {
+                html += renderStepHtml(st, i) + (i < steps.length - 1 ? arrow : '');
+            });
+
+            html += `<div style="font-family:var(--mono); font-size:0.8rem; color:var(--cyan); margin-top:1rem; text-align:center;">
+                ↳ ${steps.length} ${lang === 'es' ? 'capas decodificadas automáticamente' : 'layers decoded automatically'}
+            </div>`;
+            
+            mdChain.innerHTML = html;
+            attachCopyEvents();
+        });
+
+        // Botones de ejemplo
+        exampleBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                mdInput.value = btn.dataset.payload;
+                btnAutoChain.click(); // Autoejecutamos la cadena al hacer clic
+            });
+        });
+    }
 });

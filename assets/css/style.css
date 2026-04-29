@@ -1291,3 +1291,45 @@ nav ul li a, .submenu-toggle {
     height: 16px;
     cursor: pointer;
 }
+/* ─── HERRAMIENTA MULTI DECODER ─── */
+.md-mode-btn.active {
+    background: rgba(0, 255, 255, 0.1) !important;
+    border-color: rgba(0, 255, 255, 0.4) !important;
+    color: var(--cyan) !important;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.1);
+}
+
+.md-step-card {
+    margin-bottom: 0.6rem;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.md-step-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid var(--border);
+}
+
+.md-step-badge {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    background: var(--cyan-faint);
+    color: var(--cyan);
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.3rem;
+    font-weight: 600;
+}
+
+.md-arrow {
+    text-align: center;
+    font-family: var(--mono);
+    color: var(--cyan);
+    padding: 0.2rem 0;
+    font-size: 1.2rem;
+}
