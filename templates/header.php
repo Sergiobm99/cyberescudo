@@ -12,6 +12,11 @@
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/style.css">
 
   <link rel="icon" type="image/png" href="<?= BASE_URL ?>/assets/img/logo-cyberescudo.png">
+  <script>
+    // Definimos las variables globales para que los archivos .js las entiendan
+    window.LANG = '<?= $lang ?>';
+    window.BASE_URL = '<?= BASE_URL ?>';
+</script>
 </head>
 <body class="<?= $lang ?>">
 

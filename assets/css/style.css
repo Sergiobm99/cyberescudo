@@ -1128,54 +1128,38 @@ nav ul li a, .submenu-toggle {
 /* ─── HERRAMIENTA DNS LOOKUP ─── */
 .dns-input-grid {
     display: flex;
-    gap: 0.75rem;
-    align-items: flex-start;
-    margin-bottom: 1.5rem;
     flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+    margin-bottom: 1.5rem;
+}
+
+.dns-input-grid > div {
+    flex: 1;
+    min-width: 200px; /* Evita que se encojan demasiado en móvil */
+}
+
+.dns-quick-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
 }
 
 .dns-quick-btn {
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid var(--border);
-    color: var(--gray);
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid var(--border) !important;
+    color: var(--gray) !important;
     font-family: var(--mono);
-    font-size: 0.72rem;
-    padding: 0.35rem 0.8rem;
-    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.3rem;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: all 0.2s;
 }
 
 .dns-quick-btn:hover {
-    border-color: var(--cyan);
-    color: var(--white);
-    background: var(--cyan-faint);
-}
-
-.dns-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: rgba(0, 0, 0, 0.3);
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-    overflow: hidden;
-}
-
-.dns-table th {
-    padding: 0.6rem 0.75rem;
-    text-align: left;
-    font-family: var(--mono);
-    font-size: 0.65rem;
-    color: var(--gray-dark);
-    text-transform: uppercase;
-    border-bottom: 1px solid var(--border);
-}
-
-.dns-table td {
-    padding: 0.75rem;
-    font-family: var(--mono);
-    font-size: 0.82rem;
-    color: rgba(255, 255, 255, 0.85);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-    word-break: break-all;
+    border-color: var(--cyan) !important;
+    color: var(--white) !important;
+    background: var(--cyan-faint) !important;
 }
