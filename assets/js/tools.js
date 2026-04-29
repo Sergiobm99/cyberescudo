@@ -1209,4 +1209,124 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
+    // =========================================================
+    // 18. Herramienta: HTTP Header Analyzer
+    // =========================================================
+    const hdrInput = document.getElementById('hdr-input');
+    if (hdrInput) {
+        const btnAnalyze = document.getElementById('btn-hdr-analyze');
+        const btnExample = document.getElementById('btn-hdr-example');
+        const btnClear = document.getElementById('btn-hdr-clear');
+        const hdrResults = document.getElementById('hdr-results');
+        
+        const lang = window.LANG || 'es';
+
+        const CHECKS = [
+            { id:'hsts', name:'Strict-Transport-Security', header:'strict-transport-security', critical:true, ok: lang==='es'?'HSTS activo. Fuerza HTTPS y previene downgrade attacks.':'HSTS enabled. Forces HTTPS and prevents downgrade attacks.', fail: lang==='es'?'Falta HSTS. Los usuarios pueden ser redirigidos a HTTP por un atacante MITM.':'Missing HSTS. Users can be redirected to HTTP by a MITM attacker.', fix: 'Strict-Transport-Security: max-age=31536000; includeSubDomains; preload', check: v => v && /max-age=\d+/i.test(v) },
+            { id:'csp', name:'Content-Security-Policy', header:'content-security-policy', critical:true, ok: lang==='es'?'CSP configurada. Reduce el riesgo de XSS.':'CSP configured. Reduces XSS risk.', fail: lang==='es'?'Falta CSP. Sin ella los ataques XSS son triviales.':'Missing CSP. Without it XSS attacks are trivial.', fix: "Content-Security-Policy: default-src 'self'; script-src 'self'; object-src 'none'", check: v => !!v },
+            { id:'xcto', name:'X-Content-Type-Options', header:'x-content-type-options', critical:false, ok: lang==='es'?'X-Content-Type-Options presente. Evita MIME sniffing.':'X-Content-Type-Options present. Prevents MIME sniffing.', fail: lang==='es'?'Falta X-Content-Type-Options. Permite MIME-sniffing.':'Missing X-Content-Type-Options. Allows MIME-sniffing.', fix: 'X-Content-Type-Options: nosniff', check: v => v && v.toLowerCase().includes('nosniff') },
+            { id:'xfo', name:'X-Frame-Options', header:'x-frame-options', critical:false, ok: lang==='es'?'X-Frame-Options presente. Protege contra clickjacking.':'X-Frame-Options present. Protects against clickjacking.', fail: lang==='es'?'Falta X-Frame-Options. Vulnerable a clickjacking.':'Missing X-Frame-Options. Vulnerable to clickjacking.', fix: 'X-Frame-Options: DENY', check: v => v && /(DENY|SAMEORIGIN)/i.test(v) },
+            { id:'rp', name:'Referrer-Policy', header:'referrer-policy', critical:false, ok: lang==='es'?'Referrer-Policy configurada.':'Referrer-Policy set.', fail: lang==='es'?'Falta Referrer-Policy. URLs pueden filtrarse.':'Missing Referrer-Policy. URLs may leak.', fix: 'Referrer-Policy: strict-origin-when-cross-origin', check: v => !!v },
+            { id:'pp', name:'Permissions-Policy', header:'permissions-policy', critical:false, ok: lang==='es'?'Permissions-Policy configurada.':'Permissions-Policy set.', fail: lang==='es'?'Falta Permissions-Policy. API de navegador expuestas.':'Missing Permissions-Policy. Browser APIs exposed.', fix: 'Permissions-Policy: camera=(), microphone=(), geolocation=()', check: v => !!v },
+            { id:'server', name:'Server Fingerprinting', header:'server', critical:false, ok: lang==='es'?'Cabecera Server genérica o ausente.':'Server header generic or absent.', fail: lang==='es'?'Cabecera Server expone software y versión.':'Server header exposes software/version.', fix: lang==='es'?'Eliminar o generalizar: Server: (vacío)':'Remove or generalise: Server: (empty)', check: v => !v || v.length < 8 || !/[0-9]/.test(v) },
+            { id:'xpb', name:'X-Powered-By', header:'x-powered-by', critical:false, ok: lang==='es'?'X-Powered-By ausente.':'X-Powered-By absent.', fail: lang==='es'?'X-Powered-By expone la tecnología del backend.':'X-Powered-By exposes backend technology.', fix: 'Eliminar / Remove: X-Powered-By', check: v => !v },
+            { id:'cors', name:'CORS (Allow-Origin)', header:'access-control-allow-origin', critical:true, ok: lang==='es'?'CORS configurado correctamente.':'CORS configured correctly.', fail: lang==='es'?'CORS = * (wildcard). Inseguro.':'CORS = * (wildcard). Insecure.', fix: 'Access-Control-Allow-Origin: https://tudominio.com', check: v => !v || v.trim() !== '*' },
+            { id:'cookie', name:'Secure Cookies', header:'set-cookie', critical:true, ok: lang==='es'?'Cookies con flags seguros.':'Cookies have secure flags.', fail: lang==='es'?'Cookies sin flags de seguridad (HttpOnly/Secure).':'Cookies without security flags.', fix: 'Set-Cookie: session=...; HttpOnly; Secure; SameSite=Strict', check: v => { if(!v) return true; return /HttpOnly/i.test(v) && /Secure/i.test(v) && /SameSite/i.test(v); } }
+        ];
+
+        function parseHeaders(raw) {
+            let map = {};
+            raw.split('\n').forEach(line => {
+                let idx = line.indexOf(':');
+                if (idx > 0) {
+                    let key = line.slice(0, idx).trim().toLowerCase();
+                    let val = line.slice(idx + 1).trim();
+                    map[key] = val;
+                }
+            });
+            return map;
+        }
+
+        function esc(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        btnExample.addEventListener('click', () => {
+            hdrInput.value = 'HTTP/1.1 200 OK\nContent-Type: text/html; charset=utf-8\nServer: Apache/2.4.51 (Ubuntu)\nX-Powered-By: PHP/8.1.12\nSet-Cookie: PHPSESSID=abc123; path=/\nAccess-Control-Allow-Origin: *\nContent-Length: 12345';
+        });
+
+        btnClear.addEventListener('click', () => {
+            hdrInput.value = '';
+            hdrResults.innerHTML = '';
+        });
+
+        btnAnalyze.addEventListener('click', () => {
+            const raw = hdrInput.value.trim();
+            if (!raw) return;
+            
+            const headers = parseHeaders(raw);
+            let passed = 0, failed = 0, critical = 0;
+            let rowsHtml = '';
+
+            CHECKS.forEach(c => {
+                const val = headers[c.header];
+                const ok = c.check(val);
+                if (ok) passed++; else { failed++; if (c.critical) critical++; }
+
+                const icon = ok ? '✅' : (c.critical ? '🚨' : '⚠️');
+                const color = ok ? '#00d45a' : (c.critical ? '#ff5050' : '#f0a000');
+                const statusTxt = ok ? (lang==='es'?'BIEN':'PASS') : (c.critical ? (lang==='es'?'CRÍTICO':'CRITICAL') : (lang==='es'?'AVISO':'WARNING'));
+
+                rowsHtml += `<div class="hdr-check-card">
+                    <div class="hdr-check-header" style="margin-bottom:${ok?'0':'0.5rem'}">
+                        <span style="font-size:1.1rem;">${icon}</span>
+                        <strong style="font-family:var(--mono); color:var(--white);">${c.name}</strong>
+                        <span style="margin-left:auto; font-family:var(--mono); font-size:0.75rem; color:${color}; font-weight:bold;">${statusTxt}</span>
+                    </div>
+                    ${!ok ? `
+                    <p style="font-size:0.85rem; color:var(--gray); margin-left:1.75rem;">${ok ? c.ok : c.fail}</p>
+                    <div class="hdr-check-fix"><span style="color:var(--gray-dark);">Fix:</span> ${esc(c.fix)}</div>
+                    ` : ''}
+                </div>`;
+            });
+
+            const score = Math.round(passed / CHECKS.length * 100);
+            const scoreColor = score >= 80 ? '#00d45a' : score >= 50 ? '#f0a000' : '#ff5050';
+            const grade = score >= 90 ? 'A' : score >= 75 ? 'B' : score >= 55 ? 'C' : score >= 35 ? 'D' : 'F';
+
+            const summaryHtml = `
+                <div class="score-board">
+                    <div>
+                        <div class="score-grade" style="color:${scoreColor};">${grade}</div>
+                        <div class="score-text">${score}/100</div>
+                    </div>
+                    <div>
+                        <div class="score-stats">
+                            <div><span class="score-stat-num" style="color:#00d45a;">${passed}</span><span style="font-size:0.75rem; color:var(--gray-dark); margin-left:5px;">${lang==='es'?'correctos':'passed'}</span></div>
+                            <div><span class="score-stat-num" style="color:#f0a000;">${failed}</span><span style="font-size:0.75rem; color:var(--gray-dark); margin-left:5px;">${lang==='es'?'fallos':'failed'}</span></div>
+                            ${critical ? `<div><span class="score-stat-num" style="color:#ff5050;">${critical}</span><span style="font-size:0.75rem; color:var(--gray-dark); margin-left:5px;">${lang==='es'?'críticos':'critical'}</span></div>` : ''}
+                        </div>
+                        <div class="score-bar-bg">
+                            <div class="score-bar-fill" style="width:${score}%; background:${scoreColor};"></div>
+                        </div>
+                    </div>
+                </div>`;
+
+            let rawHtml = `<div style="margin-bottom:2rem;">
+                <div class="info-card-label" style="margin-bottom:0.8rem;">${lang==='es'?'Headers detectados':'Detected headers'}</div>
+                <div style="background:rgba(0,0,0,0.2); border:1px solid var(--border); border-radius:0.5rem; overflow:hidden;">
+                    ${Object.entries(headers).map(([k, v]) => `
+                    <div class="hdr-raw-row">
+                        <span style="color:var(--cyan); min-width:200px;">${esc(k)}</span>
+                        <span style="color:rgba(255,255,255,0.7);">${esc(v)}</span>
+                    </div>`).join('')}
+                </div>
+            </div>`;
+
+            hdrResults.innerHTML = summaryHtml + rawHtml + 
+                `<div class="info-card-label" style="margin-bottom:0.8rem;">${lang==='es'?'Análisis de seguridad':'Security analysis'}</div>` + rowsHtml;
+        });
+    }
 });
