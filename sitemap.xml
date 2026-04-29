@@ -1,0 +1,882 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+<!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
+
+
+<url>
+  <loc>https://cyberescudo.com/</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>1.00</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/index.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/tools.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/tool-ip.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/tool-passgen.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/tool-passcheck.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/tool-hash.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/tool-hashcrack.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/tool-base64.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/tool-cidr.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/tool-jwt.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/tool-url.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/tool-chmod.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/tool-regex.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/tool-mac.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/hardening-apache.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/inyeccion-comandos-rfi-lfi.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/sqlmap.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/xss-practica.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/sql-injection-manual.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/android-reversing.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/diva-auditoria.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/insecurebank-analisis.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/diva-profundizacion.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/nmap.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/metasploit.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/hydra-brute-force.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/wireshark.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/john-hashcat.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/burpsuite.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/csrf-clickjacking.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/nikto-dirb.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/xxe-path-traversal.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/gobuster.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/privilege-escalation-linux.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/docker-hardening.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/shodan.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/htaccess-modsecurity.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/openvpn-pfsense.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/ssh-tunnel.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/hardening-ssh.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/nginx-ssl.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/dnssec-dns.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/firewall-iptables.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/tor-kali.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/proxychains.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/foxyproxy.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/robtex.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/sistemas-autonomos.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/recon-ng.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/owasp-top-ten.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/asvs.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/pentesting-metodologia.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/web-security-testing.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/wireless-audit.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/incident-response.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/ctf-methodology.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/privacidad.php</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/index.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/index.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/tools.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/tools.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/tool-ip.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/tool-ip.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/tool-passgen.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/tool-passgen.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/tool-passcheck.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/tool-passcheck.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/tool-hash.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/tool-hash.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/tool-hashcrack.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/tool-hashcrack.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/tool-base64.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/tool-base64.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/tool-cidr.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/tool-cidr.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/tool-jwt.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/tool-jwt.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/tool-url.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/tool-url.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/tool-chmod.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/tool-chmod.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/tool-regex.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/tool-regex.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/tool-mac.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/tool-mac.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/hardening-apache.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/hardening-apache.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/inyeccion-comandos-rfi-lfi.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/inyeccion-comandos-rfi-lfi.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/sqlmap.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/sqlmap.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/xss-practica.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/xss-practica.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/sql-injection-manual.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/sql-injection-manual.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/android-reversing.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/android-reversing.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/diva-auditoria.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/diva-auditoria.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/insecurebank-analisis.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/insecurebank-analisis.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/diva-profundizacion.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/diva-profundizacion.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/nmap.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/nmap.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/metasploit.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/metasploit.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/hydra-brute-force.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/hydra-brute-force.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/wireshark.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/wireshark.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/john-hashcat.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/john-hashcat.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/burpsuite.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/burpsuite.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/csrf-clickjacking.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/csrf-clickjacking.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/nikto-dirb.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/nikto-dirb.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/xxe-path-traversal.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/xxe-path-traversal.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/gobuster.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/gobuster.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/privilege-escalation-linux.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/privilege-escalation-linux.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/docker-hardening.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/docker-hardening.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/shodan.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/projects/shodan.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/htaccess-modsecurity.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/htaccess-modsecurity.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/openvpn-pfsense.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/openvpn-pfsense.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/ssh-tunnel.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/ssh-tunnel.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/hardening-ssh.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/hardening-ssh.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/nginx-ssl.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/nginx-ssl.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/dnssec-dns.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/dnssec-dns.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/firewall-iptables.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/firewall-iptables.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/tor-kali.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/tor-kali.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/proxychains.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/proxychains.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/foxyproxy.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/foxyproxy.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/robtex.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/robtex.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/sistemas-autonomos.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/sistemas-autonomos.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/recon-ng.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/recon-ng.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/owasp-top-ten.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/owasp-top-ten.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/asvs.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/asvs.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/pentesting-metodologia.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/pentesting-metodologia.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/web-security-testing.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/web-security-testing.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/wireless-audit.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/wireless-audit.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/incident-response.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/incident-response.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/ctf-methodology.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/manuales/ctf-methodology.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/privacidad.php?lang=es</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberescudo.com/privacidad.php?lang=en</loc>
+  <lastmod>2026-04-28T19:28:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+
+
+</urlset>

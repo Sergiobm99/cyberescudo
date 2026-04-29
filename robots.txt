@@ -1,0 +1,32 @@
+# Robots.txt — CyberEscudo
+# https://cyberescudo.com
+
+User-agent: *
+Allow: /
+Allow: /tools.php
+Allow: /tool-ip.php
+Allow: /tool-passgen.php
+Allow: /tool-passcheck.php
+Allow: /tool-hash.php
+Allow: /tool-hashcrack.php
+Allow: /tool-base64.php
+Allow: /tool-cidr.php
+Allow: /tool-jwt.php
+Allow: /tool-url.php
+Allow: /tool-chmod.php
+Allow: /tool-mac.php
+Allow: /tool-regex.php
+Allow: /tool-revshell.php
+
+# Block internal directories and sensitive files
+Disallow: /lang/
+Disallow: /templates/
+Disallow: /assets/
+Disallow: /bootstrap.php
+Disallow: /config.php
+Disallow: /projects/_template.php
+Disallow: /manuales/_template.php
+Disallow: /.user.ini
+Disallow: /.htaccess
+
+Sitemap: https://cyberescudo.com/sitemap.xml

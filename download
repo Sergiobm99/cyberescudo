@@ -1,0 +1,112 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# CyberEscudo — Apache security configuration
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# ── Force HTTPS (redirects all HTTP traffic to HTTPS) ─────────────────────────
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Redirect HTTP → HTTPS
+    RewriteCond %{HTTPS} off
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+    # Redirect www → non-www
+    RewriteCond %{HTTP_HOST} ^www\.cyberescudo\.com [NC]
+    RewriteRule ^(.*)$ https://cyberescudo.com/$1 [L,R=301]
+</IfModule>
+
+# ── Disable directory listing and multiviews ───────────────────────────────────
+Options -Indexes -MultiViews
+
+# ── Protect sensitive PHP files ───────────────────────────────────────────────
+<FilesMatch "^(bootstrap|config)\.php$">
+    Require all denied
+</FilesMatch>
+
+# ── Block direct access to internal directories ───────────────────────────────
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(lang|templates|assets/js|assets/css)/ - [F,L]
+    RewriteRule ^(projects|manuales)/_template\.php$ - [F,L]
+</IfModule>
+
+# ── Block hidden files (.git, .env, .user.ini, etc.) ─────────────────────────
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+
+# ── Block .user.ini and .htaccess from being read ─────────────────────────────
+<FilesMatch "^(\.user\.ini|\.htaccess|\.htpasswd)$">
+    Require all denied
+</FilesMatch>
+
+# ── Remove server fingerprint ─────────────────────────────────────────────────
+ServerSignature Off
+
+# ── Security headers ──────────────────────────────────────────────────────────
+<IfModule mod_headers.c>
+    Header always set X-Frame-Options "DENY"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+    Header always unset X-Powered-By
+    Header always unset Server
+
+    # Prevent MIME sniffing on all responses
+    Header always set X-Content-Type-Options "nosniff"
+
+    # Cache static assets for 1 year
+    <FilesMatch "\.(css|js|woff2?|ttf|eot|svg|png|jpg|jpeg|gif|ico|webp)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+
+    # Do not cache PHP pages
+    <FilesMatch "\.php$">
+        Header set Cache-Control "no-store, no-cache, must-revalidate"
+        Header set Pragma "no-cache"
+    </FilesMatch>
+</IfModule>
+
+# ── Block common exploit patterns in query strings ─────────────────────────────
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Block path traversal attempts
+    RewriteCond %{QUERY_STRING} (\.\./|\.\.%2F|\.\.%5C) [NC]
+    RewriteRule .* - [F,L]
+
+    # Block null bytes
+    RewriteCond %{QUERY_STRING} %00 [NC]
+    RewriteRule .* - [F,L]
+
+    # Block common SQL injection patterns in query strings
+    RewriteCond %{QUERY_STRING} (union.*select|select.*from|insert.*into|drop.*table) [NC]
+    RewriteRule .* - [F,L]
+
+    # Block PHP file inclusion attempts
+    RewriteCond %{QUERY_STRING} (=http://|=https://|=ftp://) [NC]
+    RewriteRule .* - [F,L]
+</IfModule>
+
+# ── Block suspicious User-Agents (scanners, exploit frameworks) ───────────────
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{HTTP_USER_AGENT} (nikto|sqlmap|nessus|masscan|zgrab|nuclei|acunetix|nmap) [NC]
+    RewriteRule .* - [F,L]
+</IfModule>
+
+# ── PHP hardening ─────────────────────────────────────────────────────────────
+<IfModule mod_php.c>
+    php_flag display_errors Off
+    php_flag log_errors On
+    php_flag expose_php Off
+    php_flag session.cookie_httponly On
+    php_flag session.use_only_cookies On
+    php_flag session.use_strict_mode On
+    php_value session.cookie_samesite Lax
+</IfModule>
+
+# ── Custom error pages ────────────────────────────────────────────────────────
+ErrorDocument 403 /403.php
+ErrorDocument 404 /404.php
+ErrorDocument 500 /500.php

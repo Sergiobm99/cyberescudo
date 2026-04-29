@@ -1,0 +1,102 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# CyberEscudo — Apache security configuration
+# Place this file in the root of your Plesk httpdocs directory.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# ── Disable directory listing ──────────────────────────────────────────────────
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Redirigir forzosamente de www a SIN www mediante 301
+    RewriteCond %{HTTP_HOST} ^www\.cyberescudo\.com [NC]
+    RewriteRule ^(.*)$ https://cyberescudo.com/$1 [L,R=301]
+</IfModule>
+
+Options -Indexes -MultiViews
+
+# ── Protect sensitive PHP files from direct browser access ────────────────────
+# Visitors should never be able to open bootstrap.php or config.php directly.
+<FilesMatch "^(bootstrap|config)\.php$">
+    Require all denied
+</FilesMatch>
+
+# ── Block direct access to internal directories ───────────────────────────────
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Block direct access to lang/ and templates/ directories
+    RewriteRule ^(lang|templates)/ - [F,L]
+
+    # Block access to template/helper php files that should never run standalone
+    RewriteRule ^(projects|manuales)/_template\.php$ - [F,L]
+</IfModule>
+
+# ── Remove server signature (hide Apache version) ─────────────────────────────
+ServerSignature Off
+
+# ── Security headers (complement headers sent by PHP) ─────────────────────────
+<IfModule mod_headers.c>
+    Header always set X-Frame-Options "DENY"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+    Header always unset X-Powered-By
+    Header always unset Server
+
+    # Cache static assets for 1 year
+    <FilesMatch "\.(css|js|woff2?|ttf|eot|svg|png|jpg|jpeg|gif|ico|webp)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+
+    # Do not cache PHP pages
+    <FilesMatch "\.php$">
+        Header set Cache-Control "no-store, no-cache, must-revalidate"
+        Header set Pragma "no-cache"
+    </FilesMatch>
+</IfModule>
+
+# ── Prevent access to hidden files (.git, .env, etc.) ─────────────────────────
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+
+# ── Block common exploit patterns in query strings ─────────────────────────────
+<IfModule mod_rewrite.c>
+    RewriteCond %{QUERY_STRING} (\.\./|\.\.%2F) [NC]
+    RewriteRule .* - [F,L]
+
+    # Block null bytes
+    RewriteCond %{QUERY_STRING} %00 [NC]
+    RewriteRule .* - [F,L]
+</IfModule>
+
+# ── PHP hardening (overrides php.ini if allowed by the host) ──────────────────
+<IfModule mod_php.c>
+    php_flag display_errors Off
+    php_flag log_errors On
+    php_flag expose_php Off
+    php_flag session.cookie_httponly On
+    php_flag session.use_only_cookies On
+    php_flag session.use_strict_mode On
+    php_value session.cookie_samesite Lax
+</IfModule>
+# For PHP-FPM (common in Plesk), these must be set in php.ini or user.ini instead.
+# Create a .user.ini file in the same directory with:
+#   display_errors = Off
+#   expose_php = Off
+#   session.cookie_httponly = 1
+#   session.use_only_cookies = 1
+#   session.use_strict_mode = 1
+#   session.cookie_samesite = Lax
+
+# ── Force HTTPS (uncomment once SSL is active on your domain) ─────────────────
+# <IfModule mod_rewrite.c>
+#     RewriteEngine On
+#     RewriteCond %{HTTPS} off
+#     RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+# </IfModule>
+
+# ── Custom error pages ────────────────────────────────────────────────────────
+ErrorDocument 403 /403.php
+ErrorDocument 404 /404.php
+ErrorDocument 500 /500.php
