@@ -1125,41 +1125,35 @@ nav ul li a, .submenu-toggle {
         grid-template-columns: repeat(3, 1fr);
     }
 }
-/* ─── HERRAMIENTA DNS LOOKUP ─── */
-.dns-input-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    align-items: flex-end;
-    margin-bottom: 1.5rem;
+/* ─── TABLA DNS MEJORADA ─── */
+.dns-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    margin-top: 0.5rem;
 }
 
-.dns-input-grid > div {
-    flex: 1;
-    min-width: 200px; /* Evita que se encojan demasiado en móvil */
-}
-
-.dns-quick-wrapper {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-bottom: 1.5rem;
-}
-
-.dns-quick-btn {
-    background: rgba(255, 255, 255, 0.04) !important;
-    border: 1px solid var(--border) !important;
-    color: var(--gray) !important;
+.dns-table th, 
+.dns-table td {
+    padding: 0.8rem 1.5rem; /* 👈 Aumentamos de 0.75rem a 1.5rem para separar las columnas */
+    text-align: left;
     font-family: var(--mono);
-    font-size: 0.75rem;
-    padding: 0.4rem 0.8rem;
-    border-radius: 0.3rem;
-    cursor: pointer;
-    transition: all 0.2s;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
 }
 
-.dns-quick-btn:hover {
-    border-color: var(--cyan) !important;
-    color: var(--white) !important;
-    background: var(--cyan-faint) !important;
+/* Forzamos que la columna TTL sea más ancha y no comprima a la de VALOR */
+.dns-table th:first-child, 
+.dns-table td:first-child {
+    width: 140px; /* 👈 Subimos de 80px a 140px */
+    color: var(--gray-dark);
+    font-size: 0.75rem;
+}
+
+.dns-table td {
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.85);
+    word-break: break-all;
 }
