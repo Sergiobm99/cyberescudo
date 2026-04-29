@@ -1441,11 +1441,16 @@ document.addEventListener('DOMContentLoaded', function() {
         btnGenerate.addEventListener('click', generateWordlist);
         btnDownload.addEventListener('click', downloadWordlist);
     }
+ // =========================================================
+    // 20. Herramienta: Multi Decoder (CTF) - VERSION BLINDADA
     // =========================================================
-    // 20. Herramienta: Multi Decoder (CTF)
-    // =========================================================
-    const mdInput = document.getElementById('md-input');
-    if (mdInput) {
+    (function() {
+        const mdInput = document.getElementById('md-input');
+        // Si no estamos en la página del Multi Decoder, salimos silenciosamente
+        if (!mdInput) return; 
+
+        console.log("✅ Multi Decoder cargado correctamente en su burbuja.");
+
         const btnDecode = document.getElementById('btn-md-decode');
         const btnAutoChain = document.getElementById('btn-md-autochain');
         const mdChain = document.getElementById('md-chain');
@@ -1454,6 +1459,13 @@ document.addEventListener('DOMContentLoaded', function() {
         
         let activeMode = 'auto';
         const lang = window.LANG || 'es';
+
+        // Polyfill de seguridad para el portapapeles
+        if (typeof window.copyToClipboard !== 'function') {
+            window.copyToClipboard = function(text) {
+                navigator.clipboard.writeText(text).catch(e => console.error(e));
+            };
+        }
 
         // Selección de modo
         modeBtns.forEach(btn => {
@@ -1464,11 +1476,11 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
 
-        // Diccionario de decoders
         const DECODERS = {
             base64: function(s) {
                 try {
                     const clean = s.replace(/[\s]/g, '');
+                    if (!/^[a-zA-Z0-9+/]*={0,2}$/.test(clean)) return null;
                     const decoded = decodeURIComponent(escape(atob(clean)));
                     return decoded !== s ? decoded : null;
                 } catch(e) { return null; }
@@ -1478,10 +1490,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 catch(e) { return null; }
             },
             html: function(s) {
-                const d = document.createElement('div'); 
-                d.innerHTML = s;
-                const t = d.textContent; 
-                return t !== s ? t : null;
+                try {
+                    const d = document.createElement('div'); d.innerHTML = s;
+                    const t = d.textContent; return t !== s ? t : null;
+                } catch(e) { return null; }
             },
             hex: function(s) {
                 const clean = s.replace(/\s|0x|\\x/g, '');
@@ -1507,8 +1519,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (parts.length < 2) return null;
                 function dec(str) {
                     str = str.replace(/-/g, '+').replace(/_/g, '/');
-                    const pad = str.length % 4; 
-                    if (pad) str += '===='.slice(pad);
+                    const pad = str.length % 4; if (pad) str += '===='.slice(pad);
                     return JSON.stringify(JSON.parse(decodeURIComponent(escape(atob(str)))), null, 2);
                 }
                 try { return 'Header:\n' + dec(parts[0]) + '\n\nPayload:\n' + dec(parts[1]); } 
@@ -1516,22 +1527,16 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         };
 
-        // Motor de autodescubrimiento
         function detectEncoding(s) {
             const order = ['jwt', 'url', 'base64', 'html', 'unicode', 'hex', 'rot13'];
             for (let i = 0; i < order.length; i++) {
-                try { 
-                    const r = DECODERS[order[i]](s); 
-                    if (r !== null && r !== s) return { type: order[i], result: r }; 
-                } catch(e) {}
+                try { const r = DECODERS[order[i]](s); if (r !== null && r !== s) return { type: order[i], result: r }; } catch(e) {}
             }
             return null;
         }
 
         function escapeHTML(s) {
-            const d = document.createElement('div');
-            d.textContent = String(s || '');
-            return d.innerHTML;
+            const d = document.createElement('div'); d.textContent = String(s || ''); return d.innerHTML;
         }
 
         function renderStepHtml(step, idx) {
@@ -1539,9 +1544,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="md-step-card">
                 <div class="md-step-header">
                     <span class="md-step-badge">${step.type.toUpperCase()}</span>
-                    <span style="font-family:var(--mono); font-size:0.75rem; color:var(--gray-dark);">
-                        ${lang === 'es' ? 'Capa' : 'Layer'} ${idx + 1}
-                    </span>
+                    <span style="font-family:var(--mono); font-size:0.75rem; color:var(--gray-dark);">Capa ${idx + 1}</span>
                     <button class="copy-btn-mini" data-copy="${escapeHTML(step.result)}" style="margin-left:auto;">📋</button>
                 </div>
                 <pre style="padding:1rem; font-family:var(--mono); font-size:0.85rem; color:rgba(255,255,255,0.9); white-space:pre-wrap; word-break:break-all; margin:0; max-height:250px; overflow-y:auto;">${escapeHTML(step.result)}</pre>
@@ -1551,80 +1554,60 @@ document.addEventListener('DOMContentLoaded', function() {
         function attachCopyEvents() {
             document.querySelectorAll('#md-chain .copy-btn-mini').forEach(b => {
                 b.addEventListener('click', function() {
-                    copyToClipboard(this.dataset.copy, this);
-                    this.textContent = '✅';
-                    setTimeout(() => this.textContent = '📋', 1500);
+                    window.copyToClipboard(this.dataset.copy);
+                    this.textContent = '✅'; setTimeout(() => this.textContent = '📋', 1500);
                 });
             });
         }
 
-        // Ejecutar decodificación simple
         btnDecode.addEventListener('click', () => {
-            const s = mdInput.value;
+            const s = mdInput.value.trim();
             if (!s) return;
-            
             let result = null, type = null;
             if (activeMode !== 'auto') {
                 try { result = DECODERS[activeMode](s); type = activeMode; } catch(e) {}
             } else {
-                const d = detectEncoding(s);
-                if (d) { result = d.result; type = d.type; }
+                const d = detectEncoding(s); if (d) { result = d.result; type = d.type; }
             }
 
             if (result !== null && result !== undefined) {
-                mdChain.innerHTML = renderStepHtml({ type, result }, 0);
-                attachCopyEvents();
+                mdChain.innerHTML = renderStepHtml({ type, result }, 0); attachCopyEvents();
             } else {
-                mdChain.innerHTML = `<p style="color:var(--gray); font-family:var(--mono); margin-top:1rem;">${lang === 'es' ? 'No se pudo decodificar con el modo seleccionado.' : 'Could not decode with the selected mode.'}</p>`;
+                mdChain.innerHTML = `<p style="color:var(--gray); font-family:var(--mono); margin-top:1rem; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 0.5rem;">❌ No se pudo decodificar.</p>`;
             }
         });
 
-        // Ejecutar Auto-Chain (Desencadenado)
         btnAutoChain.addEventListener('click', () => {
             const s = mdInput.value.trim();
             if (!s) return;
-            
             let steps = [], current = s, max = 10;
             while (steps.length < max) {
                 const d = detectEncoding(current);
                 if (!d || d.result === current) break;
-                steps.push(d);
-                current = d.result;
+                steps.push(d); current = d.result;
             }
 
             if (!steps.length) {
-                mdChain.innerHTML = `<p style="color:var(--gray); font-family:var(--mono); margin-top:1rem;">${lang === 'es' ? 'No se detectaron encodings conocidos.' : 'No known encodings detected.'}</p>`;
+                mdChain.innerHTML = `<p style="color:var(--gray); font-family:var(--mono); margin-top:1rem; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 0.5rem;">❌ No se detectaron encodings conocidos.</p>`;
                 return;
             }
 
             const arrow = `<div class="md-arrow">↓</div>`;
-            
             let html = `
             <div class="md-step-card" style="border-color: rgba(0,255,255,0.2);">
                 <div class="md-step-header" style="background: rgba(0,255,255,0.05);">
-                    <span style="font-family:var(--mono); font-size:0.75rem; color:var(--cyan); font-weight:bold;">${lang === 'es' ? 'TEXTO ORIGINAL' : 'ORIGINAL TEXT'}</span>
+                    <span style="font-family:var(--mono); font-size:0.75rem; color:var(--cyan); font-weight:bold;">TEXTO ORIGINAL</span>
                 </div>
                 <pre style="padding:1rem; font-family:var(--mono); font-size:0.85rem; color:var(--gray); white-space:pre-wrap; word-break:break-all; margin:0;">${escapeHTML(s.slice(0, 500))}${s.length > 500 ? '...' : ''}</pre>
             </div>${arrow}`;
 
-            steps.forEach((st, i) => {
-                html += renderStepHtml(st, i) + (i < steps.length - 1 ? arrow : '');
-            });
-
-            html += `<div style="font-family:var(--mono); font-size:0.8rem; color:var(--cyan); margin-top:1rem; text-align:center;">
-                ↳ ${steps.length} ${lang === 'es' ? 'capas decodificadas automáticamente' : 'layers decoded automatically'}
-            </div>`;
-            
-            mdChain.innerHTML = html;
-            attachCopyEvents();
+            steps.forEach((st, i) => { html += renderStepHtml(st, i) + (i < steps.length - 1 ? arrow : ''); });
+            mdChain.innerHTML = html; attachCopyEvents();
         });
 
-        // Botones de ejemplo
         exampleBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                mdInput.value = btn.dataset.payload;
-                btnAutoChain.click(); // Autoejecutamos la cadena al hacer clic
-            });
+            btn.addEventListener('click', () => { mdInput.value = btn.dataset.payload; btnAutoChain.click(); });
         });
-    }
+
+    })(); // <-- Este paréntesis cierra la burbuja de la que te hablaba
 });
