@@ -100,6 +100,7 @@
                 <li><a href="<?= BASE_URL ?>/tool-revshell.php">🐚 Reverse Shell Generator</a></li>
                 <li><a href="<?= BASE_URL ?>/tool-cron.php">⏱ Cron Parser</a></li>
                 <li><a href="<?= BASE_URL ?>/tool-headers.php">📋 HTTP Header Analyzer</a></li>
+                <li><a href="<?= BASE_URL ?>/tool-wordlist.php">📋 📝 Wordlist Generator</a></li>
             </ul>
         </li>
 
