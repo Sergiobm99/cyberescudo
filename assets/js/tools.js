@@ -1329,4 +1329,116 @@ document.addEventListener('DOMContentLoaded', function() {
                 `<div class="info-card-label" style="margin-bottom:0.8rem;">${lang==='es'?'Análisis de seguridad':'Security analysis'}</div>` + rowsHtml;
         });
     }
+    // =========================================================
+    // 19. Herramienta: Wordlist Generator
+    // =========================================================
+    const wlKeywords = document.getElementById('wl-keywords');
+    if (wlKeywords) {
+        const btnGenerate = document.getElementById('btn-wl-generate');
+        const btnDownload = document.getElementById('btn-wl-download');
+        const wlOutputWrap = document.getElementById('wl-output-wrap');
+        const wlOutput = document.getElementById('wl-output');
+        const wlCount = document.getElementById('wl-count');
+        const lang = window.LANG || 'es';
+        
+        let fullWordlist = [];
+
+        // Función para mutación Leetspeak básica
+        function applyLeet(str) {
+            return str.replace(/a/gi, '4')
+                      .replace(/e/gi, '3')
+                      .replace(/o/gi, '0')
+                      .replace(/i/gi, '1')
+                      .replace(/s/gi, '5');
+        }
+
+        function generateWordlist() {
+            const rawKeywords = wlKeywords.value.split('\n').map(s => s.trim()).filter(Boolean);
+            if (!rawKeywords.length) return;
+
+            const years = document.getElementById('wl-years').value.split(',').map(s => s.trim()).filter(Boolean);
+            const suffixes = document.getElementById('wl-suffixes').value.split(',').map(s => s.trim()).filter(Boolean);
+            
+            const doCase = document.getElementById('wl-m-case').checked;
+            const doLeet = document.getElementById('wl-m-leet').checked;
+            const doYears = document.getElementById('wl-m-years').checked;
+            const doSuf = document.getElementById('wl-m-suffixes').checked;
+            const doSpec = document.getElementById('wl-m-special').checked;
+
+            const wordSet = new Set();
+            function addWord(w) { if (w && w.length >= 3) wordSet.add(w); }
+
+            rawKeywords.forEach(w => {
+                // Variantes base
+                addWord(w);
+                addWord(w.toLowerCase());
+                if (doCase) {
+                    addWord(w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+                    addWord(w.toUpperCase());
+                }
+                if (doLeet) {
+                    addWord(applyLeet(w));
+                    addWord(applyLeet(w.toLowerCase()));
+                }
+
+                // Con Años
+                if (doYears) {
+                    years.forEach(y => {
+                        addWord(w + y); 
+                        addWord(y + w);
+                        addWord(w.toLowerCase() + y);
+                        if (doCase) addWord(w.charAt(0).toUpperCase() + w.slice(1).toLowerCase() + y);
+                        if (doLeet) { addWord(applyLeet(w) + y); addWord(applyLeet(w.toLowerCase()) + y); }
+                    });
+                }
+
+                // Con Sufijos
+                if (doSuf) {
+                    suffixes.forEach(s => {
+                        addWord(w + s); 
+                        addWord(w.toLowerCase() + s);
+                        if (doCase) addWord(w.charAt(0).toUpperCase() + w.slice(1).toLowerCase() + s);
+                        if (doYears) years.forEach(y => { addWord(w + y + s); addWord(w.toLowerCase() + y + s); });
+                    });
+                }
+
+                // Variantes Especiales
+                if (doSpec) {
+                    ['@', '_', '.', '#'].forEach(sp => { addWord(sp + w); addWord(w + sp); });
+                    addWord(w + '!'); addWord(w + '!!'); addWord(w + '123!'); addWord(w + '@123');
+                }
+            });
+
+            // Convertir a array, ordenar y guardar globalmente para la descarga
+            fullWordlist = Array.from(wordSet).sort();
+            const count = fullWordlist.length;
+            
+            wlCount.textContent = `${count} ${lang === 'es' ? 'palabras generadas' : 'words generated'}`;
+            
+            // Previsualización (limitada a 300 palabras para no saturar el navegador)
+            const previewLimit = 300;
+            let outputText = fullWordlist.slice(0, previewLimit).join('\n');
+            if (count > previewLimit) {
+                outputText += `\n\n... (${count - previewLimit} ${lang === 'es' ? 'palabras ocultas en la previsualización' : 'words hidden in preview'})`;
+            }
+            
+            wlOutput.value = outputText;
+            wlOutputWrap.style.display = 'block';
+            btnDownload.style.display = 'inline-flex';
+        }
+
+        function downloadWordlist() {
+            if (!fullWordlist.length) return;
+            const blob = new Blob([fullWordlist.join('\n')], { type: 'text/plain' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'custom_wordlist_cyberescudo.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        btnGenerate.addEventListener('click', generateWordlist);
+        btnDownload.addEventListener('click', downloadWordlist);
+    }
 });

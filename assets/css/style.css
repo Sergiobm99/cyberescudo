@@ -1252,3 +1252,42 @@ nav ul li a, .submenu-toggle {
     padding: 0.4rem 0.6rem;
     border-bottom: 1px solid rgba(255,255,255,0.04);
 }
+/* ─── HERRAMIENTA WORDLIST GENERATOR ─── */
+.wordlist-grid {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+}
+
+.wl-mutations-box {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.wl-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    cursor: pointer;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    color: var(--gray);
+    transition: color 0.2s;
+}
+
+.wl-checkbox-label:hover {
+    color: var(--white);
+}
+
+.wl-checkbox-label input[type="checkbox"] {
+    accent-color: var(--cyan);
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
