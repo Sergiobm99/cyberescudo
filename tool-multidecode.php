@@ -107,5 +107,5 @@ require __DIR__ . '/templates/header.php';
   </div>
 </main>
 
-<script src="<?= BASE_URL ?>/assets/js/tools.js"></script>
+<script src="<?= BASE_URL ?>/assets/js/tools.js?v=<?= time() ?>"></script>
 <?php require __DIR__ . '/templates/footer.php'; ?>
