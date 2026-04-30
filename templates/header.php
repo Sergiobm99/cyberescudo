@@ -53,6 +53,8 @@
           <li><a href="<?= BASE_URL ?>/tool-wordlist.php">📝 Wordlist Generator</a></li>
           <li><a href="<?= BASE_URL ?>/tool-multidecode.php">🔄 Multi Decoder (CTF)</a></li>
           <li><a href="<?= BASE_URL ?>/tool-httpbuilder.php">📡 HTTP Builder</a></li>
+           <li><a href="<?= BASE_URL ?>/tool-waf.php">🛡️ WAF Bypass Payloads</a></li>
+                <li><a href="<?= BASE_URL ?>/tool-cloud.php">☁️ Cloud Enum</a></li>
         </ul>
       </li>
 
@@ -106,6 +108,8 @@
                 <li><a href="<?= BASE_URL ?>/tool-wordlist.php">📝 Wordlist Generator</a></li>
                 <li><a href="<?= BASE_URL ?>/tool-multidecode.php">🔄 Multi Decoder (CTF)</a></li>
                 <li><a href="<?= BASE_URL ?>/tool-httpbuilder.php">📡 HTTP Builder</a></li>
+                <li><a href="<?= BASE_URL ?>/tool-waf.php">🛡️ WAF Bypass Payloads</a></li>
+                <li><a href="<?= BASE_URL ?>/tool-cloud.php">☁️ Cloud Enum</a></li>
             </ul>
         </li>
 

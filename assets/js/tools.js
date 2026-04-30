@@ -2067,4 +2067,247 @@ document.addEventListener('DOMContentLoaded', function() {
         renderPayloads();
 
     })();
+    // =========================================================
+    // 23. Herramienta: Cloud Enum Cheatsheet
+    // =========================================================
+    (function() {
+        const cloudTargetInput = document.getElementById('cloud-target');
+        if (!cloudTargetInput) return; // Si no existe el input, no estamos en la página
+
+        console.log("✅ Cloud Enum Cheatsheet cargado.");
+
+        const targetLabel = document.getElementById('target-label');
+        const sectionPillsContainer = document.getElementById('section-pills');
+        const cloudCmdsContainer = document.getElementById('cloud-cmds');
+        const cloudTabs = document.querySelectorAll('.cloud-tab-btn');
+        const lang = window.LANG || 'es';
+
+        let currentCloud = 'azure';
+        let activeSection = 'all';
+
+        const DATA = {
+            azure: {
+                target_label: lang==='es' ? 'Tenant (ej: empresa.onmicrosoft.com)' : 'Tenant (e.g. empresa.onmicrosoft.com)',
+                placeholder: 'empresa.onmicrosoft.com',
+                sections: {
+                    'Reconocimiento': [
+                        {desc: lang==='es'?'Verificar si el tenant existe':'Check if tenant exists', cmd: 'curl "https://login.microsoftonline.com/{TARGET}/.well-known/openid-configuration" | jq .'},
+                        {desc: lang==='es'?'Enumerar usuarios con AADInternals':'Enumerate users with AADInternals', cmd: 'Invoke-AADIntReconAsOutsider -Domain {TARGET} | fl'},
+                        {desc: lang==='es'?'Comprobar si autenticación ADFS o Cloud':'Check if ADFS or Cloud auth', cmd: 'curl "https://login.microsoftonline.com/getuserrealm.srf?login=user@{TARGET}&json=1"'},
+                        {desc: lang==='es'?'Enumerar subdominios Azure (Subfinder)':'Enumerate Azure subdomains (Subfinder)', cmd: 'subfinder -d {TARGET} | grep -iE "azure|blob|mail|sharepoint|onmicrosoft"'},
+                        {desc: lang==='es'?'Buscar storage accounts públicos':'Find public storage accounts', cmd: 'for word in backup data files static media; do curl -s -o /dev/null -w "%{http_code} $word\\n" https://{TARGET%-*}${word}.blob.core.windows.net/?comp=list; done'},
+                        {desc: lang==='es'?'Verificar si Microsoft Teams está configurado':'Check if Microsoft Teams is configured', cmd: 'curl "https://teams.microsoft.com/api/mt/apac/beta/users/{TARGET}/externalsearchv3?includeTFLUsers=true"'}
+                    ],
+                    'Autenticación': [
+                        {desc: lang==='es'?'Login con credenciales (az cli)':'Login with credentials (az cli)', cmd: 'az login -u user@{TARGET} -p "Password123"'},
+                        {desc: lang==='es'?'Login con token de acceso':'Login with access token', cmd: 'az login --use-device-code'},
+                        {desc: lang==='es'?'Password spray con MSOLSpray':'Password spray with MSOLSpray', cmd: "Invoke-MSOLSpray -UserList users.txt -Password 'Empresa2024!' -Verbose"},
+                        {desc: lang==='es'?'Obtener token OAuth2':'Get OAuth2 token', cmd: 'curl -X POST "https://login.microsoftonline.com/{TARGET}/oauth2/token" -d "grant_type=password&client_id=1950a258-227b-4e31-a9cf-717495945fc2&resource=https://graph.microsoft.com&username=user@{TARGET}&password=Password123"'},
+                        {desc: lang==='es'?'Enumerar cuentas válidas (sin contraseña)':'Enumerate valid accounts (no password)', cmd: 'python3 o365spray.py --validate --domain {TARGET}'}
+                    ],
+                    'Enumeración AAD': [
+                        {desc: lang==='es'?'Listar usuarios de la organización':'List organisation users', cmd: 'az ad user list --query "[].{UPN:userPrincipalName, Name:displayName, Role:jobTitle}" -o table'},
+                        {desc: lang==='es'?'Buscar usuarios administradores':'Find admin users', cmd: 'az ad user list | jq \'.[]\' | grep -i admin'},
+                        {desc: lang==='es'?'Listar grupos':'List groups', cmd: 'az ad group list --query "[].{Name:displayName, ID:id}" -o table'},
+                        {desc: lang==='es'?'Listar aplicaciones registradas':'List registered applications', cmd: 'az ad app list --query "[].{Name:displayName, AppID:appId, URL:homepage}" -o table'},
+                        {desc: lang==='es'?'Buscar Service Principals':'Find Service Principals', cmd: 'az ad sp list --query "[].{Name:displayName, AppID:appId}" -o table'},
+                        {desc: lang==='es'?'Ver roles asignados a un usuario':'View roles assigned to a user', cmd: 'az role assignment list --query "[].{Role:roleDefinitionName, User:principalName, Scope:scope}" -o table'}
+                    ],
+                    'Recursos Azure': [
+                        {desc: lang==='es'?'Listar suscripciones accesibles':'List accessible subscriptions', cmd: 'az account list --query "[].{Name:name, ID:id, State:state}" -o table'},
+                        {desc: lang==='es'?'Listar todos los recursos':'List all resources', cmd: 'az resource list --query "[].{Name:name, Type:type, RG:resourceGroup}" -o table | sort'},
+                        {desc: lang==='es'?'Listar VMs':'List VMs', cmd: 'az vm list --query "[].{Name:name, OS:storageProfile.osDisk.osType, RG:resourceGroup, IP:privateIps}" -o table'},
+                        {desc: lang==='es'?'Ver IPs públicas':'View public IPs', cmd: 'az network public-ip list --query "[].{Name:name, IP:ipAddress, DNS:dnsSettings.fqdn}" -o table'},
+                        {desc: lang==='es'?'Listar Storage Accounts':'List Storage Accounts', cmd: 'az storage account list --query "[].{Name:name, RG:resourceGroup, Public:allowBlobPublicAccess}" -o table'},
+                        {desc: lang==='es'?'Listar contenedores de Storage (blobs públicos)':'List Storage containers (public blobs)', cmd: 'az storage container list --account-name STORAGE_NAME --query "[].{Name:name, Public:properties.publicAccess}" -o table'},
+                        {desc: lang==='es'?'Ver Key Vaults':'View Key Vaults', cmd: 'az keyvault list --query "[].{Name:name, RG:resourceGroup, Enabled:properties.enableSoftDelete}" -o table'},
+                        {desc: lang==='es'?'Ver secretos de un Key Vault':'View Key Vault secrets', cmd: 'az keyvault secret list --vault-name VAULT_NAME -o table'}
+                    ],
+                    'Herramientas': [
+                        {desc: lang==='es'?'ROADtools — recopilar y visualizar AAD':'ROADtools — collect and visualise AAD', cmd: 'pip3 install roadtools\nroadrecon gather -u user@{TARGET} -p Password123\nroadrecon gui'},
+                        {desc: lang==='es'?'BloodHound para Azure (AzureHound)':'BloodHound for Azure (AzureHound)', cmd: './azurehound -u user@{TARGET} -p "Password123" list -o output.json\n# Importar en BloodHound Community Edition'},
+                        {desc: lang==='es'?'ScoutSuite — auditoría multicloud':'ScoutSuite — multi-cloud audit', cmd: 'pip3 install scoutsuite\npython3 -m scout azure --cli'},
+                        {desc: lang==='es'?'PowerZure — post-explotación Azure':'PowerZure — Azure post-exploitation', cmd: 'Import-Module PowerZure\nGet-AzureRunAs'}
+                    ]
+                }
+            },
+            aws: {
+                target_label: lang==='es' ? 'Cuenta / perfil AWS' : 'AWS Account / Profile',
+                placeholder: '123456789012',
+                sections: {
+                    'Reconocimiento': [
+                        {desc: lang==='es'?'Verificar identidad actual':'Check current identity', cmd: 'aws sts get-caller-identity'},
+                        {desc: lang==='es'?'Enumerar cuentas/perfiles locales':'Enumerate local accounts/profiles', cmd: 'cat ~/.aws/credentials\ncat ~/.aws/config'},
+                        {desc: lang==='es'?'Buscar buckets S3 por nombre':'Find S3 buckets by name', cmd: 'for word in backup data files media static; do aws s3 ls s3://{TARGET}-${word} 2>/dev/null && echo "FOUND: {TARGET}-${word}"; done'},
+                        {desc: lang==='es'?'Listar buckets S3 accesibles':'List accessible S3 buckets', cmd: 'aws s3 ls'},
+                        {desc: lang==='es'?'Ver contenido de un bucket S3 público':'View public S3 bucket contents', cmd: 'aws s3 ls s3://BUCKET_NAME --no-sign-request'},
+                        {desc: lang==='es'?'Metadata del servidor (SSRF/desde EC2)':'Instance metadata (SSRF/from EC2)', cmd: 'curl http://169.254.169.254/latest/meta-data/\ncurl http://169.254.169.254/latest/meta-data/iam/security-credentials/'}
+                    ],
+                    'IAM': [
+                        {desc: lang==='es'?'Listar usuarios IAM':'List IAM users', cmd: 'aws iam list-users --query "Users[*].{User:UserName, Created:CreateDate}" -o table'},
+                        {desc: lang==='es'?'Listar grupos IAM':'List IAM groups', cmd: 'aws iam list-groups'},
+                        {desc: lang==='es'?'Listar políticas adjuntas a usuario':'List policies attached to user', cmd: 'aws iam list-attached-user-policies --user-name USERNAME'},
+                        {desc: lang==='es'?'Ver políticas inline de usuario':'View user inline policies', cmd: 'aws iam list-user-policies --user-name USERNAME'},
+                        {desc: lang==='es'?'Simular permisos (qué puede hacer la cuenta)':'Simulate permissions (what the account can do)', cmd: 'aws iam simulate-principal-policy --policy-source-arn arn:aws:iam::ACCOUNT:user/USERNAME --action-names "s3:*" "ec2:*" "iam:*"' },
+                        {desc: lang==='es'?'Enumerar roles asumibles':'Enumerate assumable roles', cmd: 'aws iam list-roles --query "Roles[*].{Role:RoleName, ARN:Arn}" -o table'},
+                        {desc: lang==='es'?'Asumir un rol':'Assume a role', cmd: 'aws sts assume-role --role-arn arn:aws:iam::ACCOUNT:role/ROLE --role-session-name pentest'}
+                    ],
+                    'Servicios': [
+                        {desc: lang==='es'?'Listar instancias EC2':'List EC2 instances', cmd: 'aws ec2 describe-instances --query "Reservations[*].Instances[*].{ID:InstanceId, IP:PublicIpAddress, PrivIP:PrivateIpAddress, State:State.Name}" -o table'},
+                        {desc: lang==='es'?'Listar Security Groups':'List Security Groups', cmd: 'aws ec2 describe-security-groups --query "SecurityGroups[*].{Name:GroupName, ID:GroupId}" -o table'},
+                        {desc: lang==='es'?'Buscar security groups con 0.0.0.0/0':'Find security groups open to 0.0.0.0/0', cmd: 'aws ec2 describe-security-groups --query "SecurityGroups[?IpPermissions[?IpRanges[?CidrIp==\`0.0.0.0/0\`]]].{Name:GroupName, ID:GroupId}" -o table'},
+                        {desc: lang==='es'?'Listar funciones Lambda':'List Lambda functions', cmd: 'aws lambda list-functions --query "Functions[*].{Name:FunctionName, Runtime:Runtime, Role:Role}" -o table'},
+                        {desc: lang==='es'?'Listar secretos en Secrets Manager':'List Secrets Manager secrets', cmd: 'aws secretsmanager list-secrets --query "SecretList[*].{Name:Name, ARN:ARN}" -o table'},
+                        {desc: lang==='es'?'Ver valor de un secreto':'Get secret value', cmd: 'aws secretsmanager get-secret-value --secret-id SECRET_NAME'},
+                        {desc: lang==='es'?'Listar parámetros SSM':'List SSM parameters', cmd: 'aws ssm describe-parameters --query "Parameters[*].{Name:Name, Type:Type}" -o table'},
+                        {desc: lang==='es'?'Leer parámetro SSM (con decifrado)':'Read SSM parameter (with decryption)', cmd: 'aws ssm get-parameter --name /production/database/password --with-decryption'}
+                    ],
+                    'Herramientas': [
+                        {desc: lang==='es'?'Pacu — framework de post-explotación AWS':'Pacu — AWS post-exploitation framework', cmd: 'pip3 install pacu\npacu\n# Dentro de Pacu:\nset_keys\nrun iam__enum_users_roles_policies_groups'},
+                        {desc: lang==='es'?'ScoutSuite — auditoría AWS':'ScoutSuite — AWS audit', cmd: 'python3 -m scout aws --profile default'},
+                        {desc: lang==='es'?'Prowler — CIS benchmark AWS':'Prowler — CIS benchmark AWS', cmd: 'pip3 install prowler\nprowler aws -M csv json -f eu-west-1'},
+                        {desc: lang==='es'?'CloudMapper — visualización de red AWS':'CloudMapper — AWS network visualisation', cmd: 'python3 cloudmapper.py collect --account {TARGET}\npython3 cloudmapper.py report --account {TARGET}'}
+                    ]
+                }
+            },
+            gcp: {
+                target_label: lang==='es' ? 'Proyecto GCP (project-id)' : 'GCP Project (project-id)',
+                placeholder: 'my-project-123456',
+                sections: {
+                    'Reconocimiento': [
+                        {desc: lang==='es'?'Ver cuenta activa':'View active account', cmd: 'gcloud auth list\ngcloud config list'},
+                        {desc: lang==='es'?'Listar proyectos accesibles':'List accessible projects', cmd: 'gcloud projects list'},
+                        {desc: lang==='es'?'Metadata del servidor (SSRF/desde GCE)':'Instance metadata (SSRF/from GCE)', cmd: 'curl "http://metadata.google.internal/computeMetadata/v1/?recursive=true" -H "Metadata-Flavor: Google"'},
+                        {desc: lang==='es'?'Obtener token de acceso desde metadata':'Get access token from metadata', cmd: 'curl "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token" -H "Metadata-Flavor: Google"'},
+                        {desc: lang==='es'?'Buscar buckets GCS públicos':'Find public GCS buckets', cmd: 'for word in backup data files media static; do gsutil ls gs://{TARGET}-${word} 2>/dev/null && echo "FOUND"; done'}
+                    ],
+                    'IAM': [
+                        {desc: lang==='es'?'Ver política IAM del proyecto':'View project IAM policy', cmd: 'gcloud projects get-iam-policy {TARGET} --format json'},
+                        {desc: lang==='es'?'Listar cuentas de servicio':'List service accounts', cmd: 'gcloud iam service-accounts list --project={TARGET}'},
+                        {desc: lang==='es'?'Ver claves de cuenta de servicio':'View service account keys', cmd: 'gcloud iam service-accounts keys list --iam-account SA_EMAIL'},
+                        {desc: lang==='es'?'Listar roles personalizados':'List custom roles', cmd: 'gcloud iam roles list --project={TARGET}'},
+                        {desc: lang==='es'?'Ver permisos de un rol':'View role permissions', cmd: 'gcloud iam roles describe roles/editor'}
+                    ],
+                    'Servicios': [
+                        {desc: lang==='es'?'Listar instancias Compute Engine':'List Compute Engine instances', cmd: 'gcloud compute instances list --project={TARGET}'},
+                        {desc: lang==='es'?'Listar buckets Cloud Storage':'List Cloud Storage buckets', cmd: 'gsutil ls -p {TARGET}'},
+                        {desc: lang==='es'?'Ver ACL de un bucket':'View bucket ACL', cmd: 'gsutil acl get gs://BUCKET_NAME'},
+                        {desc: lang==='es'?'Listar secretos de Secret Manager':'List Secret Manager secrets', cmd: 'gcloud secrets list --project={TARGET}'},
+                        {desc: lang==='es'?'Leer valor de un secreto':'Read a secret value', cmd: 'gcloud secrets versions access latest --secret=SECRET_NAME --project={TARGET}'},
+                        {desc: lang==='es'?'Listar funciones Cloud Functions':'List Cloud Functions', cmd: 'gcloud functions list --project={TARGET}'},
+                        {desc: lang==='es'?'Listar endpoints Cloud Run':'List Cloud Run endpoints', cmd: 'gcloud run services list --project={TARGET}'}
+                    ],
+                    'Herramientas': [
+                        {desc: lang==='es'?'GCPBucketBrute — enumerar buckets GCS':'GCPBucketBrute — enumerate GCS buckets', cmd: 'python3 GCPBucketBrute.py -k {TARGET} -w wordlist.txt'},
+                        {desc: lang==='es'?'ScoutSuite — auditoría GCP':'ScoutSuite — GCP audit', cmd: 'python3 -m scout gcp --project {TARGET}'},
+                        {desc: lang==='es'?'GCP IAM Privilege Escalation (PayloadsAllTheThings)':'GCP IAM Privilege Escalation', cmd: '# Ver: https://github.com/RhinoSecurityLabs/GCP-IAM-Privilege-Escalation'}
+                    ]
+                }
+            }
+        };
+
+        function escapeHTML(s) {
+            const d = document.createElement('div');
+            d.textContent = String(s || '');
+            return d.innerHTML;
+        }
+
+        function renderCmds() {
+            const targetVal = cloudTargetInput.value.trim() || 'TARGET';
+            const sectionsData = DATA[currentCloud].sections;
+            let html = '';
+
+            for (const [sectionName, items] of Object.entries(sectionsData)) {
+                if (activeSection !== 'all' && sectionName !== activeSection) continue;
+
+                html += `<div class="cloud-sec-header">${escapeHTML(sectionName)}</div>`;
+                
+                items.forEach(item => {
+                    const finalCmd = item.cmd.replace(/\{TARGET\}/g, targetVal);
+                    html += `
+                    <div class="cloud-cmd-item">
+                        <div class="cloud-cmd-desc">${escapeHTML(item.desc)}</div>
+                        <div class="cloud-cmd-box">
+                            <pre class="cloud-cmd-pre">${escapeHTML(finalCmd)}</pre>
+                            <button type="button" class="copy-btn-mini" data-copy="${escapeHTML(finalCmd)}" style="position:absolute; top:0.5rem; right:0.5rem;">📋</button>
+                        </div>
+                    </div>`;
+                });
+            }
+
+            cloudCmdsContainer.innerHTML = html || `<p style="color:var(--gray); font-family:var(--mono);">Sin comandos.</p>`;
+
+            // Configurar botones de copia
+            document.querySelectorAll('#cloud-cmds .copy-btn-mini').forEach(b => {
+                b.addEventListener('click', function() {
+                    if (typeof window.copyToClipboard === 'function') {
+                        window.copyToClipboard(this.dataset.copy, this);
+                    } else {
+                        navigator.clipboard.writeText(this.dataset.copy);
+                    }
+                    this.textContent = '✅';
+                    setTimeout(() => this.textContent = '📋', 1500);
+                });
+            });
+        }
+
+        function renderPills() {
+            const sections = Object.keys(DATA[currentCloud].sections);
+            let html = `<button type="button" data-sec="all" class="sec-pill ${activeSection === 'all' ? 'active' : ''}">All</button>`;
+            
+            sections.forEach(s => {
+                html += `<button type="button" data-sec="${escapeHTML(s)}" class="sec-pill ${activeSection === s ? 'active' : ''}">${escapeHTML(s)}</button>`;
+            });
+            
+            sectionPillsContainer.innerHTML = html;
+
+            // Añadir eventos a las nuevas pills
+            document.querySelectorAll('.sec-pill').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    activeSection = this.dataset.sec;
+                    document.querySelectorAll('.sec-pill').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    renderCmds();
+                });
+            });
+        }
+
+        function setCloud(cloud) {
+            currentCloud = cloud;
+            activeSection = 'all';
+
+            // Actualizar botones de pestañas
+            cloudTabs.forEach(btn => {
+                if (btn.dataset.cloud === cloud) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // Actualizar inputs y labels
+            const d = DATA[cloud];
+            targetLabel.textContent = d.target_label;
+            cloudTargetInput.placeholder = d.placeholder;
+            
+            // Forzar recálculo para reemplazar el {TARGET} por defecto si el input está vacío
+            cloudTargetInput.value = ''; 
+
+            renderPills();
+            renderCmds();
+        }
+
+        // Eventos principales
+        cloudTabs.forEach(btn => {
+            btn.addEventListener('click', function() {
+                setCloud(this.dataset.cloud);
+            });
+        });
+
+        cloudTargetInput.addEventListener('input', renderCmds);
+
+        // Inicializar
+        setCloud('azure');
+
+    })();
 });
