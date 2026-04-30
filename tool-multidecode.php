@@ -6,7 +6,7 @@ require __DIR__ . '/templates/header.php';
 ?>
 
 <main class="content-page">
-  <div style="margin-bottom:2rem;">
+  <div class="m-bottom-2">
     <span class="section-label"><?= $lang==='es' ? '// HERRAMIENTAS' : '// TOOLS' ?></span>
     <h1><?= $lang==='es' ? 'Herramientas de Seguridad' : 'Security Tools' ?></h1>
   </div>
@@ -37,10 +37,10 @@ require __DIR__ . '/templates/header.php';
 
   <div class="card">
     <div class="tool-header md-container">
-      <h2>🔄 Multi Decoder</h2>
-      <p><?= $lang==='es'
-        ? 'Detecta y decodifica encodings encadenados automáticamente.'
-        : 'Automatically detects and decodes chained encodings.' ?></p>
+      <h2 style="font-size:1.4rem;color:var(--white);margin-bottom:.5rem;">🔄 Multi Decoder</h2>
+      <p style="color:var(--gray);font-size:.9rem;"><?= $lang==='es'
+        ? 'Detecta y decodifica encodings encadenados automáticamente. Útil en CTFs, análisis de WAF bypass y ofuscación de malware.'
+        : 'Automatically detects and decodes chained encodings. Useful for CTFs, WAF bypass analysis and malware obfuscation.' ?></p>
     </div>
 
     <!-- Input -->
@@ -85,41 +85,8 @@ require __DIR__ . '/templates/header.php';
 
     <!-- Quick payloads -->
     <div class="md-examples-section">
-      <div class="info-card-label md-label-mb"><?= $lang==='es'?'Payloads de ejemplo':'Example payloads' ?></div>
+      <div class="info-card-label md-label-mb"><?= $lang==='es'?'Payloads de ejemplo (haz clic para cargar)':'Example payloads (click to load)' ?></div>
       <div class="md-flex-wrap">
-        <?php
-        $examples = [
-          ['XSS Base64+URL', 'JTNDc2NyaXB0JTNFYWxlcnQoJ1hTUycpJTNDJTJGc2NyaXB0JTNF'],
-          ['HTML Entity XSS', '&lt;script&gt;alert(1)&lt;/script&gt;'],
-          ['Double URL Enc.', '%2527%2520OR%25201%253D1'],
-          ['Hex string', '48656c6c6f20576f726c64'],
-          ['Unicode escape', '\u003cscript\u003ealert(1)\u003c/script\u003e'],
-          ['ROT13', 'Uryyb, jbeyq! Guvf vf n grfg.'],
-          ['JWT (decode)',  'eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkFkbWluIiwicm9sZSI6ImFkbWluIn0.'],
-        ];
-        foreach($examples as $ex): ?>
-        <button type="button" class="dns-quick-btn md-example-btn" data-payload="<?= htmlspecialchars($ex[1]) ?>">
-            <?= htmlspecialchars($ex[0]) ?>
-        </button>
-        <?php endforeach; ?>
-      </div>
-    </div>
-  </div>
-
-    <div style="display:flex; gap:1rem; margin-bottom:2rem; flex-wrap:wrap;">
-      <button type="button" id="btn-md-decode" class="tool-btn">
-        🔍 <?= $lang==='es'?'Decodificar':'Decode' ?>
-      </button>
-      <button type="button" id="btn-md-autochain" class="tool-btn" style="background:rgba(0,255,255,.08); border-color:var(--cyan);">
-        ⛓ <?= $lang==='es'?'Auto-desencadenar (máx. 10 capas)':'Auto-unchain (max 10 layers)' ?>
-      </button>
-    </div>
-
-    <div id="md-chain"></div>
-
-    <div style="margin-top:2rem; padding-top:1.5rem; border-top:1px solid var(--border);">
-      <div class="info-card-label" style="margin-bottom:1rem;"><?= $lang==='es'?'Payloads de ejemplo (haz clic para cargar)':'Example payloads (click to load)' ?></div>
-      <div style="display:flex; flex-wrap:wrap; gap:0.5rem;">
         <?php
         $examples = [
           ['XSS Base64+URL', 'JTNDc2NyaXB0JTNFYWxlcnQoJ1hTUycpJTNDJTJGc2NyaXB0JTNF'],
