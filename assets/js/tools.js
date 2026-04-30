@@ -1609,5 +1609,176 @@ document.addEventListener('DOMContentLoaded', function() {
             btn.addEventListener('click', () => { mdInput.value = btn.dataset.payload; btnAutoChain.click(); });
         });
 
-    })(); // <-- Este paréntesis cierra la burbuja de la que te hablaba
+    })(); 
+    // =========================================================
+    // 21. Herramienta: HTTP Request Builder
+    // =========================================================
+    (function() {
+        const hbMethod = document.getElementById('hb-method');
+        if (!hbMethod) return;
+
+        const lang = window.LANG || 'es';
+        let reqHeaders = [];
+        let currentBtype = 'JSON';
+
+        const hbUrl = document.getElementById('hb-url');
+        const hbBody = document.getElementById('hb-body');
+        const hbAuthType = document.getElementById('hb-auth-type');
+        const curlOut = document.getElementById('hb-curl-output');
+        const headersList = document.getElementById('hb-headers-list');
+
+        // Pestañas (Tabs)
+        document.querySelectorAll('.hb-tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.hb-tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.hb-tab-content').forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+                document.getElementById('tab-' + this.dataset.tab).classList.add('active');
+            });
+        });
+
+        // Tipo de Body
+        document.querySelectorAll('.hb-btype-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.hb-btype-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentBtype = this.dataset.btype;
+                generateCurl();
+            });
+        });
+
+        // Cambio de Autenticación
+        hbAuthType.addEventListener('change', function() {
+            document.querySelectorAll('.hb-auth-section').forEach(el => el.style.display = 'none');
+            if (this.value !== 'none') {
+                document.getElementById('auth-' + this.value).style.display = 
+                    (this.value === 'bearer') ? 'block' : 'grid'; // Grid para los que tienen 2 campos
+            }
+            generateCurl();
+        });
+
+        // Gestión de Headers (Añadir / Eliminar)
+        function renderHeadersUI() {
+            let html = '';
+            reqHeaders.forEach((h, i) => {
+                html += `
+                <div class="hb-header-row">
+                    <input type="text" class="cyber-input hb-h-key" data-idx="${i}" value="${escapeHTML(h.k)}" placeholder="Header-Name" style="margin-bottom:0;">
+                    <input type="text" class="cyber-input hb-h-val" data-idx="${i}" value="${escapeHTML(h.v)}" placeholder="Value" style="margin-bottom:0;">
+                    <button type="button" class="hb-del-btn" data-idx="${i}">✕</button>
+                </div>`;
+            });
+            headersList.innerHTML = html;
+        }
+
+        document.getElementById('btn-hb-add-header').addEventListener('click', () => {
+            reqHeaders.push({ k: '', v: '' });
+            renderHeadersUI();
+            generateCurl();
+        });
+
+        document.querySelectorAll('.hb-preset-header').forEach(btn => {
+            btn.addEventListener('click', function() {
+                reqHeaders.push({ k: this.dataset.key, v: this.dataset.val });
+                renderHeadersUI();
+                generateCurl();
+            });
+        });
+
+        // Event Delegation para los inputs de headers generados dinámicamente
+        headersList.addEventListener('input', (e) => {
+            if (e.target.classList.contains('hb-h-key')) {
+                reqHeaders[e.target.dataset.idx].k = e.target.value;
+                generateCurl();
+            }
+            if (e.target.classList.contains('hb-h-val')) {
+                reqHeaders[e.target.dataset.idx].v = e.target.value;
+                generateCurl();
+            }
+        });
+
+        headersList.addEventListener('click', (e) => {
+            if (e.target.classList.contains('hb-del-btn')) {
+                reqHeaders.splice(e.target.dataset.idx, 1);
+                renderHeadersUI();
+                generateCurl();
+            }
+        });
+
+        function escapeHTML(s) {
+            const d = document.createElement('div'); d.textContent = String(s || ''); return d.innerHTML;
+        }
+
+        // Generador Principal de cURL
+        function generateCurl() {
+            const method = hbMethod.value;
+            const url = hbUrl.value.trim() || 'https://api.target.com/v1/users';
+            const body = hbBody.value.trim();
+            const authType = hbAuthType.value;
+
+            let parts = ['curl -s -i'];
+            if (method !== 'GET') parts.push('-X ' + method);
+
+            // Capa de Autenticación
+            let authHeader = '';
+            if (authType === 'bearer') {
+                const t = document.getElementById('hb-bearer').value.trim();
+                if (t) authHeader = 'Authorization: Bearer ' + t;
+            } else if (authType === 'basic') {
+                const u = document.getElementById('hb-basic-user').value.trim();
+                const p = document.getElementById('hb-basic-pass').value.trim();
+                if (u) parts.push(`-u "${u}:${p}"`);
+            } else if (authType === 'apikey') {
+                const n = document.getElementById('hb-ak-name').value.trim();
+                const v = document.getElementById('hb-ak-val').value.trim();
+                if (n && v) authHeader = n + ': ' + v;
+            } else if (authType === 'custom') {
+                const hn = document.getElementById('hb-custom-h').value.trim();
+                const hv = document.getElementById('hb-custom-v').value.trim();
+                if (hn && hv) authHeader = hn + ': ' + hv;
+            }
+            
+            if (authHeader) parts.push(`-H "${authHeader}"`);
+
+            // Headers Personalizados
+            reqHeaders.forEach(h => {
+                if (h.k) parts.push(`-H "${h.k}: ${h.v}"`);
+            });
+
+            // Capa de Body
+            if (body && method !== 'GET' && method !== 'HEAD') {
+                const ct = (currentBtype === 'JSON') ? 'application/json' : 
+                           (currentBtype === 'Form') ? 'application/x-www-form-urlencoded' : 'text/xml';
+                parts.push(`-H "Content-Type: ${ct}"`);
+                
+                // Escapar comillas simples para bash
+                const safeBody = body.replace(/'/g, "'\\''");
+                parts.push(`--data '${safeBody}'`);
+            }
+
+            parts.push(`"${url}"`);
+            curlOut.textContent = parts.join(' \\\n  ');
+        }
+
+        // Escuchar cambios globales
+        const inputs = document.querySelectorAll('#hb-url, #hb-method, #hb-body, #hb-bearer, #hb-basic-user, #hb-basic-pass, #hb-ak-name, #hb-ak-val, #hb-custom-h, #hb-custom-v');
+        inputs.forEach(el => {
+            el.addEventListener(el.tagName === 'SELECT' ? 'change' : 'input', generateCurl);
+        });
+
+        // Botón Copiar
+        document.getElementById('btn-hb-copy').addEventListener('click', function() {
+            if (typeof window.copyToClipboard === 'function') {
+                window.copyToClipboard(curlOut.textContent, this);
+            } else {
+                navigator.clipboard.writeText(curlOut.textContent).catch(e => console.error(e));
+            }
+            const originalText = this.innerHTML;
+            this.textContent = '✅ ' + (lang === 'es' ? 'Copiado' : 'Copied');
+            setTimeout(() => this.innerHTML = originalText, 1500);
+        });
+
+        // Init
+        generateCurl();
+    })();// <-- Este paréntesis cierra la burbuja de la que te hablaba
 });
