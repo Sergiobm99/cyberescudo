@@ -36,22 +36,24 @@ require __DIR__ . '/templates/header.php';
   </div>
 
   <div class="card">
-    <div class="tool-header">
-      <h2 style="font-size:1.4rem;color:var(--white);margin-bottom:.5rem;">🔄 Multi Decoder</h2>
-      <p style="color:var(--gray);font-size:.9rem;"><?= $lang==='es'
-        ? 'Detecta y decodifica encodings encadenados automáticamente. Útil en CTFs, análisis de WAF bypass y ofuscación de malware.'
-        : 'Automatically detects and decodes chained encodings. Useful for CTFs, WAF bypass analysis and malware obfuscation.' ?></p>
+    <div class="tool-header md-container">
+      <h2>🔄 Multi Decoder</h2>
+      <p><?= $lang==='es'
+        ? 'Detecta y decodifica encodings encadenados automáticamente.'
+        : 'Automatically detects and decodes chained encodings.' ?></p>
     </div>
 
-    <div style="margin-bottom:1.5rem;">
+    <!-- Input -->
+    <div class="md-container">
       <label class="info-card-label"><?= $lang==='es'?'Texto a decodificar':'Text to decode' ?></label>
-      <textarea id="md-input" class="cyber-input" rows="5" style="resize:vertical;"
+      <textarea id="md-input" class="cyber-input md-textarea" rows="5" 
         placeholder="JTNDc2NyaXB0JTNFYWxlcnQoMSklM0MlMkZzY3JpcHQlM0U="></textarea>
     </div>
 
-    <div style="margin-bottom:1.5rem;">
-      <label class="info-card-label" style="margin-bottom:0.75rem;"><?= $lang==='es'?'Modo de Decodificación':'Decoding Mode' ?></label>
-      <div style="display:flex;flex-wrap:wrap;gap:0.5rem;" id="md-modes">
+    <!-- Mode buttons -->
+    <div class="md-container">
+      <label class="info-card-label md-label-mb"><?= $lang==='es'?'Modo de Decodificación':'Decoding Mode' ?></label>
+      <div class="md-flex-wrap" id="md-modes">
         <?php foreach([
           ['auto',   $lang==='es'?'🤖 Auto-detectar':'🤖 Auto-detect'],
           ['base64', '🔄 Base64'],
@@ -68,6 +70,41 @@ require __DIR__ . '/templates/header.php';
         <?php endforeach; ?>
       </div>
     </div>
+
+    <div class="md-flex-wrap-lg">
+      <button type="button" id="btn-md-decode" class="tool-btn">
+        🔍 <?= $lang==='es'?'Decodificar':'Decode' ?>
+      </button>
+      <button type="button" id="btn-md-autochain" class="tool-btn md-btn-autochain">
+        ⛓ <?= $lang==='es'?'Auto-desencadenar (máx. 10 capas)':'Auto-unchain (max 10 layers)' ?>
+      </button>
+    </div>
+
+    <!-- Steps chain -->
+    <div id="md-chain"></div>
+
+    <!-- Quick payloads -->
+    <div class="md-examples-section">
+      <div class="info-card-label md-label-mb"><?= $lang==='es'?'Payloads de ejemplo':'Example payloads' ?></div>
+      <div class="md-flex-wrap">
+        <?php
+        $examples = [
+          ['XSS Base64+URL', 'JTNDc2NyaXB0JTNFYWxlcnQoJ1hTUycpJTNDJTJGc2NyaXB0JTNF'],
+          ['HTML Entity XSS', '&lt;script&gt;alert(1)&lt;/script&gt;'],
+          ['Double URL Enc.', '%2527%2520OR%25201%253D1'],
+          ['Hex string', '48656c6c6f20576f726c64'],
+          ['Unicode escape', '\u003cscript\u003ealert(1)\u003c/script\u003e'],
+          ['ROT13', 'Uryyb, jbeyq! Guvf vf n grfg.'],
+          ['JWT (decode)',  'eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkFkbWluIiwicm9sZSI6ImFkbWluIn0.'],
+        ];
+        foreach($examples as $ex): ?>
+        <button type="button" class="dns-quick-btn md-example-btn" data-payload="<?= htmlspecialchars($ex[1]) ?>">
+            <?= htmlspecialchars($ex[0]) ?>
+        </button>
+        <?php endforeach; ?>
+      </div>
+    </div>
+  </div>
 
     <div style="display:flex; gap:1rem; margin-bottom:2rem; flex-wrap:wrap;">
       <button type="button" id="btn-md-decode" class="tool-btn">

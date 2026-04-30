@@ -1544,10 +1544,10 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="md-step-card">
                 <div class="md-step-header">
                     <span class="md-step-badge">${step.type.toUpperCase()}</span>
-                    <span style="font-family:var(--mono); font-size:0.75rem; color:var(--gray-dark);">Capa ${idx + 1}</span>
-                    <button class="copy-btn-mini" data-copy="${escapeHTML(step.result)}" style="margin-left:auto;">📋</button>
+                    <span class="md-text-layer">${lang === 'es' ? 'Capa' : 'Layer'} ${idx + 1}</span>
+                    <button class="copy-btn-mini ml-auto" data-copy="${escapeHTML(step.result)}">📋</button>
                 </div>
-                <pre style="padding:1rem; font-family:var(--mono); font-size:0.85rem; color:rgba(255,255,255,0.9); white-space:pre-wrap; word-break:break-all; margin:0; max-height:250px; overflow-y:auto;">${escapeHTML(step.result)}</pre>
+                <pre class="md-pre">${escapeHTML(step.result)}</pre>
             </div>`;
         }
 
@@ -1573,7 +1573,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (result !== null && result !== undefined) {
                 mdChain.innerHTML = renderStepHtml({ type, result }, 0); attachCopyEvents();
             } else {
-                mdChain.innerHTML = `<p style="color:var(--gray); font-family:var(--mono); margin-top:1rem; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 0.5rem;">❌ No se pudo decodificar.</p>`;
+                mdChain.innerHTML = `<p class="md-error-msg">❌ ${lang === 'es' ? 'No se pudo decodificar.' : 'Could not decode.'}</p>`;
             }
         });
 
@@ -1588,26 +1588,24 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             if (!steps.length) {
-                mdChain.innerHTML = `<p style="color:var(--gray); font-family:var(--mono); margin-top:1rem; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 0.5rem;">❌ No se detectaron encodings conocidos.</p>`;
+                mdChain.innerHTML = `<p class="md-error-msg">❌ ${lang === 'es' ? 'No se detectaron encodings conocidos.' : 'No known encodings detected.'}</p>`;
                 return;
             }
 
             const arrow = `<div class="md-arrow">↓</div>`;
             let html = `
-            <div class="md-step-card" style="border-color: rgba(0,255,255,0.2);">
-                <div class="md-step-header" style="background: rgba(0,255,255,0.05);">
-                    <span style="font-family:var(--mono); font-size:0.75rem; color:var(--cyan); font-weight:bold;">TEXTO ORIGINAL</span>
+            <div class="md-step-card md-step-card-auto">
+                <div class="md-step-header md-step-header-auto">
+                    <span class="md-text-original">${lang === 'es' ? 'TEXTO ORIGINAL' : 'ORIGINAL TEXT'}</span>
                 </div>
-                <pre style="padding:1rem; font-family:var(--mono); font-size:0.85rem; color:var(--gray); white-space:pre-wrap; word-break:break-all; margin:0;">${escapeHTML(s.slice(0, 500))}${s.length > 500 ? '...' : ''}</pre>
+                <pre class="md-pre md-pre-auto">${escapeHTML(s.slice(0, 500))}${s.length > 500 ? '...' : ''}</pre>
             </div>${arrow}`;
 
             steps.forEach((st, i) => { html += renderStepHtml(st, i) + (i < steps.length - 1 ? arrow : ''); });
+            
+            html += `<div class="md-layer-count">↳ ${steps.length} ${lang === 'es' ? 'capas decodificadas automáticamente' : 'layers decoded automatically'}</div>`;
             mdChain.innerHTML = html; attachCopyEvents();
         });
+        })(); // <-- Esto cierra la burbuja "blindada" del Multi Decoder
 
-        exampleBtns.forEach(btn => {
-            btn.addEventListener('click', () => { mdInput.value = btn.dataset.payload; btnAutoChain.click(); });
-        });
-
-    })(); // <-- Este paréntesis cierra la burbuja de la que te hablaba
-});
+}); // <--
