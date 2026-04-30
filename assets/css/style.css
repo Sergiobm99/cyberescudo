@@ -1414,3 +1414,27 @@ nav ul li a, .submenu-toggle {
 @media (max-width: 600px) {
     .log-top-ips { grid-column: span 1; }
 }
+/* ─── HERRAMIENTA CVE FINDER ─── */
+.cve-search-box { display: flex; gap: 1rem; align-items: stretch; flex-wrap: wrap; }
+.cve-card { background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 0.5rem; padding: 1.2rem; margin-bottom: 1rem; transition: border-color 0.2s; }
+.cve-card:hover { border-color: rgba(0,255,255,0.2); }
+.cve-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; flex-wrap: wrap; gap: 0.5rem; }
+.cve-title { font-family: var(--mono); font-size: 1.15rem; color: var(--cyan); font-weight: bold; }
+.cvss-badge { padding: 0.3rem 0.6rem; border-radius: 0.3rem; font-family: var(--mono); font-size: 0.85rem; font-weight: bold; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+
+/* Colores de Severidad CVSS */
+.cvss-crit { background: #ff4444; }
+.cvss-high { background: #ff8800; }
+.cvss-med  { background: #f0c000; color: #000; text-shadow: none; }
+.cvss-low  { background: #00d45a; color: #000; text-shadow: none; }
+.cvss-none { background: var(--gray); color: #000; text-shadow: none;}
+
+.cve-desc { font-size: 0.88rem; color: rgba(255,255,255,0.8); line-height: 1.5; margin-bottom: 1rem; font-family: var(--font); }
+.cve-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.cve-action-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--gray); font-family: var(--mono); font-size: 0.75rem; padding: 0.4rem 0.8rem; border-radius: 0.3rem; cursor: pointer; text-decoration: none; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.4rem; }
+.cve-action-btn:hover { background: rgba(0,255,255,0.1); border-color: var(--cyan); color: var(--cyan); }
+
+@media (max-width: 600px) {
+    .cve-search-box { flex-direction: column; }
+    .cve-search-box button { width: 100%; }
+}

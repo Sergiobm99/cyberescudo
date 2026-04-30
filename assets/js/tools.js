@@ -2473,4 +2473,124 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
     })();
+   // =========================================================
+    // 25. Herramienta: CVE & Exploit Finder Integrado
+    // =========================================================
+    (function() {
+        const cveInput = document.getElementById('cve-input');
+        if (!cveInput) return;
+
+        console.log("✅ CVE & Exploit Finder cargado.");
+
+        const btnSearch = document.getElementById('btn-cve-search');
+        const cveStatus = document.getElementById('cve-status');
+        const cveResults = document.getElementById('cve-results');
+        const lang = window.LANG || 'es';
+
+        function escapeHTML(s) {
+            const d = document.createElement('div');
+            d.textContent = String(s || '');
+            return d.innerHTML;
+        }
+
+        // Determinar el color y etiqueta según el CVSS v3 Score
+        function getSeverityBadge(score) {
+            if (!score && score !== 0) return `<span class="cvss-badge cvss-none">N/A</span>`;
+            const s = parseFloat(score);
+            if (s >= 9.0) return `<span class="cvss-badge cvss-crit">CRÍTICO (${s})</span>`;
+            if (s >= 7.0) return `<span class="cvss-badge cvss-high">ALTO (${s})</span>`;
+            if (s >= 4.0) return `<span class="cvss-badge cvss-med">MEDIO (${s})</span>`;
+            return `<span class="cvss-badge cvss-low">BAJO (${s})</span>`;
+        }
+
+        async function searchCVEs() {
+            const query = cveInput.value.trim();
+            if (!query) return;
+
+            // Limpiamos la pantalla y mostramos el "Cargando..."
+            cveResults.innerHTML = '';
+            cveStatus.innerHTML = `<span style="color:var(--cyan);">⏳ ${lang === 'es' ? 'Consultando base de datos del NIST NVD (puede tardar unos segundos)...' : 'Querying NIST NVD database (may take a few seconds)...'}</span>`;
+            btnSearch.disabled = true;
+
+            try {
+                // Hacemos la petición a NUESTRO proxy PHP local
+                const url = `?api_cve=${encodeURIComponent(query)}`;
+                const response = await fetch(url);
+
+                if (!response.ok) {
+                    // Intentar leer el error enviado por PHP
+                    const errData = await response.json().catch(() => ({}));
+                    throw new Error(errData.error || `HTTP Error: ${response.status}`);
+                }
+
+                const data = await response.json();
+                const vulns = data.vulnerabilities || [];
+
+                if (vulns.length === 0) {
+                    cveStatus.innerHTML = `<span style="color:#00d45a;">✅ ${lang === 'es' ? 'No se encontraron vulnerabilidades para:' : 'No vulnerabilities found for:'} "${escapeHTML(query)}"</span>`;
+                    btnSearch.disabled = false;
+                    return;
+                }
+
+                cveStatus.innerHTML = `${lang === 'es' ? 'Mostrando los últimos' : 'Showing the latest'} ${vulns.length} ${lang === 'es' ? 'resultados para' : 'results for'}: "${escapeHTML(query)}"`;
+
+                let html = '';
+                vulns.forEach(item => {
+                    const cve = item.cve;
+                    const cveId = cve.id;
+                    
+                    // Extraer descripción en inglés (por defecto en NVD)
+                    let desc = "No description available.";
+                    if (cve.descriptions && cve.descriptions.length > 0) {
+                        const enDesc = cve.descriptions.find(d => d.lang === 'en');
+                        desc = enDesc ? enDesc.value : cve.descriptions[0].value;
+                    }
+
+                    // Extraer puntuación CVSS (Prioriza v3.1, luego v3.0, luego v2)
+                    let cvssScore = null;
+                    if (cve.metrics) {
+                        if (cve.metrics.cvssMetricV31) cvssScore = cve.metrics.cvssMetricV31[0].cvssData.baseScore;
+                        else if (cve.metrics.cvssMetricV30) cvssScore = cve.metrics.cvssMetricV30[0].cvssData.baseScore;
+                        else if (cve.metrics.cvssMetricV2) cvssScore = cve.metrics.cvssMetricV2[0].cvssData.baseScore;
+                    }
+
+                    const exploitDbId = cveId.replace('CVE-', '');
+
+                    html += `
+                    <div class="cve-card">
+                        <div class="cve-header">
+                            <div class="cve-title">${escapeHTML(cveId)}</div>
+                            ${getSeverityBadge(cvssScore)}
+                        </div>
+                        <div class="cve-desc">${escapeHTML(desc)}</div>
+                        <div class="cve-actions">
+                            <a href="https://nvd.nist.gov/vuln/detail/${cveId}" target="_blank" class="cve-action-btn">
+                                🏛️ NIST Details
+                            </a>
+                            <a href="https://github.com/search?q=${cveId}+poc&type=repositories" target="_blank" class="cve-action-btn" style="border-color: rgba(0, 255, 255, 0.3);">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                                GitHub PoC
+                            </a>
+                            <a href="https://www.exploit-db.com/search?cve=${exploitDbId}" target="_blank" class="cve-action-btn">
+                                🎯 Exploit-DB
+                            </a>
+                        </div>
+                    </div>`;
+                });
+
+                cveResults.innerHTML = html;
+
+            } catch (error) {
+                cveStatus.innerHTML = `<span style="color:#ff5050;">❌ ${escapeHTML(error.message)}</span>`;
+            } finally {
+                btnSearch.disabled = false;
+            }
+        }
+
+        btnSearch.addEventListener('click', searchCVEs);
+        cveInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') searchCVEs();
+        });
+
+    })();
 });
