@@ -56,7 +56,7 @@
            <li><a href="<?= BASE_URL ?>/tool-waf.php">🛡️ WAF Bypass Payloads</a></li>
                 <li><a href="<?= BASE_URL ?>/tool-cloud.php">☁️ Cloud Enum</a></li>
           <li><a href="<?= BASE_URL ?>/tool-loganalyzer.php">📊 Log Analyzer</a></li>
-          <li><a href="<?= BASE_URL ?>/tool-loganalyzer.php">🐛 CVE & Exploit Finder</a></li>
+          <li><a href="<?= BASE_URL ?>/tool-cve.php">🐛 CVE & Exploit Finder</a></li>
         </ul>
       </li>
 
@@ -113,7 +113,7 @@
                 <li><a href="<?= BASE_URL ?>/tool-waf.php">🛡️ WAF Bypass Payloads</a></li>
                 <li><a href="<?= BASE_URL ?>/tool-cloud.php">☁️ Cloud Enum</a></li>
                 <li><a href="<?= BASE_URL ?>/tool-loganalyzer.php">📊 Log Analyzer</a></li>
-                <li><a href="<?= BASE_URL ?>/tool-loganalyzer.php">🐛 CVE & Exploit Finder</a></li>
+                <li><a href="<?= BASE_URL ?>/tool-cve.php">🐛 CVE & Exploit Finder</a></li>
             </ul>
         </li>
 
