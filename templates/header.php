@@ -55,6 +55,7 @@
           <li><a href="<?= BASE_URL ?>/tool-httpbuilder.php">📡 HTTP Builder</a></li>
            <li><a href="<?= BASE_URL ?>/tool-waf.php">🛡️ WAF Bypass Payloads</a></li>
                 <li><a href="<?= BASE_URL ?>/tool-cloud.php">☁️ Cloud Enum</a></li>
+          <li><a href="<?= BASE_URL ?>/tool-loganalyzer.php">📊 Log Analyzer</a></li>
         </ul>
       </li>
 
@@ -110,6 +111,7 @@
                 <li><a href="<?= BASE_URL ?>/tool-httpbuilder.php">📡 HTTP Builder</a></li>
                 <li><a href="<?= BASE_URL ?>/tool-waf.php">🛡️ WAF Bypass Payloads</a></li>
                 <li><a href="<?= BASE_URL ?>/tool-cloud.php">☁️ Cloud Enum</a></li>
+                li><a href="<?= BASE_URL ?>/tool-loganalyzer.php">📊 Log Analyzer</a></li>
             </ul>
         </li>
 

@@ -2310,4 +2310,167 @@ document.addEventListener('DOMContentLoaded', function() {
         setCloud('azure');
 
     })();
+    // =========================================================
+    // 24. Herramienta: Security Log Analyzer
+    // =========================================================
+    (function() {
+        const logInput = document.getElementById('log-input');
+        if (!logInput) return;
+
+        console.log("✅ Security Log Analyzer cargado.");
+
+        const btnAnalyze = document.getElementById('btn-log-analyze');
+        const btnExample = document.getElementById('btn-log-example');
+        const logStats = document.getElementById('log-stats');
+        const logResults = document.getElementById('log-results');
+        const typeBtns = document.querySelectorAll('.log-type-btn');
+        const lang = window.LANG || 'es';
+
+        let currentType = 'auto';
+
+        const EXAMPLE_LOG = 
+`192.168.1.100 - admin [29/Apr/2026:10:22:00 +0000] "GET /index.php HTTP/1.1" 200 4523
+192.168.1.100 - - [29/Apr/2026:10:22:01 +0000] "GET /index.php?id=1' OR '1'='1 HTTP/1.1" 200 4523 "-" "sqlmap/1.7.8"
+10.0.0.5 - - [29/Apr/2026:10:22:02 +0000] "GET /../../etc/passwd HTTP/1.1" 404 217 "-" "Nikto/2.1.6"
+45.33.32.156 - - [29/Apr/2026:10:22:03 +0000] "POST /wp-login.php HTTP/1.1" 200 2718 "-" "python-requests"
+45.33.32.156 - - [29/Apr/2026:10:22:04 +0000] "POST /wp-login.php HTTP/1.1" 200 2718 "-" "python-requests"
+45.33.32.156 - - [29/Apr/2026:10:22:05 +0000] "POST /wp-login.php HTTP/1.1" 200 2718 "-" "python-requests"
+203.0.113.42 - - [29/Apr/2026:10:22:06 +0000] "GET /admin/config.php.bak HTTP/1.1" 200 1024 "-" "curl/7.74"
+198.51.100.5 - - [29/Apr/2026:10:22:07 +0000] "GET /?s=<script>alert(1)</script> HTTP/1.1" 200 3219
+10.10.14.5  - - [29/Apr/2026:10:22:08 +0000] "GET /shell.php?cmd=id HTTP/1.1" 200 1024
+209.85.128.0 - - [29/Apr/2026:10:22:09 +0000] "GET /robots.txt HTTP/1.1" 200 65 "-" "Googlebot/2.1"`;
+
+        const PATTERNS = [
+            { id: 'sqli', severity: 'critical', label: 'SQL Injection', color: '#ff5050', regex: /union.{0,20}select|select.{0,30}from|insert.{0,20}into|drop.{0,10}table|'.*or.*'.*=.*'|1=1|1%3D1|%27.*or|xp_cmdshell/i },
+            { id: 'xss', severity: 'high', label: 'XSS', color: '#ff8040', regex: /<script|javascript:|onerror=|onload=|alert\(|%3Cscript|%3c%73%63%72%69%70%74|\bon\w+\s*=/i },
+            { id: 'lfi', severity: 'high', label: 'LFI / Path Traversal', color: '#ff8040', regex: /\.\.\/|\.\.\\|%2e%2e%2f|%252e%252e%252f|\/etc\/passwd|\/etc\/shadow|boot\.ini|win\.ini/i },
+            { id: 'rce', severity: 'critical', label: 'Remote Code Execution', color: '#ff5050', regex: /cmd=|shell=|exec=|system\(|passthru\(|eval\(|base64_decode|\/bin\/bash|\/bin\/sh|cmd\.exe|powershell/i },
+            { id: 'ssrf', severity: 'high', label: 'SSRF', color: '#ff8040', regex: /169\.254\.169\.254|metadata\.google|localhost|127\.0\.0\.1|192\.168\.|10\.\d+\.\d+\.\d+|file:\/\/|dict:\/\//i },
+            { id: 'bruteforce', severity: 'medium', label: lang === 'es' ? 'Brute Force / Spam' : 'Brute Force / Spam', color: '#f0c000', regex: /wp-login|xmlrpc|admin\/login|login\.php|signin/i },
+            { id: 'scanner', severity: 'medium', label: lang === 'es' ? 'Escáner / Tool' : 'Scanner / Tool', color: '#f0c000', regex: /sqlmap|nikto|nmap|masscan|nuclei|acunetix|burpsuite|wfuzz|dirb|dirbuster|gobuster|nessus|openvas|zgrab|python-requests\/|curl\//i },
+            { id: 'backup', severity: 'high', label: lang === 'es' ? 'Archivos sensibles' : 'Sensitive files', color: '#ff8040', regex: /\.bak|\.old|\.backup|\.sql|\.env|config\.php|\.git\/|\.svn\/|\.DS_Store|web\.config|\.htpasswd/i },
+            { id: 'xxe', severity: 'high', label: 'XXE', color: '#ff8040', regex: /<!ENTITY|SYSTEM\s+["']|DOCTYPE.*ENTITY/i },
+            { id: 'ssti', severity: 'high', label: 'SSTI', color: '#ff8040', regex: /\{\{.*\}\}|\$\{.*\}|<%=.*%>/ }
+        ];
+
+        function escapeHTML(s) {
+            const d = document.createElement('div');
+            d.textContent = String(s || '');
+            return d.innerHTML;
+        }
+
+        function extractIP(line) {
+            const m = line.match(/^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/);
+            return m ? m[1] : null;
+        }
+
+        // Selección de tipo de log
+        typeBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                typeBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentType = this.dataset.ltype;
+            });
+        });
+
+        btnExample.addEventListener('click', () => {
+            logInput.value = EXAMPLE_LOG;
+        });
+
+        btnAnalyze.addEventListener('click', () => {
+            const raw = logInput.value.trim();
+            if (!raw) return;
+
+            const lines = raw.split('\n').filter(Boolean);
+            logStats.textContent = `${lines.length} ${lang === 'es' ? 'líneas totales procesadas' : 'total lines processed'}`;
+
+            const findings = {};
+            const ipCounts = {};
+            const statusCounts = {};
+
+            PATTERNS.forEach(p => findings[p.id] = []);
+
+            // Procesamiento de líneas
+            lines.forEach((line, idx) => {
+                const ip = extractIP(line);
+                if (ip) ipCounts[ip] = (ipCounts[ip] || 0) + 1;
+
+                const statusM = line.match(/" (\d{3}) /);
+                if (statusM) statusCounts[statusM[1]] = (statusCounts[statusM[1]] || 0) + 1;
+
+                PATTERNS.forEach(p => {
+                    if (p.regex.test(line)) {
+                        findings[p.id].push({ line: idx + 1, text: line.slice(0, 250), ip: ip });
+                    }
+                });
+            });
+
+            // Generación de HTML
+            let html = '';
+            let totalFindings = 0;
+            let critCount = 0, highCount = 0, medCount = 0;
+
+            PATTERNS.forEach(p => {
+                const n = findings[p.id].length;
+                totalFindings += n;
+                if (n) {
+                    if (p.severity === 'critical') critCount += n;
+                    else if (p.severity === 'high') highCount += n;
+                    else medCount += n;
+                }
+            });
+
+            // Dashboard
+            html += `<div class="log-stat-grid">`;
+            html += `<div class="log-stat-card crit"><div class="num">${critCount}</div><div class="label">${lang === 'es' ? 'CRÍTICO' : 'CRITICAL'}</div></div>`;
+            html += `<div class="log-stat-card high"><div class="num">${highCount}</div><div class="label">${lang === 'es' ? 'ALTO' : 'HIGH'}</div></div>`;
+            html += `<div class="log-stat-card med"><div class="num">${medCount}</div><div class="label">${lang === 'es' ? 'MEDIO' : 'MEDIUM'}</div></div>`;
+
+            // Top IPs
+            const topIPs = Object.entries(ipCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+            if (topIPs.length) {
+                html += `
+                <div class="log-top-ips">
+                    <div class="info-card-label" style="margin-bottom:0.8rem; color:var(--cyan);">${lang === 'es' ? 'Top IPs Atacantes / Origen' : 'Top Source IPs'}</div>`;
+                topIPs.forEach(e => {
+                    html += `<div class="log-top-ip-row"><span style="color:var(--white);">${escapeHTML(e[0])}</span><span style="color:var(--gray);">${e[1]} req</span></div>`;
+                });
+                html += `</div>`;
+            }
+            html += `</div>`; // Fin Dashboard
+
+            // Detalles de los hallazgos
+            PATTERNS.forEach(p => {
+                const items = findings[p.id];
+                if (!items.length) return;
+
+                html += `<div class="m-bottom-1-5">
+                    <div class="log-finding-header">
+                        <span class="log-finding-dot" style="color:${p.color}; background:${p.color};"></span>
+                        <strong style="font-family:var(--mono); font-size:1rem; color:var(--white);">${p.label}</strong>
+                        <span style="font-family:var(--mono); font-size:0.85rem; font-weight:600; color:${p.color}; margin-left:auto;">${items.length} ${lang === 'es' ? 'hits' : 'hits'}</span>
+                    </div>`;
+
+                items.slice(0, 10).forEach(item => {
+                    html += `
+                    <div class="log-finding-row">
+                        <span class="log-line-num">#${item.line}</span>
+                        <div class="log-line-text">${escapeHTML(item.text)}</div>
+                    </div>`;
+                });
+
+                if (items.length > 10) {
+                    html += `<p style="font-family:var(--mono); font-size:0.8rem; color:var(--cyan); margin:0.5rem 0 0 2.5rem;">... ${lang === 'es' ? 'y' : 'and'} ${items.length - 10} ${lang === 'es' ? 'más' : 'more'}</p>`;
+                }
+                html += `</div>`;
+            });
+
+            if (!totalFindings) {
+                html = `<div class="md-error-msg" style="color:#00d45a;">✅ ${lang === 'es' ? 'No se detectaron patrones de ataque conocidos en la muestra.' : 'No known attack patterns detected in the sample.'}</div>`;
+            }
+
+            logResults.innerHTML = html;
+        });
+
+    })();
 });

@@ -1387,3 +1387,30 @@ nav ul li a, .submenu-toggle {
 @media (max-width: 600px) {
     .cloud-grid { grid-template-columns: 1fr; }
 }
+/* ─── HERRAMIENTA LOG ANALYZER ─── */
+.log-type-btn.active { background: rgba(0,255,255,0.1) !important; border-color: rgba(0,255,255,0.35) !important; color: var(--cyan) !important; box-shadow: 0 0 8px rgba(0,255,255,0.1); }
+
+.log-stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 0.8rem; margin-bottom: 2rem; }
+.log-stat-card { background: rgba(0,0,0,0.35); border: 1px solid var(--border); border-radius: 0.5rem; padding: 1rem 0.5rem; text-align: center; }
+.log-stat-card .num { font-family: var(--mono); font-size: 1.8rem; font-weight: 700; margin-bottom: 0.2rem; }
+.log-stat-card .label { font-family: var(--mono); font-size: 0.7rem; color: var(--gray-dark); text-transform: uppercase; letter-spacing: 0.05em; }
+
+.log-stat-card.crit { border-color: rgba(255,80,80,0.3); }
+.log-stat-card.crit .num { color: #ff5050; }
+.log-stat-card.high { border-color: rgba(255,128,64,0.3); }
+.log-stat-card.high .num { color: #ff8040; }
+.log-stat-card.med { border-color: rgba(240,192,0,0.3); }
+.log-stat-card.med .num { color: #f0c000; }
+
+.log-top-ips { background: rgba(0,0,0,0.35); border: 1px solid var(--border); border-radius: 0.5rem; padding: 1rem; grid-column: span 2; }
+.log-top-ip-row { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 0.8rem; margin-bottom: 0.3rem; }
+
+.log-finding-header { display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.75rem; }
+.log-finding-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 0 5px currentColor; }
+.log-finding-row { display: flex; gap: 0.75rem; margin-bottom: 0.4rem; align-items: flex-start; }
+.log-line-num { font-family: var(--mono); font-size: 0.75rem; color: var(--gray-dark); flex-shrink: 0; padding-top: 0.25rem; min-width: 35px; }
+.log-line-text { flex: 1; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 0.4rem; padding: 0.5rem 0.8rem; font-family: var(--mono); font-size: 0.8rem; color: rgba(255,255,255,0.75); word-break: break-all; }
+
+@media (max-width: 600px) {
+    .log-top-ips { grid-column: span 1; }
+}
