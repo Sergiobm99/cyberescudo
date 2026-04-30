@@ -1333,23 +1333,3 @@ nav ul li a, .submenu-toggle {
     padding: 0.2rem 0;
     font-size: 1.2rem;
 }
-/* ─── CLASES DE COMPATIBILIDAD CSP (Multi Decoder) ─── */
-.md-container { margin-bottom: 1.5rem; }
-.md-textarea { resize: vertical; }
-.md-flex-wrap { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-.md-flex-wrap-lg { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; }
-.md-examples-section { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
-.md-label-mb { margin-bottom: 0.75rem; }
-.md-btn-autochain { background: rgba(0,255,255,0.08) !important; border-color: var(--cyan) !important; }
-
-/* Elementos inyectados por JS */
-.md-step-card-auto { border-color: rgba(0,255,255,0.2); }
-.md-step-header-auto { background: rgba(0,255,255,0.05); }
-.md-text-original { font-family: var(--mono); font-size: 0.75rem; color: var(--cyan); font-weight: bold; }
-.md-text-layer { font-family: var(--mono); font-size: 0.75rem; color: var(--gray-dark); }
-.md-pre { padding: 1rem; font-family: var(--mono); font-size: 0.85rem; color: rgba(255,255,255,0.9); white-space: pre-wrap; word-break: break-all; margin: 0; max-height: 250px; overflow-y: auto; }
-.md-pre-auto { color: var(--gray); max-height: none; overflow-y: visible; }
-.md-error-msg { color: var(--gray); font-family: var(--mono); margin-top: 1rem; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 0.5rem; }
-.md-layer-count { font-family: var(--mono); font-size: 0.8rem; color: var(--cyan); margin-top: 1rem; text-align: center; }
-.md-arrow { text-align: center; font-family: var(--mono); color: var(--cyan); padding: 0.5rem 0; font-size: 1.2rem; }
-.ml-auto { margin-left: auto; }
