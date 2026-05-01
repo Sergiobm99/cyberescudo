@@ -1571,3 +1571,73 @@ nav ul li a, .submenu-toggle {
 .port-cmd-pre { background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 0.35rem; padding: 0.4rem 2.5rem 0.4rem 0.65rem; font-family: var(--mono); font-size: 0.72rem; color: rgba(255,255,255,0.8); white-space: pre-wrap; word-break: break-all; margin: 0; }
 .port-copy-btn { position: absolute; top: 0.2rem; right: 0.2rem; background: none; border: none; font-size: 0.75rem; cursor: pointer; color: var(--gray-dark); transition: color 0.15s; padding: 0.2rem; }
 .port-copy-btn:hover { color: var(--cyan); }
+/* ─── MEGA MENU ACTUALIZADO ─── */
+.nav-dropdown .dropdown-menu {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    width: max-content;
+    min-width: 800px;
+    padding: 1.5rem;
+}
+
+.megamenu-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.megamenu-title {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--cyan);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border-bottom: 1px solid rgba(0, 255, 255, 0.15);
+    padding-bottom: 0.4rem;
+    margin-bottom: 0.6rem;
+    display: block;
+    font-weight: 600;
+}
+
+.megamenu-sublist {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+
+/* Títulos para la versión móvil */
+.mobile-menu-title {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--cyan);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 1.2rem 1rem 0.3rem 1.5rem;
+    font-weight: 600;
+}
+.mobile-menu-title:first-child {
+    padding-top: 0.5rem;
+}
+/* ─── BUSCADOR DEL MEGA MENÚ ─── */
+.megamenu-search-wrap {
+    grid-column: 1 / -1; /* Hace que el buscador ocupe las 3 columnas enteras */
+    margin-bottom: 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    padding-bottom: 1.5rem;
+}
+.megamenu-search-wrap input,
+.mobile-search-wrap input {
+    width: 100%;
+    margin-bottom: 0;
+    font-size: 0.85rem;
+}
+.mobile-search-wrap {
+    padding: 1rem 1.5rem 0.5rem 1.5rem;
+}
+/* Clase para ocultar las herramientas que no coincidan con la búsqueda */
+.hidden-tool {
+    display: none !important;
+}
