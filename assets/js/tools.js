@@ -3087,4 +3087,125 @@ document.addEventListener('DOMContentLoaded', function() {
         sshHostInput?.addEventListener('input', renderAudit);
         renderAudit();
     })();
+    // =========================================================
+    // 29. Herramienta: Port Reference
+    // =========================================================
+    (function() {
+        const searchInput = document.getElementById('port-search');
+        const filterBtns = document.querySelectorAll('.port-filter-btn');
+        const portList = document.getElementById('port-list');
+        const portCount = document.getElementById('port-count');
+        
+        if (!searchInput || !portList || typeof window.PORT_DATA === 'undefined') return;
+
+        console.log("✅ Port Reference cargado.");
+
+        const lang = window.PORT_LANG || 'es';
+        const ports = window.PORT_DATA;
+        let currentFilter = 'all';
+
+        function escapeHTML(s) {
+            const d = document.createElement('div');
+            d.textContent = String(s || '');
+            return d.innerHTML;
+        }
+
+        function renderPorts() {
+            const q = searchInput.value.toLowerCase();
+            
+            // Filtrar array
+            const filtered = ports.filter(p => {
+                if (currentFilter !== 'all' && p.cat !== currentFilter) return false;
+                if (!q) return true;
+                return String(p.port).includes(q) || 
+                       p.svc.toLowerCase().includes(q) || 
+                       p.desc.toLowerCase().includes(q) || 
+                       p.proto.toLowerCase().includes(q);
+            });
+
+            portCount.textContent = filtered.length + ' ' + (lang === 'es' ? 'puertos' : 'ports');
+
+            let html = '';
+            filtered.forEach(p => {
+                const riskLabel = {
+                    critical: lang === 'es' ? 'CRÍTICO' : 'CRITICAL',
+                    high: lang === 'es' ? 'ALTO' : 'HIGH',
+                    medium: lang === 'es' ? 'MEDIO' : 'MEDIUM',
+                    low: lang === 'es' ? 'BAJO' : 'LOW'
+                }[p.risk] || p.risk;
+
+                const attacksHtml = p.attacks.map(a => `<li class="port-li">${escapeHTML(a)}</li>`).join('');
+                const cmdsHtml = p.enum.map(cmd => `
+                    <div class="port-cmd-wrap">
+                        <pre class="port-cmd-pre">${escapeHTML(cmd)}</pre>
+                        <button class="port-copy-btn" data-cmd="${escapeHTML(cmd)}">📋</button>
+                    </div>
+                `).join('');
+
+                html += `
+                <details class="port-item">
+                    <summary class="port-summary">
+                        <span class="port-num">${p.port}</span>
+                        <span class="port-proto">${p.proto}</span>
+                        <strong class="port-svc">${escapeHTML(p.svc)}</strong>
+                        <span class="port-risk-badge" style="color:${p.color}; background:${p.color}1a;">${riskLabel}</span>
+                        <span class="port-arrow">▼</span>
+                    </summary>
+                    <div class="port-details">
+                        <p class="port-desc">${escapeHTML(p.desc)}</p>
+                        <div class="port-grid">
+                            <div>
+                                <div class="port-section-title">${lang === 'es' ? 'Vectores de ataque' : 'Attack vectors'}</div>
+                                <ul class="port-ul">${attacksHtml}</ul>
+                            </div>
+                            <div>
+                                <div class="port-section-title">${lang === 'es' ? 'Comandos de enumeración' : 'Enumeration commands'}</div>
+                                ${cmdsHtml}
+                            </div>
+                        </div>
+                    </div>
+                </details>`;
+            });
+
+            portList.innerHTML = html || `<p style="font-family:var(--mono);font-size:.85rem;color:var(--gray);">${lang === 'es' ? 'Sin resultados.' : 'No results.'}</p>`;
+        }
+
+        // Listeners
+        searchInput.addEventListener('input', renderPorts);
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentFilter = e.target.getAttribute('data-filter');
+                renderPorts();
+            });
+        });
+
+        // Delegación de eventos para los botones de copia (muy eficiente y sin 'onclick')
+        portList.addEventListener('click', (e) => {
+            const btn = e.target.closest('.port-copy-btn');
+            if (!btn) return;
+
+            const text = btn.getAttribute('data-cmd');
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text);
+            } else {
+                const el = document.createElement('textarea');
+                el.value = text;
+                document.body.appendChild(el);
+                el.select();
+                document.execCommand('copy');
+                document.body.removeChild(el);
+            }
+            
+            // Feedback visual
+            const oldText = btn.textContent;
+            btn.textContent = '✅';
+            setTimeout(() => { btn.textContent = oldText; }, 1500);
+        });
+
+        // Init
+        renderPorts();
+    })();
 });
