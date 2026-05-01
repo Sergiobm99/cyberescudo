@@ -1,7 +1,12 @@
 <?php
 require_once __DIR__ . '/bootstrap.php';
-$pageTitle = $lang==='es' ? 'Analizador de Fortaleza — CyberEscudo' : 'Password Strength Analyzer — CyberEscudo';
-$current_page = basename($_SERVER['PHP_SELF']); // Añadido para el menú
+
+$pageTitle = $lang==='es' ? 'Comprobador de Fuerza de Contraseña Online — CyberEscudo' : 'Online Password Strength Checker — CyberEscudo';
+$pageDescription = $lang==='es' 
+    ? 'Analiza la seguridad de tu contraseña y calcula cuánto tiempo tardaría un atacante en crackearla. Análisis 100% local por seguridad y privacidad.' 
+    : 'Analyze your password\'s security and calculate how long it would take an attacker to crack it. 100% local analysis for security and privacy.';
+
+$current_page = basename($_SERVER['PHP_SELF']);
 require __DIR__ . '/templates/header.php';
 ?>
 

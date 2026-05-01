@@ -1,6 +1,12 @@
 <?php
 require_once __DIR__ . '/bootstrap.php';
-$pageTitle = $lang==='es' ? 'Referencia de Puertos y Servicios — CyberEscudo' : 'Port & Service Reference — CyberEscudo';
+
+$pageTitle = $lang==='es' ? 'Cheatsheet de Puertos TCP/UDP para Pentesting — CyberEscudo' : 'TCP/UDP Ports Cheatsheet for Pentesting — CyberEscudo';
+
+$pageDescription = $lang==='es' 
+    ? 'Referencia interactiva de puertos y protocolos para hacking ético. Descubre vectores de ataque, vulnerabilidades y comandos de enumeración para cada servicio.' 
+    : 'Interactive ports and protocols reference for ethical hacking. Discover attack vectors, vulnerabilities, and enumeration commands for each service.';
+
 $current_page = basename($_SERVER['PHP_SELF']);
 require __DIR__ . '/templates/header.php';
 

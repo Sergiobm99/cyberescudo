@@ -1,7 +1,12 @@
 <?php
 require_once __DIR__ . '/bootstrap.php';
-$pageTitle = $lang==='es' ? 'Generador Regex de Contraseñas — CyberEscudo' : 'Password Regex Generator — CyberEscudo';
-$current_page = basename($_SERVER['PHP_SELF']); 
+
+$pageTitle = $lang==='es' ? 'Generador de Expresiones Regulares (Regex) — CyberEscudo' : 'Regular Expression (Regex) Generator — CyberEscudo';
+$pageDescription = $lang==='es' 
+    ? 'Construye y prueba patrones Regex para validación de contraseñas, emails o IPs de forma interactiva. Ideal para desarrollo seguro.' 
+    : 'Build and test Regex patterns for password, email, or IP validation interactively. Ideal for secure development.';
+
+$current_page = basename($_SERVER['PHP_SELF']);
 require __DIR__ . '/templates/header.php';
 ?>
 

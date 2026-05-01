@@ -1,6 +1,11 @@
 <?php
 require_once __DIR__ . '/bootstrap.php';
-$pageTitle = $lang==='es' ? 'Generador de Wordlist — CyberEscudo' : 'Wordlist Generator — CyberEscudo';
+
+$pageTitle = $lang==='es' ? 'Generador de Diccionarios (Wordlists) Personalizados — CyberEscudo' : 'Custom Wordlist Generator — CyberEscudo';
+$pageDescription = $lang==='es' 
+    ? 'Crea diccionarios de contraseñas personalizados y mutaciones de palabras clave al instante. Herramienta esencial para ataques de fuerza bruta y cracking con Hashcat.' 
+    : 'Create custom password dictionaries and keyword mutations instantly. Essential tool for brute forcing and password cracking with Hashcat or John the Ripper.';
+
 $current_page = basename($_SERVER['PHP_SELF']);
 require __DIR__ . '/templates/header.php';
 ?>

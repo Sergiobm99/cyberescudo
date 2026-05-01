@@ -24,9 +24,15 @@ if (isset($_GET['api_mac'])) {
 }
 // -------------------------------------------------------
 
+
 require_once __DIR__ . '/bootstrap.php';
-$pageTitle = $lang==='es' ? 'Buscador de Fabricante MAC — CyberEscudo' : 'MAC Vendor Lookup — CyberEscudo';
-$current_page = basename($_SERVER['PHP_SELF']); 
+
+$pageTitle = $lang==='es' ? 'Buscador de Fabricante por Dirección MAC (OUI) — CyberEscudo' : 'MAC Address Vendor Lookup (OUI) — CyberEscudo';
+$pageDescription = $lang==='es' 
+    ? 'Identifica el fabricante, marca y modelo de cualquier tarjeta de red o dispositivo de hardware introduciendo su dirección MAC (OUI).' 
+    : 'Identify the manufacturer, brand, and model of any network card or hardware device by entering its MAC address (OUI).';
+
+$current_page = basename($_SERVER['PHP_SELF']);
 require __DIR__ . '/templates/header.php';
 ?>
 

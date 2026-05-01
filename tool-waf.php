@@ -1,6 +1,11 @@
 <?php
 require_once __DIR__ . '/bootstrap.php';
-$pageTitle = $lang==='es' ? 'Biblioteca de Payloads WAF Bypass — CyberEscudo' : 'WAF Bypass Payload Library — CyberEscudo';
+
+$pageTitle = $lang==='es' ? 'Generador de Payloads WAF Bypass — CyberEscudo' : 'WAF Bypass Payload Generator — CyberEscudo';
+$pageDescription = $lang==='es' 
+    ? 'Colección de payloads para evadir Web Application Firewalls (WAF) en ataques XSS, SQLi y LFI. Encuentra el payload ofuscado perfecto para tu auditoría.' 
+    : 'Collection of payloads to bypass Web Application Firewalls (WAF) in XSS, SQLi, and LFI attacks. Find the perfect obfuscated payload for your audit.';
+
 $current_page = basename($_SERVER['PHP_SELF']);
 require __DIR__ . '/templates/header.php';
 ?>

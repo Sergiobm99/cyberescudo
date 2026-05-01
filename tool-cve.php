@@ -33,10 +33,15 @@ if (isset($_GET['api_cve'])) {
 }
 // --- FIN DEL PROXY API ---
 
-$pageTitle = $lang==='es' ? 'Buscador de CVE y Exploits — CyberEscudo' : 'CVE & Exploit Finder — CyberEscudo';
+$pageTitle = $lang==='es' ? 'Buscador de CVE y Exploits Online — CyberEscudo' : 'Online CVE & Exploit Finder — CyberEscudo';
+$pageDescription = $lang==='es' 
+    ? 'Busca vulnerabilidades registradas (CVE) por producto, año o severidad. Encuentra exploits públicos de Exploit-DB y GitHub para tus auditorías.' 
+    : 'Search registered vulnerabilities (CVE) by product, year, or severity. Find public exploits from Exploit-DB and GitHub for your security audits.';
+
 $current_page = basename($_SERVER['PHP_SELF']);
 require __DIR__ . '/templates/header.php';
 ?>
+
 
 <main class="content-page">
   <div class="m-bottom-2">

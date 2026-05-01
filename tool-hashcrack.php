@@ -1,7 +1,12 @@
 <?php
 require_once __DIR__ . '/bootstrap.php';
-$pageTitle = $lang==='es' ? 'Analizador de Hashes — CyberEscudo' : 'Hash Analyzer — CyberEscudo';
-$current_page = basename($_SERVER['PHP_SELF']); // Añadido para el menú
+
+$pageTitle = $lang==='es' ? 'Analizador e Identificador de Hashes — CyberEscudo' : 'Hash Analyzer and Identifier — CyberEscudo';
+$pageDescription = $lang==='es' 
+    ? 'Identifica qué algoritmo generó un hash desconocido (MD5, bcrypt, NTLM, etc.) y prepara comandos de Hashcat o John the Ripper para crackearlo.' 
+    : 'Identify which algorithm generated an unknown hash (MD5, bcrypt, NTLM, etc.) and prepare Hashcat or John the Ripper commands to crack it.';
+
+$current_page = basename($_SERVER['PHP_SELF']);
 require __DIR__ . '/templates/header.php';
 ?>
 

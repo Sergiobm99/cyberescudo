@@ -1,6 +1,11 @@
 <?php
 require_once __DIR__ . '/bootstrap.php';
-$pageTitle = $lang==='es' ? 'Calculadora CIDR — CyberEscudo' : 'CIDR Calculator — CyberEscudo';
+
+$pageTitle = $lang==='es' ? 'Calculadora CIDR y Subredes IPv4/IPv6 — CyberEscudo' : 'CIDR and Subnet Calculator IPv4/IPv6 — CyberEscudo';
+$pageDescription = $lang==='es' 
+    ? 'Calcula rangos de red, máscaras de subred, direcciones de broadcast y cantidad de hosts útiles con esta calculadora CIDR online para redes.' 
+    : 'Calculate network ranges, subnet masks, broadcast addresses, and usable hosts with this online CIDR calculator for networking.';
+
 $current_page = basename($_SERVER['PHP_SELF']);
 require __DIR__ . '/templates/header.php';
 ?>

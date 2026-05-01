@@ -1,8 +1,13 @@
 <?php
 require_once __DIR__ . '/bootstrap.php';
-$pageTitle = $lang==='es' ? 'Decodificador JWT — CyberEscudo' : 'JWT Decoder — CyberEscudo';
-require __DIR__ . '/templates/header.php';
+
+$pageTitle = $lang==='es' ? 'Decodificador y Analizador de JWT (JSON Web Tokens) — CyberEscudo' : 'JWT (JSON Web Token) Decoder and Analyzer — CyberEscudo';
+$pageDescription = $lang==='es' 
+    ? 'Decodifica el payload y la cabecera de tokens JWT de forma segura sin enviarlos al servidor. Útil para pentesting de APIs y escalada de privilegios.' 
+    : 'Decode JWT token payloads and headers securely without sending them to the server. Useful for API pentesting and privilege escalation.';
+
 $current_page = basename($_SERVER['PHP_SELF']);
+require __DIR__ . '/templates/header.php';
 ?>
 
 <main class="content-page">

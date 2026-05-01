@@ -1,6 +1,11 @@
 <?php
 require_once __DIR__ . '/bootstrap.php';
-$pageTitle = $lang==='es' ? 'Analizador de Headers HTTP — CyberEscudo' : 'HTTP Header Analyzer — CyberEscudo';
+
+$pageTitle = $lang==='es' ? 'Analizador de Cabeceras HTTP (Security Headers) — CyberEscudo' : 'HTTP Security Headers Analyzer — CyberEscudo';
+$pageDescription = $lang==='es' 
+    ? 'Inspecciona y audita las cabeceras de respuesta HTTP de cualquier web para detectar configuraciones inseguras y falta de protecciones como CSP o HSTS.' 
+    : 'Inspect and audit HTTP response headers of any website to detect insecure configurations and missing protections like CSP or HSTS.';
+
 $current_page = basename($_SERVER['PHP_SELF']);
 require __DIR__ . '/templates/header.php';
 ?>

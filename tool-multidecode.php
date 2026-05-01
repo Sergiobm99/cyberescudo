@@ -1,6 +1,11 @@
 <?php
 require_once __DIR__ . '/bootstrap.php';
-$pageTitle = $lang==='es' ? 'Multi Decoder — CyberEscudo' : 'Multi Decoder — CyberEscudo';
+
+$pageTitle = $lang==='es' ? 'Multi-Decoder para CTFs (Base64, Hex, Rot13) — CyberEscudo' : 'Multi-Decoder for CTFs (Base64, Hex, Rot13) — CyberEscudo';
+$pageDescription = $lang==='es' 
+    ? 'Aplica múltiples decodificaciones en cadena a un texto ofuscado. La navaja suiza online perfecta para resolver retos de criptografía en CTFs.' 
+    : 'Apply multiple chained decodings to obfuscated text. The perfect online Swiss army knife for solving cryptography challenges in CTFs.';
+
 $current_page = basename($_SERVER['PHP_SELF']);
 require __DIR__ . '/templates/header.php';
 ?>

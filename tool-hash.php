@@ -1,7 +1,12 @@
 <?php
 require_once __DIR__ . '/bootstrap.php';
-$pageTitle = $lang==='es' ? 'Generador de Hashes — CyberEscudo' : 'Hash Generator — CyberEscudo';
-$current_page = basename($_SERVER['PHP_SELF']); // Añadido para el menú
+
+$pageTitle = $lang==='es' ? 'Generador de Hashes Online (MD5, SHA-1, SHA-256) — CyberEscudo' : 'Online Hash Generator (MD5, SHA-1, SHA-256) — CyberEscudo';
+$pageDescription = $lang==='es' 
+    ? 'Calcula firmas criptográficas y hashes de textos al instante. Soporta algoritmos como MD5, SHA-1, SHA-256, SHA-512 y más.' 
+    : 'Calculate cryptographic signatures and text hashes instantly. Supports algorithms like MD5, SHA-1, SHA-256, SHA-512 and more.';
+
+$current_page = basename($_SERVER['PHP_SELF']);
 require __DIR__ . '/templates/header.php';
 ?>
 

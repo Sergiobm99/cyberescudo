@@ -3,8 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="<?= e($pageDescription ?? 'Proyectos, manuales y guías sobre ciberseguridad. Desde hardening de servidores hasta pentesting.') ?>">
-  <title><?= e($pageTitle ?? SITE_NAME . ' — Ciberseguridad') ?></title>
+  
+  <!-- SEO Básico -->
+  <title><?= e($pageTitle ?? 'CyberEscudo — Herramientas de Ciberseguridad y Pentesting') ?></title>
+  <meta name="description" content="<?= e($pageDescription ?? ($lang === 'es' ? 'Plataforma gratuita de herramientas para pentesting y OSINT. Genera reverse shells, analiza claves SSH, descubre vulnerabilidades y aprende hacking ético.' : 'Free platform for pentesting and OSINT tools. Generate reverse shells, analyze SSH keys, discover vulnerabilities and learn ethical hacking.')) ?>">
+
+  <!-- Open Graph / Facebook / WhatsApp / LinkedIn -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="<?= e('https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']) ?>">
+  <meta property="og:title" content="<?= e($pageTitle ?? 'CyberEscudo — Herramientas de Ciberseguridad') ?>">
+  <meta property="og:description" content="<?= e($pageDescription ?? ($lang === 'es' ? 'Plataforma gratuita de herramientas para pentesting y OSINT.' : 'Free platform for pentesting and OSINT tools.')) ?>">
+  <meta property="og:image" content="<?= BASE_URL ?>/assets/img/logo-cyberescudo.jpg">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="<?= e($pageTitle ?? 'CyberEscudo') ?>">
+  <meta name="twitter:description" content="<?= e($pageDescription ?? ($lang === 'es' ? 'Herramientas de ciberseguridad gratuitas.' : 'Free cybersecurity tools.')) ?>">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -99,7 +113,7 @@
         <li><a href="<?= BASE_URL ?>/index.php#manuals"><?= e($t['nav']['manuals']) ?></a></li>
         
         <li class="has-submenu">
-            <input type="checkbox" id="tools-toggle" class="submenu-checkbox" style="display: none;">
+            <input type="checkbox" id="tools-toggle" class="submenu-checkbox" hidden>
             
             <label for="tools-toggle" class="submenu-toggle">
                 <?= $lang === 'es' ? 'Herramientas' : 'Tools' ?>
@@ -138,8 +152,8 @@
 
         <li><a href="<?= BASE_URL ?>/index.php#about"><?= e($t['nav']['about']) ?></a></li>
         
-        <li style="margin-top: 1.5rem; text-align: center;">
-            <a href="<?= BASE_URL ?>/index.php#donate" class="nav-support-btn" style="display:inline-flex;">
+        <li class="nav-donate-item">
+            <a href="<?= BASE_URL ?>/index.php#donate" class="nav-support-btn">
                 ♥ <?= $lang === 'es' ? 'Apóyame' : 'Support' ?> 
             </a>
         </li>

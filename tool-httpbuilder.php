@@ -1,6 +1,11 @@
 <?php
 require_once __DIR__ . '/bootstrap.php';
-$pageTitle = $lang==='es' ? 'HTTP Request Builder — CyberEscudo' : 'HTTP Request Builder — CyberEscudo';
+
+$pageTitle = $lang==='es' ? 'Constructor de Peticiones HTTP Personalizadas — CyberEscudo' : 'Custom HTTP Request Builder — CyberEscudo';
+$pageDescription = $lang==='es' 
+    ? 'Envía peticiones HTTP personalizadas (GET, POST, PUT) manipulando cabeceras y payloads. Ideal para testear APIs y vulnerabilidades web.' 
+    : 'Send custom HTTP requests (GET, POST, PUT) manipulating headers and payloads. Ideal for testing APIs and web vulnerabilities.';
+
 $current_page = basename($_SERVER['PHP_SELF']);
 require __DIR__ . '/templates/header.php';
 ?>

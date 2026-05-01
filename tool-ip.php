@@ -1,8 +1,14 @@
 <?php
 require_once __DIR__ . '/bootstrap.php';
-$pageTitle = $lang==='es' ? '¿Cuál es mi IP? — CyberEscudo' : 'What is my IP? — CyberEscudo';
-$current_page = basename($_SERVER['PHP_SELF']); // Añadido para el menú
+
+$pageTitle = $lang==='es' ? '¿Cuál es mi IP? Detector de IP Pública y VPN — CyberEscudo' : 'What is my IP? Public IP and VPN Detector — CyberEscudo';
+$pageDescription = $lang==='es' 
+    ? 'Descubre tu dirección IP pública, proveedor de internet (ISP), ubicación geográfica exacta y averigua si tus DNS están filtrando información.' 
+    : 'Discover your public IP address, internet provider (ISP), exact geolocation, and check if your DNS requests are leaking information.';
+
+$current_page = basename($_SERVER['PHP_SELF']);
 require __DIR__ . '/templates/header.php';
+
 
 // Use REMOTE_ADDR as the trusted source.
 // Only trust X-Forwarded-For if the connection comes from a known reverse-proxy IP.

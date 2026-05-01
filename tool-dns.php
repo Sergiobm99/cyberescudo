@@ -1,6 +1,11 @@
 <?php
 require_once __DIR__ . '/bootstrap.php';
-$pageTitle = $lang==='es' ? 'DNS Lookup — CyberEscudo' : 'DNS Lookup — CyberEscudo';
+
+$pageTitle = $lang==='es' ? 'Enumeración de Registros DNS y Transferencia de Zona — CyberEscudo' : 'DNS Record Enum & Zone Transfer — CyberEscudo';
+$pageDescription = $lang==='es' 
+    ? 'Herramienta online para consultar registros DNS (A, MX, TXT, NS) e intentar ataques de transferencia de zona (AXFR) en auditorías de seguridad.' 
+    : 'Online tool to query DNS records (A, MX, TXT, NS) and attempt zone transfer (AXFR) attacks in security audits.';
+
 $current_page = basename($_SERVER['PHP_SELF']);
 require __DIR__ . '/templates/header.php';
 ?>

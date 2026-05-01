@@ -1,6 +1,11 @@
 <?php
 require_once __DIR__ . '/bootstrap.php';
-$pageTitle = $lang==='es' ? 'Codificador Base64 — CyberEscudo' : 'Base64 Encoder — CyberEscudo';
+
+$pageTitle = $lang==='es' ? 'Decodificador y Codificador Base64 Online — CyberEscudo' : 'Online Base64 Encoder & Decoder — CyberEscudo';
+$pageDescription = $lang==='es' 
+    ? 'Codifica y decodifica texto en Base64 de forma segura y local en tu navegador. Herramienta esencial para CTFs y análisis de malware.' 
+    : 'Encode and decode Base64 text securely and locally in your browser. Essential tool for CTFs and malware analysis.';
+
 $current_page = basename($_SERVER['PHP_SELF']);
 require __DIR__ . '/templates/header.php';
 ?>

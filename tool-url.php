@@ -1,6 +1,11 @@
 <?php
 require_once __DIR__ . '/bootstrap.php';
-$pageTitle = $lang==='es' ? 'Codificador de URL — CyberEscudo' : 'URL Encoder — CyberEscudo';
+
+$pageTitle = $lang==='es' ? 'URL Encoder y Decoder Online — CyberEscudo' : 'Online URL Encoder & Decoder — CyberEscudo';
+$pageDescription = $lang==='es' 
+    ? 'Codifica y decodifica parámetros de URL (URL encoding) al instante. Herramienta imprescindible para manipular payloads web de forma segura.' 
+    : 'Encode and decode URL parameters (URL encoding) instantly. Essential tool for securely manipulating web payloads.';
+
 $current_page = basename($_SERVER['PHP_SELF']);
 require __DIR__ . '/templates/header.php';
 ?>

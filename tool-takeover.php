@@ -70,7 +70,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['api'])) {
 }
 // --- FIN DEL MOTOR DNS ---
 
-$pageTitle = $lang==='es' ? 'Subdomain Takeover — CyberEscudo' : 'Subdomain Takeover — CyberEscudo';
+$pageTitle = $lang==='es' ? 'Escáner de Subdomain Takeover Online — CyberEscudo' : 'Online Subdomain Takeover Scanner — CyberEscudo';
+$pageDescription = $lang==='es' 
+    ? 'Analiza subdominios en busca de registros CNAME huérfanos apuntando a servicios Cloud (AWS, GitHub, Azure) vulnerables a secuestro.' 
+    : 'Analyze subdomains looking for dangling CNAME records pointing to Cloud services (AWS, GitHub, Azure) vulnerable to hijacking.';
+
 $current_page = basename($_SERVER['PHP_SELF']);
 require __DIR__ . '/templates/header.php';
 ?>

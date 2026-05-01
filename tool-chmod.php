@@ -1,12 +1,12 @@
 <?php
 require_once __DIR__ . '/bootstrap.php';
 
-$pageTitle = SITE_NAME . ' — Calculadora de Permisos (Chmod)';
-$pageDescription = 'Calculadora interactiva de permisos Linux/Unix. Genera comandos chmod y convierte entre notación octal y simbólica.';
+$pageTitle = $lang==='es' ? 'Calculadora de Permisos Linux (Chmod) Online — CyberEscudo' : 'Online Linux Permissions Calculator (Chmod) — CyberEscudo';
+$pageDescription = $lang==='es' 
+    ? 'Genera comandos chmod y calcula permisos de archivos en Linux (octal y simbólico) de forma visual, rápida y sencilla.' 
+    : 'Generate chmod commands and calculate Linux file permissions (octal and symbolic) visually, quickly, and easily.';
 
-// Variable para que el desplegable sepa en qué página estamos
-$current_page = basename($_SERVER['PHP_SELF']); 
-
+$current_page = basename($_SERVER['PHP_SELF']);
 require __DIR__ . '/templates/header.php';
 ?>
 

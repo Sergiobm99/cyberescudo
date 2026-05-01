@@ -1,7 +1,12 @@
 <?php
 require_once __DIR__ . '/bootstrap.php';
-$pageTitle = $lang==='es' ? 'Generador de Contraseñas — CyberEscudo' : 'Password Generator — CyberEscudo';
-$current_page = basename($_SERVER['PHP_SELF']); // Añadido para el menú
+
+$pageTitle = $lang==='es' ? 'Generador de Contraseñas Seguras — CyberEscudo' : 'Secure Password Generator — CyberEscudo';
+$pageDescription = $lang==='es' 
+    ? 'Crea contraseñas aleatorias, ultra fuertes y robustas. La generación se realiza 100% en tu navegador (lado del cliente) para máxima privacidad y seguridad.' 
+    : 'Create random, ultra-strong, and robust passwords. Generation is done 100% locally in your browser (client-side) for maximum privacy and security.';
+
+$current_page = basename($_SERVER['PHP_SELF']);
 require __DIR__ . '/templates/header.php';
 ?>
 

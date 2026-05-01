@@ -1,6 +1,11 @@
 <?php
 require_once __DIR__ . '/bootstrap.php';
-$pageTitle = $lang==='es' ? 'Analizador de Logs de Seguridad — CyberEscudo' : 'Security Log Analyzer — CyberEscudo';
+
+$pageTitle = $lang==='es' ? 'Analizador de Logs Apache/Nginx — CyberEscudo' : 'Apache/Nginx Log Analyzer — CyberEscudo';
+$pageDescription = $lang==='es' 
+    ? 'Audita archivos de log de servidores web en busca de ataques automatizados, inyecciones SQL, XSS y escáneres de vulnerabilidades en tiempo real.' 
+    : 'Audit web server log files looking for automated attacks, SQL injections, XSS, and vulnerability scanners in real-time.';
+
 $current_page = basename($_SERVER['PHP_SELF']);
 require __DIR__ . '/templates/header.php';
 ?>

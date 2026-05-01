@@ -1,6 +1,11 @@
 <?php
 require_once __DIR__ . '/bootstrap.php';
-$pageTitle = $lang==='es' ? 'Generador de Reverse Shells — CyberEscudo' : 'Reverse Shell Generator — CyberEscudo';
+
+$pageTitle = $lang==='es' ? 'Generador de Reverse Shell Online — CyberEscudo' : 'Online Reverse Shell Generator — CyberEscudo';
+$pageDescription = $lang==='es' 
+    ? 'Genera comandos de reverse shell y bind shell al instante para Bash, Python, Netcat, PHP, PowerShell y más. Listo para copiar y pegar en tu terminal.' 
+    : 'Generate reverse shell and bind shell commands instantly for Bash, Python, Netcat, PHP, PowerShell, and more. Ready to copy and paste.';
+
 $current_page = basename($_SERVER['PHP_SELF']);
 require __DIR__ . '/templates/header.php';
 ?>

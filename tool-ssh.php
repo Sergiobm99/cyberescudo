@@ -1,6 +1,14 @@
 <?php
 require_once __DIR__ . '/bootstrap.php';
-$pageTitle = $lang==='es' ? 'Analizador de Claves SSH — CyberEscudo' : 'SSH Key Analyzer — CyberEscudo';
+
+// Título SEO (Hasta 60 caracteres)
+$pageTitle = $lang==='es' ? 'Analizador de Claves SSH Online — CyberEscudo' : 'Online SSH Key Analyzer — CyberEscudo';
+
+// Descripción SEO (Hasta 155 caracteres llenos de palabras clave)
+$pageDescription = $lang==='es' 
+    ? 'Herramienta online gratuita para analizar claves públicas SSH (RSA, ED25519). Descubre si tu clave es segura, audita servidores y genera comandos ssh-keygen.' 
+    : 'Free online tool to analyze SSH public keys (RSA, ED25519). Check if your key is secure, audit servers, and generate ssh-keygen commands.';
+
 $current_page = basename($_SERVER['PHP_SELF']);
 require __DIR__ . '/templates/header.php';
 ?>

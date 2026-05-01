@@ -1,6 +1,11 @@
 <?php
 require_once __DIR__ . '/bootstrap.php';
-$pageTitle = $lang === 'es' ? 'Cloud Enum Cheatsheet — CyberEscudo' : 'Cloud Enum Cheatsheet — CyberEscudo';
+
+$pageTitle = $lang==='es' ? 'Enumeración Cloud Online (AWS, Azure, GCP) — CyberEscudo' : 'Online Cloud Enum Tool (AWS, Azure, GCP) — CyberEscudo';
+$pageDescription = $lang==='es' 
+    ? 'Descubre S3 buckets públicos, contenedores de Azure y buckets de Google Cloud asociados a un dominio. Herramienta vital para bug bounty y OSINT.' 
+    : 'Discover public S3 buckets, Azure containers, and GCP buckets associated with a target domain. Essential tool for bug bounty and OSINT.';
+
 $current_page = basename($_SERVER['PHP_SELF']);
 require __DIR__ . '/templates/header.php';
 ?>

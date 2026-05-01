@@ -1,6 +1,11 @@
 <?php
 require_once __DIR__ . '/bootstrap.php';
-$pageTitle = $lang==='es' ? 'Analizador de Expresiones Cron — CyberEscudo' : 'Cron Expression Parser — CyberEscudo';
+
+$pageTitle = $lang==='es' ? 'Generador y Traductor de Expresiones Cron — CyberEscudo' : 'Cron Expression Generator and Parser — CyberEscudo';
+$pageDescription = $lang==='es' 
+    ? 'Crea, traduce y entiende expresiones crontab para programar tareas en Linux fácilmente. Descubre exactamente cuándo se ejecutará tu próximo script.' 
+    : 'Create, translate, and understand crontab expressions to schedule tasks on Linux easily. Find out exactly when your next script will run.';
+
 $current_page = basename($_SERVER['PHP_SELF']);
 require __DIR__ . '/templates/header.php';
 ?>

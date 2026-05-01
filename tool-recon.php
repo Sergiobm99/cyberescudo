@@ -1,6 +1,11 @@
 <?php
 require_once __DIR__ . '/bootstrap.php';
-$pageTitle = $lang==='es' ? 'OSINT Quick Recon — CyberEscudo' : 'OSINT Quick Recon — CyberEscudo';
+
+$pageTitle = $lang==='es' ? 'Herramienta OSINT y Quick Recon — CyberEscudo' : 'OSINT & Quick Recon Tool — CyberEscudo';
+$pageDescription = $lang==='es' 
+    ? 'Genera automáticamente comandos de reconocimiento pasivo y activo (Nmap, Nikto, Subfinder) listos para usar en tus auditorías y bug bounty.' 
+    : 'Automatically generate passive and active reconnaissance commands (Nmap, Nikto, Subfinder) ready to use in your audits and bug bounties.';
+
 $current_page = basename($_SERVER['PHP_SELF']);
 require __DIR__ . '/templates/header.php';
 ?>
