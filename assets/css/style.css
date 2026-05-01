@@ -557,12 +557,12 @@ footer {
   list-style: none;
   
   /* AQUÍ ESTÁ LA MAGIA PARA HACERLO MÁS ANCHO Y CORTO */
-  width: 560px; /* Hacemos el menú mucho más ancho */
+  width: 750px; /* Hacemos el menú mucho más ancho */
   max-width: 90vw; /* Porcentaje de seguridad por si la pantalla es pequeña */
   padding: 1rem; 
   display: grid; /* Usamos grid para hacer columnas */
-  grid-template-columns: repeat(2, 1fr); /* 2 columnas exactamente iguales */
-  gap: 0.2rem 1rem; /* Espacio vertical y horizontal entre herramientas */
+  grid-template-columns: repeat(3, 1fr); /* 2 columnas exactamente iguales */
+  gap: 0.5rem 1rem; /* Espacio vertical y horizontal entre herramientas */
 
   opacity: 0;
   visibility: hidden;
@@ -1455,3 +1455,25 @@ nav ul li a, .submenu-toggle {
 .tk-details { font-family: var(--mono); font-size: 0.85rem; color: var(--gray); display: flex; flex-direction: column; gap: 0.3rem; }
 .tk-cname { color: var(--cyan); }
 .tk-provider { color: #ff8800; font-weight: bold; }
+/* ─── HERRAMIENTA OSINT QUICK RECON ─── */
+.recon-grid { display: grid; grid-template-columns: 1fr; gap: 0.75rem; margin-bottom: 1.25rem; align-items: flex-end; }
+@media (min-width: 768px) { .recon-grid { grid-template-columns: 1fr auto; } }
+
+.recon-label { font-family: var(--mono); font-size: 0.72rem; color: var(--gray-dark); text-transform: uppercase; letter-spacing: 0.1em; display: block; margin-bottom: 0.45rem; }
+.recon-pills-wrap { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.5rem; }
+.recon-pill { background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--gray); font-family: var(--mono); font-size: 0.75rem; padding: 0.3rem 0.8rem; border-radius: 9999px; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+.recon-pill:hover { border-color: var(--cyan); color: var(--cyan); }
+.recon-pill.active { background: rgba(0, 255, 255, 0.1); border-color: rgba(0, 255, 255, 0.35); color: var(--cyan); }
+.recon-warning { margin-top: 1.5rem; padding: 0.7rem 1rem; background: rgba(255,160,0,0.05); border: 1px solid rgba(255,160,0,0.15); border-radius: 0.45rem; font-family: var(--mono); font-size: 0.75rem; color: #f0a000; }
+
+.recon-phase-section { margin-bottom: 1.75rem; }
+.recon-phase-title { font-family: var(--mono); font-size: 0.72rem; color: var(--cyan); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.75rem; padding-bottom: 0.35rem; border-bottom: 1px solid rgba(0,255,255,0.1); }
+.recon-cmd-item { margin-bottom: 0.75rem; }
+.recon-cmd-desc { font-family: var(--mono); font-size: 0.75rem; color: var(--gray); margin-bottom: 0.3rem; }
+.recon-cmd-wrap { position: relative; }
+.recon-cmd-pre { background: rgba(0,0,0,0.45); border: 1px solid var(--border); border-radius: 0.45rem; padding: 0.75rem 3rem 0.75rem 1rem; font-family: var(--mono); font-size: 0.79rem; color: rgba(255,255,255,0.85); white-space: pre-wrap; word-break: break-all; margin: 0; line-height: 1.65; max-height: 200px; overflow-y: auto; }
+
+.recon-copy-btn { position: absolute; top: 0.4rem; right: 0.4rem; background: rgba(0,255,255,0.06); border: 1px solid rgba(0,255,255,0.15); color: var(--gray-dark); font-size: 0.7rem; padding: 0.2rem 0.5rem; border-radius: 0.3rem; cursor: pointer; transition: color 0.15s, transform 0.1s, background 0.15s; }
+.recon-copy-btn:hover { color: var(--cyan); background: rgba(0,255,255,0.1); }
+.recon-copy-btn:active { transform: scale(0.95); }
+.m-bottom-0 { margin-bottom: 0 !important; }

@@ -69,6 +69,7 @@
           <li><a href="<?= BASE_URL ?>/tool-loganalyzer.php">📊 Log Analyzer</a></li>
           <li><a href="<?= BASE_URL ?>/tool-cve.php">🐛 CVE & Exploit Finder</a></li>
           <li><a href="<?= BASE_URL ?>/tool-takeover.php">🏴‍☠️ Subdomain Takeover</a></li>
+          <li><a href="<?= BASE_URL ?>/tool-recon.php">🔍 OSINT Quick Recon</a></li>
         </ul>
       </li>
 
@@ -127,6 +128,7 @@
                 <li><a href="<?= BASE_URL ?>/tool-loganalyzer.php">📊 Log Analyzer</a></li>
                 <li><a href="<?= BASE_URL ?>/tool-cve.php">🐛 CVE & Exploit Finder</a></li>
                 <li><a href="<?= BASE_URL ?>/tool-takeover.php">🏴‍☠️ Subdomain Takeover</a></li>
+                <li><a href="<?= BASE_URL ?>/tool-recon.php">🔍 OSINT Quick Recon</a></li>
             </ul>
         </li>
 

