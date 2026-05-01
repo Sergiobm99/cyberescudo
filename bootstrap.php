@@ -31,11 +31,11 @@ header('Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
 header(
     "Content-Security-Policy: " .
     "default-src 'self'; " .
-    "style-src 'self' [https://fonts.googleapis.com](https://fonts.googleapis.com); " .
-    "font-src 'self' [https://fonts.gstatic.com](https://fonts.gstatic.com); " .
-    "script-src 'self' 'nonce-{$cspNonce}' [https://www.googletagmanager.com](https://www.googletagmanager.com); " .
-    "img-src 'self' data: [https://www.googletagmanager.com](https://www.googletagmanager.com) [https://www.google-analytics.com](https://www.google-analytics.com); " .
-    "connect-src 'self' [https://ipapi.co](https://ipapi.co) [https://cloudflare-dns.com](https://cloudflare-dns.com) [https://www.google-analytics.com](https://www.google-analytics.com) [https://analytics.google.com](https://analytics.google.com); " .
+    "style-src 'self' https://fonts.googleapis.com; " .
+    "font-src 'self' https://fonts.gstatic.com; " .
+    "script-src 'self' 'nonce-{$cspNonce}' https://*.googletagmanager.com; " .
+    "img-src 'self' data: https://*.googletagmanager.com https://*.google-analytics.com; " .
+    "connect-src 'self' https://ipapi.co https://cloudflare-dns.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; " .
     "frame-src 'none'; " .
     "object-src 'none'; " .
     "base-uri 'self'; " .
