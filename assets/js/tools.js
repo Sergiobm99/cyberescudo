@@ -2880,4 +2880,211 @@ document.addEventListener('DOMContentLoaded', function() {
         renderPills();
         renderAll();
     })();
+    // =========================================================
+    // 28. Herramienta: SSH Key Analyzer
+    // =========================================================
+    (function() {
+        const sshInput = document.getElementById('ssh-key-input');
+        const sshHostInput = document.getElementById('ssh-host');
+        if (!sshInput && !sshHostInput) return;
+
+        console.log("✅ SSH Key Analyzer cargado.");
+
+        const lang = window.LANG || 'es';
+
+        // --- Manejo de Tabs ---
+        document.querySelectorAll('.ssh-tab').forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                const target = e.target.getAttribute('data-tab');
+                
+                // Actualizar botones
+                document.querySelectorAll('.ssh-tab').forEach(t => t.classList.remove('active'));
+                e.target.classList.add('active');
+                
+                // Actualizar contenido
+                document.querySelectorAll('.ssh-tab-content').forEach(c => c.classList.remove('active'));
+                document.getElementById('tab-' + target).classList.add('active');
+            });
+        });
+
+        // --- Funciones de Copia ---
+        function attachCopyEvents(container) {
+            container.querySelectorAll('.ssh-copy-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const text = e.target.getAttribute('data-cmd');
+                    if (navigator.clipboard) {
+                        navigator.clipboard.writeText(text);
+                    } else {
+                        const el = document.createElement('textarea');
+                        el.value = text;
+                        document.body.appendChild(el);
+                        el.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(el);
+                    }
+                    const oldText = e.target.textContent;
+                    e.target.textContent = '✅';
+                    setTimeout(() => { e.target.textContent = oldText; }, 1500);
+                });
+            });
+        }
+        
+        attachCopyEvents(document.getElementById('tab-generate'));
+
+        // --- Analizador de Claves ---
+        const btnAnalyze = document.getElementById('btn-analyze');
+        const btnExample = document.getElementById('btn-example-key');
+        const analysisOutput = document.getElementById('ssh-analysis');
+
+        function escapeHTML(s) {
+            const d = document.createElement('div');
+            d.textContent = String(s || '');
+            return d.innerHTML;
+        }
+
+        btnExample?.addEventListener('click', () => {
+            sshInput.value = 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQC0Q1URiM8/RI4MFMbK5bEHxPDkgKY1TIw3fJd7OniKB0p0fYhZp2ZRQG5hpFi0ZvD0XNAnzJ6BvnCJBwAMz9V4hZe+XYh7/6H2JOmBX7NbWPqdNBPAEZFD+YKVyXE2nDk9bA1yZ3VJkjB9bvvwEtcJRQ3YYJwHMPUgKB0Q== user@oldserver';
+            analyzeKey();
+        });
+
+        btnAnalyze?.addEventListener('click', analyzeKey);
+
+        function analyzeKey() {
+            const raw = sshInput.value.trim();
+            if (!raw) return;
+
+            const parts = raw.split(/\s+/);
+            const type = parts[0] || '';
+            const keyData = parts[1] || '';
+            const comment = parts.slice(2).join(' ') || '(sin comentario)';
+
+            const typeMap = {
+                'ssh-rsa': { name: 'RSA', alg: 'RSA' },
+                'ssh-dss': { name: 'DSA', alg: 'DSA' },
+                'ecdsa-sha2-nistp256': { name: 'ECDSA P-256', alg: 'ECDSA' },
+                'ecdsa-sha2-nistp384': { name: 'ECDSA P-384', alg: 'ECDSA' },
+                'ecdsa-sha2-nistp521': { name: 'ECDSA P-521', alg: 'ECDSA' },
+                'ssh-ed25519': { name: 'ED25519', alg: 'EdDSA' }
+            };
+
+            if (!typeMap[type]) {
+                analysisOutput.innerHTML = `<div class="ssh-error">⚠️ ${lang === 'es' ? 'Tipo de clave no reconocido. Asegúrate de pegar la clave pública.' : 'Unrecognised key type. Make sure you paste the public key.'}</div>`;
+                return;
+            }
+
+            const info = typeMap[type];
+            let bits = '—';
+            let security = 'unknown';
+
+            if (type === 'ssh-rsa') {
+                const rawLen = keyData.length;
+                if (rawLen < 300) { bits = '1024'; security = 'critical'; }
+                else if (rawLen < 400) { bits = '2048'; security = 'weak'; }
+                else if (rawLen < 560) { bits = '3072'; security = 'ok'; }
+                else { bits = '4096'; security = 'good'; }
+            } else if (type === 'ssh-dss') {
+                bits = '1024'; security = 'critical';
+            } else if (type === 'ecdsa-sha2-nistp256') { bits = '256'; security = 'good'; }
+            else if (type === 'ecdsa-sha2-nistp384') { bits = '384'; security = 'good'; }
+            else if (type === 'ecdsa-sha2-nistp521') { bits = '521'; security = 'good'; }
+            else if (type === 'ssh-ed25519') { bits = '256 (ED25519)'; security = 'excellent'; }
+
+            const secLabels = {
+                critical: { es: 'CRÍTICO — obsoleto, reemplazar inmediatamente', en: 'CRITICAL — obsolete, replace immediately', color: '#ff5050', icon: '🔴', title: 'CRÍTICO' },
+                weak: { es: 'DÉBIL — funcionará pero vulnerable a ataques', en: 'WEAK — works but vulnerable to attacks', color: '#ff8040', icon: '🔴', title: 'DÉBIL' },
+                ok: { es: 'ACEPTABLE — suficiente para uso actual', en: 'ACCEPTABLE — sufficient for current use', color: '#f0c000', icon: '🟡', title: 'ACEPTABLE' },
+                good: { es: 'BIEN — configuración recomendada', en: 'GOOD — recommended configuration', color: '#00d45a', icon: '✅', title: 'BIEN' },
+                excellent: { es: 'EXCELENTE — mejor opción disponible', en: 'EXCELLENT — best available option', color: '#00ffcc', icon: '✅', title: 'EXCELENTE' }
+            };
+
+            const sl = secLabels[security];
+            const secMsg = lang === 'es' ? sl.es : sl.en;
+            const secColor = sl.color;
+
+            // Fake fingerprint
+            const fingerprint = 'SHA256:' + Array.from(keyData.slice(0, 32)).map((c, i) => {
+                return (((c.charCodeAt(0) * 31 + i * 17) & 0xff).toString(16).padStart(2, '0'));
+            }).join('').replace(/(.{2})/g, '$1:').slice(0, -1).slice(0, 47) + '... (' + comment + ')';
+
+            let html = `<div class="ssh-grid">`;
+            const fields = [
+                [lang === 'es' ? 'Tipo' : 'Type', info.name],
+                [lang === 'es' ? 'Algoritmo' : 'Algorithm', info.alg],
+                [lang === 'es' ? 'Longitud (estimada)' : 'Length (estimated)', bits + ' bits'],
+                [lang === 'es' ? 'Comentario' : 'Comment', escapeHTML(comment)]
+            ];
+            
+            fields.forEach(f => {
+                html += `
+                <div class="ssh-field">
+                    <div class="ssh-field-label">${f[0]}</div>
+                    <div class="ssh-field-value">${f[1]}</div>
+                </div>`;
+            });
+            html += `</div>`;
+
+            // Verdict
+            html += `
+            <div class="ssh-verdict" style="border-color: ${secColor}22; background: ${secColor}0d;">
+                <span class="ssh-verdict-icon">${sl.icon}</span>
+                <div>
+                    <div class="ssh-verdict-title" style="color: ${secColor};">${sl.title}</div>
+                    <div class="ssh-verdict-desc">${secMsg}</div>
+                </div>
+            </div>`;
+
+            // Fingerprint
+            html += `
+            <div class="ssh-fingerprint">
+                <div class="ssh-fp-label">Fingerprint (simulado)</div>
+                <div class="ssh-fp-value">${fingerprint}</div>
+            </div>`;
+
+            // Recommendations
+            if (security === 'critical' || security === 'weak') {
+                html += `
+                <div class="ssh-recommendation">
+                    ⚠️ ${lang === 'es' ? 'Reemplazar esta clave por ED25519:' : 'Replace this key with ED25519:'}
+                    <pre class="ssh-rec-pre">ssh-keygen -t ed25519 -C '${escapeHTML(comment)}' -f ~/.ssh/id_ed25519</pre>
+                </div>`;
+            }
+
+            analysisOutput.innerHTML = html;
+        }
+
+        // --- Auditoría de Servidor ---
+        const auditOutput = document.getElementById('ssh-audit-cmds');
+        
+        function renderAudit() {
+            if(!sshHostInput || !auditOutput) return;
+            const host = sshHostInput.value.trim() || 'HOST';
+            const cmds = [
+                { desc: lang === 'es' ? 'Obtener banner SSH (versión del servidor)' : 'Get SSH banner (server version)', cmd: `nc -nv ${host} 22\n# o:\nssh -v ${host} 2>&1 | grep "Remote protocol"` },
+                { desc: lang === 'es' ? 'Algoritmos soportados por el servidor' : 'Algorithms supported by the server', cmd: `nmap -p 22 --script ssh2-enum-algos ${host}` },
+                { desc: lang === 'es' ? 'Detectar autenticación por contraseña habilitada' : 'Detect password auth enabled', cmd: `nmap -p 22 --script ssh-auth-methods --script-args="ssh.user=root" ${host}` },
+                { desc: lang === 'es' ? 'Fingerprint de host keys' : 'Host key fingerprints', cmd: `ssh-keyscan -H ${host} 2>/dev/null | ssh-keygen -l -f -` },
+                { desc: lang === 'es' ? 'Comprobar configuración débil (ssh-audit)' : 'Check weak configuration (ssh-audit)', cmd: `# Instalar: pip3 install ssh-audit\nssh-audit ${host}` },
+                { desc: lang === 'es' ? 'Bruteforce SSH con Hydra' : 'SSH bruteforce with Hydra', cmd: `hydra -l root -P /usr/share/wordlists/rockyou.txt ssh://${host} -t 4 -v` },
+                { desc: lang === 'es' ? 'Bruteforce SSH con Medusa' : 'SSH bruteforce with Medusa', cmd: `medusa -h ${host} -u root -P /usr/share/wordlists/rockyou.txt -M ssh -t 4` },
+                { desc: lang === 'es' ? 'Nmap — vulnerabilidades SSH conocidas' : 'Nmap — known SSH vulnerabilities', cmd: `nmap -p 22 --script ssh-* ${host}` }
+            ];
+
+            let html = '';
+            cmds.forEach(item => {
+                html += `
+                <div style="margin-bottom:.7rem;">
+                    <div style="font-family:var(--mono);font-size:.75rem;color:var(--gray);margin-bottom:.3rem;">${item.desc}</div>
+                    <div class="ssh-cmd-wrap" style="padding:0;">
+                        <pre class="ssh-cmd-pre">${escapeHTML(item.cmd)}</pre>
+                        <button class="ssh-copy-btn" data-cmd="${escapeHTML(item.cmd)}">📋</button>
+                    </div>
+                </div>`;
+            });
+            auditOutput.innerHTML = html;
+            attachCopyEvents(auditOutput);
+        }
+
+        sshHostInput?.addEventListener('input', renderAudit);
+        renderAudit();
+    })();
 });
