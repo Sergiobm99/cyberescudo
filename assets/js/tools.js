@@ -2593,4 +2593,111 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
     })();
+    // =========================================================
+    // 26. Herramienta: Subdomain Takeover Assistant
+    // =========================================================
+    (function() {
+        const tkInput = document.getElementById('takeover-input');
+        if (!tkInput) return;
+
+        console.log("✅ Subdomain Takeover Assistant cargado.");
+
+        const btnScan = document.getElementById('btn-takeover-scan');
+        const btnExample = document.getElementById('btn-takeover-example');
+        const tkStatus = document.getElementById('takeover-status');
+        const tkResults = document.getElementById('takeover-results');
+        const lang = window.LANG || 'es';
+
+        function escapeHTML(s) {
+            const d = document.createElement('div');
+            d.textContent = String(s || '');
+            return d.innerHTML;
+        }
+
+        // Cargar datos de prueba
+        btnExample.addEventListener('click', () => {
+            tkInput.value = [
+                "www.google.com",
+                "nonexistent-subdomain.github.io",
+                "blog.ejemplo-vulnerable.com", 
+                "api.ejemplo.com"
+            ].join('\n');
+            tkResults.innerHTML = '';
+            tkStatus.innerHTML = lang === 'es' ? '💡 Ejemplo cargado. (Nota: Para ver un Takeover real, necesitarías un subdominio que apunte a un CNAME vulnerable).' : '💡 Example loaded.';
+        });
+
+        btnScan.addEventListener('click', async () => {
+            const lines = tkInput.value.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+            if (lines.length === 0) return;
+
+            if (lines.length > 50) {
+                alert(lang === 'es' ? 'Por favor, analiza un máximo de 50 subdominios a la vez para no saturar el DNS.' : 'Please scan a maximum of 50 subdomains at once.');
+                return;
+            }
+
+            tkResults.innerHTML = '';
+            tkStatus.innerHTML = `<span style="color:var(--cyan);">⏳ ${lang === 'es' ? 'Resolviendo registros DNS y analizando firmas (' + lines.length + ' dominios)...' : 'Resolving DNS and analyzing signatures...'}</span>`;
+            btnScan.disabled = true;
+
+            try {
+                // Enviamos los dominios al backend PHP para que haga la consulta DNS
+                const response = await fetch('?api=1', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ domains: lines })
+                });
+
+                if (!response.ok) throw new Error('HTTP Error: ' + response.status);
+                
+                const data = await response.json();
+                let html = '';
+                let vulnerablesCount = 0;
+
+                data.forEach(item => {
+                    if (item.error) {
+                        html += `
+                        <div class="tk-card">
+                            <div class="tk-header">
+                                <span class="tk-domain">${escapeHTML(item.domain)}</span>
+                                <span class="tk-badge none">Inválido</span>
+                            </div>
+                        </div>`;
+                        return;
+                    }
+
+                    if (item.vulnerable) vulnerablesCount++;
+
+                    const cardClass = item.vulnerable ? 'tk-vuln' : (item.cname !== 'Sin registro CNAME' ? 'tk-safe' : '');
+                    const badge = item.vulnerable ? `<span class="tk-badge vuln">🚨 POSIBLE TAKEOVER</span>` : 
+                                 (item.cname !== 'Sin registro CNAME' ? `<span class="tk-badge safe">CNAME Seguro</span>` : `<span class="tk-badge none">Sin CNAME</span>`);
+
+                    html += `
+                    <div class="tk-card ${cardClass}">
+                        <div class="tk-header">
+                            <span class="tk-domain">${escapeHTML(item.domain)}</span>
+                            ${badge}
+                        </div>
+                        <div class="tk-details">
+                            <div>CNAME Target: <span class="tk-cname">${escapeHTML(item.cname)}</span></div>
+                            ${item.vulnerable ? `<div>Cloud Provider: <span class="tk-provider">${escapeHTML(item.provider)}</span></div>
+                            <div style="margin-top: 0.5rem; color: #fff;">👉 <b>Acción recomendada:</b> Revisa si el recurso en <i>${escapeHTML(item.provider)}</i> ha sido eliminado. Si es así, un atacante puede reclamar el nombre <b>${escapeHTML(item.cname)}</b> y tomar control del subdominio.</div>` : ''}
+                        </div>
+                    </div>`;
+                });
+
+                tkResults.innerHTML = html;
+                
+                if (vulnerablesCount > 0) {
+                    tkStatus.innerHTML = `<span style="color:#ff4444; font-weight:bold;">🚨 Se encontraron ${vulnerablesCount} posibles secuestros de subdominio.</span>`;
+                } else {
+                    tkStatus.innerHTML = `<span style="color:#00d45a;">✅ Análisis completado. No se detectaron CNAMEs vulnerables.</span>`;
+                }
+
+            } catch (error) {
+                tkStatus.innerHTML = `<span style="color:#ff5050;">❌ Error de conexión: ${escapeHTML(error.message)}</span>`;
+            } finally {
+                btnScan.disabled = false;
+            }
+        });
+    })();
 });
