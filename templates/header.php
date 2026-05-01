@@ -9,23 +9,25 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/style.css?v=<?= time() ?>"></script>
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/style.css?v=<?= time() ?>">
 
   <link rel="icon" type="image/png" href="<?= BASE_URL ?>/assets/img/logo-cyberescudo.png">
+  
   <!-- Google tag (gtag.js) -->
-<script nonce="<?= e($cspNonce) ?>" async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-<script nonce="<?= e($cspNonce) ?>">
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  <script nonce="<?= e($cspNonce) ?>" async src="https://www.googletagmanager.com/gtag/js?id=G-T1D83JWZV1"></script>
+  <script nonce="<?= e($cspNonce) ?>">
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
 
-  gtag('config', 'G-T1D83JWZV1');
-</script>
-  <script>
+    gtag('config', 'G-T1D83JWZV1');
+  </script>
+  
+  <script nonce="<?= e($cspNonce) ?>">
     // Definimos las variables globales para que los archivos .js las entiendan
     window.LANG = '<?= $lang ?>';
     window.BASE_URL = '<?= BASE_URL ?>';
-</script>
+  </script>
 </head>
 <body class="<?= $lang ?>">
 
@@ -62,8 +64,8 @@
           <li><a href="<?= BASE_URL ?>/tool-wordlist.php">📝 Wordlist Generator</a></li>
           <li><a href="<?= BASE_URL ?>/tool-multidecode.php">🔄 Multi Decoder (CTF)</a></li>
           <li><a href="<?= BASE_URL ?>/tool-httpbuilder.php">📡 HTTP Builder</a></li>
-           <li><a href="<?= BASE_URL ?>/tool-waf.php">🛡️ WAF Bypass Payloads</a></li>
-                <li><a href="<?= BASE_URL ?>/tool-cloud.php">☁️ Cloud Enum</a></li>
+          <li><a href="<?= BASE_URL ?>/tool-waf.php">🛡️ WAF Bypass Payloads</a></li>
+          <li><a href="<?= BASE_URL ?>/tool-cloud.php">☁️ Cloud Enum</a></li>
           <li><a href="<?= BASE_URL ?>/tool-loganalyzer.php">📊 Log Analyzer</a></li>
           <li><a href="<?= BASE_URL ?>/tool-cve.php">🐛 CVE & Exploit Finder</a></li>
         </ul>

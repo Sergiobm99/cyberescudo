@@ -32,9 +32,9 @@ $projectMeta = [
   'projects/secure-dev.php'                 => ['cat'=>'defensive',  'diff'=>'intermediate'],
   'projects/incident-response.php'          => ['cat'=>'defensive',  'diff'=>'advanced'],
   'projects/gobuster.php'                   => ['cat'=>'offensive',  'diff'=>'basic'],
-  'projects/privilege-escalation-linux.php'=> ['cat'=>'offensive', 'diff'=>'advanced'],
-  'projects/docker-hardening.php'          => ['cat'=>'defensive',  'diff'=>'intermediate'],
-  'projects/shodan.php'                    => ['cat'=>'network',    'diff'=>'basic'],
+  'projects/privilege-escalation-linux.php' => ['cat'=>'offensive',  'diff'=>'advanced'],
+  'projects/docker-hardening.php'           => ['cat'=>'defensive',  'diff'=>'intermediate'],
+  'projects/shodan.php'                     => ['cat'=>'network',    'diff'=>'basic'],
 ];
 
 // Difficulty display labels
@@ -93,7 +93,8 @@ require __DIR__ . '/templates/header.php';
         : [''=>'All',  'basic'=>'Basic','intermediate'=>'Intermediate','advanced'=>'Advanced'];
       ?>
 
-      <div class="filter-bar" style="grid-column:1/-1;order:-1;">
+      <!-- Se ha eliminado el style en línea problemático de la filter-bar -->
+      <div class="filter-bar">
         <input type="search" class="filter-search" id="proj-search"
                placeholder="<?= $lang==='es' ? 'Buscar proyecto...' : 'Search project...' ?>">
         <div class="filter-sep"></div>
