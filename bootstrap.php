@@ -27,15 +27,15 @@ header('Strict-Transport-Security: max-age=31536000; includeSubDomains; preload'
 header('Referrer-Policy: strict-origin-when-cross-origin');
 // Disable browser features not needed by the site
 header('Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()');
-// Content Security Policy with nonce for inline scripts
+// Content Security Policy with nonce for inline scripts AND Google Analytics support
 header(
     "Content-Security-Policy: " .
     "default-src 'self'; " .
     "style-src 'self' https://fonts.googleapis.com; " .
     "font-src 'self' https://fonts.gstatic.com; " .
-    "script-src 'self' 'nonce-{$cspNonce}'; " .
+    "script-src 'self' 'nonce-{$cspNonce}' https://www.googletagmanager.com; " .
     "img-src 'self' data:; " .
-    "connect-src 'self' https://ipapi.co https://cloudflare-dns.com; " .
+    "connect-src 'self' https://ipapi.co https://cloudflare-dns.com https://www.google-analytics.com https://analytics.google.com; " .
     "frame-src 'none'; " .
     "object-src 'none'; " .
     "base-uri 'self'; " .

@@ -12,6 +12,15 @@
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/style.css?v=<?= time() ?>"></script>
 
   <link rel="icon" type="image/png" href="<?= BASE_URL ?>/assets/img/logo-cyberescudo.png">
+  <!-- Google tag (gtag.js) -->
+<script nonce="<?= e($cspNonce) ?>" async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script nonce="<?= e($cspNonce) ?>">
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-T1D83JWZV1');
+</script>
   <script>
     // Definimos las variables globales para que los archivos .js las entiendan
     window.LANG = '<?= $lang ?>';
