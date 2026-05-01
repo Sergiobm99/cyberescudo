@@ -31,7 +31,7 @@ header('Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
 header(
     "Content-Security-Policy: " .
     "default-src 'self'; " .
-    "style-src 'self' https://fonts.googleapis.com; " .
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://*.googletagmanager.com; " .
     "font-src 'self' https://fonts.gstatic.com; " .
     "script-src 'self' 'nonce-{$cspNonce}' https://*.googletagmanager.com; " .
     "img-src 'self' data: https://*.googletagmanager.com https://*.google-analytics.com; " .
