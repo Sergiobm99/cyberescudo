@@ -166,16 +166,24 @@ $filters = [
         : 'Interactive cheatsheet of the most important pentesting ports. Search by number, name or protocol. Includes attack vectors and enumeration commands.' ?></p>
     </div>
 
-    <!-- Search + filter -->
+   <!-- Search + filter + PDF Download -->
     <div class="port-controls">
       <div class="port-search-wrap">
         <input type="text" id="port-search" class="cyber-input m-bottom-0" placeholder="<?= $lang==='es'?'Buscar puerto, servicio, protocolo...':'Search port, service, protocol...' ?>">
       </div>
-      <div class="port-filter-wrap">
+      
+      <!-- Botón de Descarga PDF -->
+      <div>
+        <a href="<?= BASE_URL ?>/assets/pdf/cyberescudo-ports-cheatsheet.pdf" download target="_blank" class="cyber-btn-pdf">
+          📄 <?= $lang==='es'?'Descargar CheatSheet (PDF)':'Download CheatSheet (PDF)' ?>
+        </a>
+      </div>
+    </div>
+    
+    <div class="port-filter-wrap m-bottom-1">
         <?php foreach($filters as $f): ?>
         <button data-filter="<?= $f[0] ?>" class="port-filter-btn <?= $f[0]==='all'?'active':'' ?>"><?= $f[1] ?></button>
         <?php endforeach; ?>
-      </div>
     </div>
 
     <div id="port-count" class="port-count"></div>

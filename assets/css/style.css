@@ -1702,3 +1702,39 @@ nav ul li a, .submenu-toggle {
 }
 .term-link:hover { color: var(--white); border-bottom-color: var(--white); }
 .return-btn { margin-top: 1rem; }
+/* ─── BOTÓN DESCARGA PDF ─── */
+.cyber-btn-pdf {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(0, 255, 255, 0.1);
+    border: 1px solid var(--cyan);
+    color: var(--cyan);
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.6rem 1.2rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+    white-space: nowrap;
+}
+
+.cyber-btn-pdf:hover {
+    background: var(--cyan);
+    color: var(--bg); /* Usa el color oscuro de tu fondo */
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
+    transform: translateY(-2px);
+}
+
+.cyber-btn-pdf:active {
+    transform: translateY(0);
+}
+
+/* Ajuste de margen para la nueva disposición */
+.m-bottom-1 {
+    margin-bottom: 1.25rem;
+}
