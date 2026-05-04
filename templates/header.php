@@ -129,7 +129,8 @@
       <li>
         <a href="<?= BASE_URL ?>/index.php#donate" class="nav-support-btn">
             ♥ <?= $lang === 'es' ? 'Apóyame' : 'Support' ?>
-        </a>
+        </a></li>
+        <li>
         <a href="<?= BASE_URL ?>/tool-osint-report.php" class="nav-link <?= ($current_page === 'tool-osint-report.php') ? 'active' : '' ?>" style="color: var(--cyan); font-weight: bold; text-shadow: 0 0 8px rgba(0,255,255,0.4);">
     📄 <?= $lang==='es' ? 'Reporte OSINT' : 'OSINT Report' ?>
 </a>

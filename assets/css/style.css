@@ -84,34 +84,30 @@ a { text-decoration: none; color: inherit; }
 .card p    { color: var(--gray); font-size: .85rem; line-height: 1.6; }
 
 /* ─── Navbar ────────────────────────────────────────── */
-.navbar {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  background: rgba(10,14,20,.7);
-  transition: background .3s, border-color .3s, backdrop-filter .3s;
-}
-.navbar.scrolled {
-  background: rgba(10,14,20,.95);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(0,255,255,.1);
-}
 .nav-inner {
-  max-width: 72rem; margin: 0 auto;
+  max-width: 1500px; /* 👈 Antes era 72rem. Esto estira la barra de menú */
+  width: 95%; /* 👈 Asegura que ocupa casi toda la pantalla */
+  margin: 0 auto;
   padding: 0 1.5rem;
   height: 4rem;
   display: flex; align-items: center; gap: 2rem;
 }
+
 .logo {
   display: flex; align-items: center; gap: .5rem;
   font-weight: 700; font-size: 1.1rem; white-space: nowrap;
   flex-shrink: 0;
+  margin-right: auto; /* 👈 TRUCO DEL IMÁN: Empuja todo el menú a la derecha */
 }
+
 .logo svg { flex-shrink: 0; }
+
 .nav-links {
   display: flex; 
-  align-items: center; /* 👈 ESTA ES LA LÍNEA MÁGICA QUE FALTA */
+  align-items: center;
   list-style: none; 
   gap: 2rem; 
-  margin-left: auto;
+  margin-left: auto; /* 👈 Se asegura de quedarse pegado a la derecha */
 }
 .nav-links a {
   font-size: .875rem; color: var(--gray);
