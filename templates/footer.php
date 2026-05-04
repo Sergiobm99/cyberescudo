@@ -15,5 +15,23 @@
 </footer>
 
 <script src="<?= BASE_URL ?>/assets/js/main.js"></script>
+<script src="<?= BASE_URL ?>/assets/js/html2pdf.min.js"></script>
+<!-- MODAL DE DONACIÓN / DESCARGA -->
+<div id="donation-modal" class="cyber-modal hidden">
+    <div class="cyber-modal-content">
+        <h3 style="color: var(--cyan); margin-top: 0;">🛡️ Generar Reporte OSINT</h3>
+        <p style="color: var(--gray); font-size: 0.95rem; margin-bottom: 1rem;">
+            Generar y mantener esta herramienta consume recursos del servidor. <strong>CyberEscudo es 100% gratuito y sin publicidad.</strong>
+        </p>
+        <p style="color: var(--white); font-size: 0.95rem; margin-bottom: 1.5rem;">
+            Si este reporte te ayuda a proteger tu empresa o te ahorra tiempo de trabajo, ¿considerarías apoyarme para mantener el proyecto vivo?
+        </p>
+        <div class="modal-actions">
+            <!-- Cambia el href por el enlace real a tu página de Ko-fi, PayPal o donaciones -->
+            <a href="https://cyberescudo.com/donar" target="_blank" class="cyber-btn-donate">☕ Invitar a un café</a>
+            <button id="btn-download-free" class="cyber-btn-free">Descargar PDF gratis</button>
+        </div>
+    </div>
+</div>
 </body>
 </html>

@@ -1738,53 +1738,77 @@ nav ul li a, .submenu-toggle {
 .m-bottom-1 {
     margin-bottom: 1.25rem;
 }
-/* ─── NOTIFICACIONES TOAST ─── */
-.toast-container {
+/* ─── VENTANA MODAL (POP-UP) ─── */
+.cyber-modal {
     position: fixed;
-    bottom: 24px;
-    right: 24px;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.cyber-modal.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.cyber-modal-content {
+    background: rgba(10, 15, 20, 0.95);
+    border: 1px solid var(--cyan);
+    padding: 2rem;
+    border-radius: 8px;
+    max-width: 450px;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.15);
+    transform: translateY(0);
+    transition: transform 0.3s ease;
+}
+
+.cyber-modal.hidden .cyber-modal-content {
+    transform: translateY(-20px);
+}
+
+.modal-actions {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    z-index: 9999;
-    pointer-events: none; /* Para que los clics traspasen la zona si no hay toasts */
+    gap: 1rem;
 }
 
-.cyber-toast {
-    background: rgba(10, 15, 20, 0.95);
-    border-left: 4px solid var(--cyan);
-    border-top: 1px solid var(--border);
-    border-right: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    color: var(--white);
+.cyber-btn-donate {
+    background: var(--cyan);
+    color: #000;
+    padding: 0.8rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
     font-family: var(--mono);
-    font-size: 0.85rem;
-    padding: 14px 20px;
-    border-radius: 6px;
-    box-shadow: 0 10px 30px rgba(0, 255, 255, 0.1);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    backdrop-filter: blur(5px);
-    pointer-events: auto;
-    
-    /* Animación de entrada */
-    animation: toastSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    text-transform: uppercase;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+    transition: all 0.2s ease;
 }
 
-.cyber-toast.toast-hiding {
-    /* Animación de salida */
-    animation: toastFadeOut 0.4s forwards;
+.cyber-btn-donate:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 25px rgba(0, 255, 255, 0.6);
 }
 
-.toast-icon { font-size: 1.1rem; }
-
-@keyframes toastSlideIn {
-    from { transform: translateX(120%); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
+.cyber-btn-free {
+    background: transparent;
+    color: var(--gray);
+    border: 1px solid var(--border);
+    padding: 0.6rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: var(--mono);
+    transition: all 0.2s ease;
 }
 
-@keyframes toastFadeOut {
-    from { transform: translateX(0); opacity: 1; }
-    to { transform: translateX(120%); opacity: 0; }
+.cyber-btn-free:hover {
+    color: var(--white);
+    border-color: var(--gray);
 }

@@ -3244,4 +3244,56 @@ document.addEventListener('DOMContentLoaded', function() {
         updateRealTime();
     }
 });
+/* ─── SISTEMA DE EXPORTACIÓN A PDF Y DONACIONES ─── */
+document.addEventListener('DOMContentLoaded', () => {
+    // Busca el botón que dispara la acción (tienes que añadir id="btn-export-pdf" a tu botón en el HTML de la herramienta)
+    const btnExport = document.getElementById('btn-export-pdf');
+    const modal = document.getElementById('donation-modal');
+    const btnFree = document.getElementById('btn-download-free');
+    
+    // Este es el contenedor que se convertirá en PDF (ej. el div donde salen los resultados OSINT)
+    // Asegúrate de que el div de tus resultados tenga id="osint-results"
+    const contentToPrint = document.getElementById('osint-results'); 
+
+    if (btnExport && modal && btnFree && contentToPrint) {
+        
+        // 1. Al pulsar Exportar -> Mostramos el Modal
+        btnExport.addEventListener('click', (e) => {
+            e.preventDefault();
+            modal.classList.remove('hidden');
+        });
+
+        // 2. Al pulsar Descargar Gratis -> Ocultamos modal y generamos PDF
+        btnFree.addEventListener('click', () => {
+            modal.classList.add('hidden');
+            
+            // Usamos el Toast que creamos antes para avisar al usuario
+            if(typeof window.showToast === 'function') {
+                window.showToast('Generando reporte PDF...', 'success');
+            }
+
+            // Opciones del PDF (A4, márgenes, calidad fotográfica)
+            const opt = {
+                margin:       10,
+                filename:     'CyberEscudo-OSINT-Report.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#0a0f14' }, // Usa tu color oscuro de fondo
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            // Ejecuta la librería
+            html2pdf().set(opt).from(contentToPrint).save().then(() => {
+                if(typeof window.showToast === 'function') {
+                    window.showToast('PDF descargado con éxito', 'success');
+                }
+            });
+        });
+        
+        // Extra: Si hacen clic fuera de la cajita del modal, se cierra
+        modal.addEventListener('click', (e) => {
+            if(e.target === modal) modal.classList.add('hidden');
+        });
+    }
+});
+
 });
