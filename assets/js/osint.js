@@ -95,10 +95,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 if(dnsData.Answer && dnsData.Answer.length > 0) {
                     ipAddress = dnsData.Answer[0].data;
-                    const geoRes = await fetch(`https://ipapi.co/${ipAddress}/json/`);
+                    // Usamos ipwho.is que no bloquea localhost ni da problemas de CORS
+                    const geoRes = await fetch(`https://ipwho.is/${ipAddress}`);
                     const geoData = await geoRes.json();
-                    if(!geoData.error && geoList) {
-                        geoList.innerHTML = `<li><strong>IP:</strong> ${ipAddress}</li><li><strong>${t.country}:</strong> ${geoData.country_name}</li><li><strong>ISP:</strong> ${geoData.org}</li>`;
+                    if(geoData.success && geoList) {
+                        geoList.innerHTML = `<li><strong>IP:</strong> ${ipAddress}</li><li><strong>${t.country}:</strong> ${geoData.country}</li><li><strong>ISP:</strong> ${geoData.connection.isp}</li>`;
                     } else if (geoList) { geoList.innerHTML = `<li><strong>IP:</strong> ${ipAddress}</li>`; }
 
                     // EXTRA: SHODAN InternetDB
