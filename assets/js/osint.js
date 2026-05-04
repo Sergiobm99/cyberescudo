@@ -1,6 +1,50 @@
-/* ─── SCRIPT EXCLUSIVO OSINT (V7: 12 MÓDULOS - EDICIÓN PRO) ─── */
+/* ─── SCRIPT EXCLUSIVO OSINT (BILINGÜE) ─── */
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("🚀 SCRIPT OSINT: Iniciado versión PRO (12 Módulos)");
+    
+    // Detectamos el idioma leyendo la clase del body (es / en)
+    const isEn = document.body.classList.contains('en');
+    
+    // Diccionario de traducciones
+    const t = {
+        target: isEn ? 'Target: ' : 'Objetivo: ',
+        analyzing: isEn ? '<span class="cyber-spinner"></span>Analyzing...' : '<span class="cyber-spinner"></span>Analizando...',
+        country: isEn ? 'Country' : 'País',
+        noA: isEn ? 'No public A records found.' : 'No se encontraron registros A públicos.',
+        blocked: isEn ? 'Blocked by Firewall (CSP)' : 'Bloqueado por Firewall (CSP)',
+        reg: isEn ? 'Registrar' : 'Registrador',
+        status: isEn ? 'Status' : 'Estado',
+        registered: isEn ? 'Registered' : 'Registrado',
+        priv: isEn ? 'Private or unavailable.' : 'Privado o no disponible.',
+        nomx: isEn ? 'No mail services found.' : 'No hay servicios de correo.',
+        spfFound: isEn ? 'Found' : 'Encontrado',
+        spfRisk: isEn ? 'Phishing Risk' : 'Riesgo de Phishing',
+        nons: isEn ? 'No NS records.' : 'Sin registros NS.',
+        archived: isEn ? 'Archived' : 'Archivado',
+        capture: isEn ? 'Capture' : 'Captura',
+        noArchive: isEn ? 'No records in Wayback Machine.' : 'Sin registros en Wayback Machine.',
+        yes: isEn ? 'Yes' : 'Sí',
+        dmarcOk: isEn ? 'Configured' : 'Configurado',
+        dmarcFail: isEn ? 'No DMARC policy detected' : 'No se detecta política DMARC',
+        admin: isEn ? 'Admin' : 'Admin',
+        primary: isEn ? 'Primary' : 'Primario',
+        nosoa: isEn ? 'No SOA record.' : 'Sin registro SOA.',
+        caaOk: isEn ? 'Restricted' : 'Restringido',
+        caaOkSub: isEn ? 'Authorized issuers found.' : 'Emisores autorizados encontrados.',
+        caaFail: isEn ? 'Open (Anyone can issue SSL)' : 'Libre (Cualquiera puede emitir SSL)',
+        v6Ok: isEn ? 'Supported' : 'Soportado',
+        v6Fail: isEn ? 'Only IPv4 supported' : 'Solo IPv4 soportado',
+        portsFound: isEn ? 'Detected {n} ports:' : 'Detectados {n} puertos:',
+        noPorts: isEn ? 'No open ports recorded.' : 'No constan puertos abiertos.',
+        reqIp: isEn ? 'Requires IP for analysis.' : 'Requiere IP para análisis.',
+        vulnDanger: isEn ? 'Danger!' : '¡Peligro!',
+        vulnFound: isEn ? '{n} public CVEs:' : '{n} CVEs públicos:',
+        noVulns: isEn ? 'No public vulnerabilities in DB.' : 'Ninguna vulnerabilidad pública en BD.',
+        shodanErr: isEn ? 'Error querying Shodan.' : 'Error al consultar Shodan.',
+        toastSuccess: isEn ? 'OSINT Analysis Completed' : 'Análisis OSINT Finalizado',
+        toastError: isEn ? 'Scan Error' : 'Error en el escaneo',
+        toastPdf: isEn ? 'Generating PDF report...' : 'Generando reporte PDF...',
+        toastPdfOk: isEn ? 'PDF downloaded successfully' : 'PDF descargado con éxito'
+    };
 
     const btnRunOsint = document.getElementById('btn-run-osint');
     const targetInput = document.getElementById('osint-target');
@@ -8,7 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const exportContainer = document.getElementById('export-container');
     const reportDomain = document.getElementById('report-domain');
     
-    // Las 12 cajas
     const geoList = document.getElementById('osint-geo');
     const whoisList = document.getElementById('osint-whois');
     const mxList = document.getElementById('osint-mx');
@@ -33,17 +76,16 @@ document.addEventListener('DOMContentLoaded', () => {
             domain = domain.replace(/^https?:\/\//,'').replace(/\/$/,'');
 
             if(!domain) {
-                if(typeof window.showToast === 'function') window.showToast('Introduce un dominio válido', 'error');
+                if(typeof window.showToast === 'function') window.showToast(t.toastError, 'error');
                 return;
             }
 
             if(resultsDiv) resultsDiv.style.display = 'block';
             if(exportContainer) exportContainer.style.display = 'block';
-            if(reportDomain) reportDomain.textContent = 'Objetivo: ' + domain;
+            if(reportDomain) reportDomain.textContent = t.target + domain;
             
-            // Textos de carga
             const loadingBoxes = [geoList, whoisList, mxList, txtList, nsList, archList, portsList, vulnsList, dmarcList, soaList, caaList, ipv6List];
-            loadingBoxes.forEach(box => { if(box) box.innerHTML = '<li>Analizando...</li>'; });
+            loadingBoxes.forEach(box => { if(box) box.innerHTML = `<li>${t.analyzing}</li>`; });
 
             try {
                 // 1. IP y GEO
@@ -56,54 +98,52 @@ document.addEventListener('DOMContentLoaded', () => {
                     const geoRes = await fetch(`https://ipapi.co/${ipAddress}/json/`);
                     const geoData = await geoRes.json();
                     if(!geoData.error && geoList) {
-                        geoList.innerHTML = `<li><strong>IP:</strong> ${ipAddress}</li><li><strong>País:</strong> ${geoData.country_name}</li><li><strong>ISP:</strong> ${geoData.org}</li>`;
+                        geoList.innerHTML = `<li><strong>IP:</strong> ${ipAddress}</li><li><strong>${t.country}:</strong> ${geoData.country_name}</li><li><strong>ISP:</strong> ${geoData.org}</li>`;
                     } else if (geoList) { geoList.innerHTML = `<li><strong>IP:</strong> ${ipAddress}</li>`; }
 
-                    // EXTRA: SHODAN InternetDB (Puertos y Vulns) basado en la IP
+                    // EXTRA: SHODAN InternetDB
                     try {
                         const shodanRes = await fetch(`https://internetdb.shodan.io/${ipAddress}`);
                         if(shodanRes.ok) {
                             const shodanData = await shodanRes.json();
-                            // Puertos
                             if(shodanData.ports && shodanData.ports.length > 0 && portsList) {
-                                let portsHtml = `<li>Detectados ${shodanData.ports.length} puertos:</li>`;
+                                let portsHtml = `<li>${t.portsFound.replace('{n}', shodanData.ports.length)}</li>`;
                                 portsHtml += `<li style="color:#00ffff; font-size:0.85rem;">[ ${shodanData.ports.join(', ')} ]</li>`;
                                 portsList.innerHTML = portsHtml;
-                            } else if (portsList) { portsList.innerHTML = '<li>No constan puertos abiertos.</li>'; }
+                            } else if (portsList) { portsList.innerHTML = `<li>${t.noPorts}</li>`; }
                             
-                            // Vulnerabilidades
                             if(shodanData.vulns && shodanData.vulns.length > 0 && vulnsList) {
-                                let vulnsHtml = `<li><strong style="color:#ff4444;">¡Peligro!</strong> ${shodanData.vulns.length} CVEs públicos:</li>`;
-                                let showVulns = shodanData.vulns.slice(0, 3).join(', '); // Mostramos 3 max
+                                let vulnsHtml = `<li><strong style="color:#ff4444;">${t.vulnDanger}</strong> ${t.vulnFound.replace('{n}', shodanData.vulns.length)}</li>`;
+                                let showVulns = shodanData.vulns.slice(0, 3).join(', ');
                                 vulnsHtml += `<li style="color:#ff4444; font-size:0.85rem;">${showVulns}${shodanData.vulns.length > 3 ? '...' : ''}</li>`;
                                 vulnsList.innerHTML = vulnsHtml;
-                            } else if (vulnsList) { vulnsList.innerHTML = '<li style="color:#00ff00;">Ninguna vulnerabilidad pública en BD.</li>'; }
+                            } else if (vulnsList) { vulnsList.innerHTML = `<li style="color:#00ff00;">${t.noVulns}</li>`; }
                         } else {
-                            if(portsList) portsList.innerHTML = '<li>Sin registros en Shodan.</li>';
-                            if(vulnsList) vulnsList.innerHTML = '<li>Sin registros en Shodan.</li>';
+                            if(portsList) portsList.innerHTML = `<li>${t.shodanErr}</li>`;
+                            if(vulnsList) vulnsList.innerHTML = `<li>${t.shodanErr}</li>`;
                         }
-                   } catch(e) { 
-                        if(portsList) portsList.innerHTML = '<li style="color:#ff4444;">Bloqueado por Firewall (CSP)</li>'; 
-                        if(vulnsList) vulnsList.innerHTML = '<li style="color:#ff4444;">Bloqueado por Firewall (CSP)</li>'; 
+                    } catch(e) { 
+                        if(portsList) portsList.innerHTML = `<li style="color:#ff4444;">${t.blocked}</li>`; 
+                        if(vulnsList) vulnsList.innerHTML = `<li style="color:#ff4444;">${t.blocked}</li>`; 
                     }
 
                 } else { 
-                    if(geoList) geoList.innerHTML = '<li>No se encontraron registros A públicos.</li>'; 
-                    if(portsList) portsList.innerHTML = '<li>Requiere IP para análisis.</li>';
-                    if(vulnsList) vulnsList.innerHTML = '<li>Requiere IP para análisis.</li>';
+                    if(geoList) geoList.innerHTML = `<li>${t.noA}</li>`; 
+                    if(portsList) portsList.innerHTML = `<li>${t.reqIp}</li>`;
+                    if(vulnsList) vulnsList.innerHTML = `<li>${t.reqIp}</li>`;
                 }
 
-                // Las demás consultas DNS en paralelo para que sea súper rápido
+                // Resto de consultas DNS
                 const reqs = [
-                    fetch(`https://networkcalc.com/api/dns/whois/${domain}`), // WHOIS
-                    fetch(`https://cloudflare-dns.com/dns-query?name=${domain}&type=MX`, { headers: { 'Accept': 'application/dns-json' } }), // MX
-                    fetch(`https://cloudflare-dns.com/dns-query?name=${domain}&type=TXT`, { headers: { 'Accept': 'application/dns-json' } }), // TXT
-                    fetch(`https://cloudflare-dns.com/dns-query?name=${domain}&type=NS`, { headers: { 'Accept': 'application/dns-json' } }), // NS
-                    fetch(`https://archive.org/wayback/available?url=${domain}`), // ARCHIVE
-                    fetch(`https://cloudflare-dns.com/dns-query?name=_dmarc.${domain}&type=TXT`, { headers: { 'Accept': 'application/dns-json' } }), // DMARC
-                    fetch(`https://cloudflare-dns.com/dns-query?name=${domain}&type=SOA`, { headers: { 'Accept': 'application/dns-json' } }), // SOA
-                    fetch(`https://cloudflare-dns.com/dns-query?name=${domain}&type=CAA`, { headers: { 'Accept': 'application/dns-json' } }), // CAA
-                    fetch(`https://cloudflare-dns.com/dns-query?name=${domain}&type=AAAA`, { headers: { 'Accept': 'application/dns-json' } }) // AAAA
+                    fetch(`https://networkcalc.com/api/dns/whois/${domain}`), 
+                    fetch(`https://cloudflare-dns.com/dns-query?name=${domain}&type=MX`, { headers: { 'Accept': 'application/dns-json' } }), 
+                    fetch(`https://cloudflare-dns.com/dns-query?name=${domain}&type=TXT`, { headers: { 'Accept': 'application/dns-json' } }), 
+                    fetch(`https://cloudflare-dns.com/dns-query?name=${domain}&type=NS`, { headers: { 'Accept': 'application/dns-json' } }), 
+                    fetch(`https://archive.org/wayback/available?url=${domain}`), 
+                    fetch(`https://cloudflare-dns.com/dns-query?name=_dmarc.${domain}&type=TXT`, { headers: { 'Accept': 'application/dns-json' } }), 
+                    fetch(`https://cloudflare-dns.com/dns-query?name=${domain}&type=SOA`, { headers: { 'Accept': 'application/dns-json' } }), 
+                    fetch(`https://cloudflare-dns.com/dns-query?name=${domain}&type=CAA`, { headers: { 'Accept': 'application/dns-json' } }), 
+                    fetch(`https://cloudflare-dns.com/dns-query?name=${domain}&type=AAAA`, { headers: { 'Accept': 'application/dns-json' } }) 
                 ];
 
                 const results = await Promise.allSettled(reqs);
@@ -113,11 +153,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     if(results[0].status === 'fulfilled') {
                         const wData = await results[0].value.json();
                         if(wData.status === 'OK' && wData.whois && wData.whois.registrar && whoisList) {
-                            whoisList.innerHTML = `<li><strong>Registrador:</strong> ${wData.whois.registrar}</li><li><strong>Estado:</strong> Registrado</li>`;
-                        } else if (whoisList) { whoisList.innerHTML = '<li>Privado o no disponible.</li>'; }
-                    } else if (whoisList) {
-                        whoisList.innerHTML = '<li style="color:#ff4444;">Bloqueado por Firewall (CSP)</li>';
-                    }
+                            whoisList.innerHTML = `<li><strong>${t.reg}:</strong> ${wData.whois.registrar}</li><li><strong>${t.status}:</strong> ${t.registered}</li>`;
+                        } else if (whoisList) { whoisList.innerHTML = `<li>${t.priv}</li>`; }
+                    } else if (whoisList) { whoisList.innerHTML = `<li style="color:#ff4444;">${t.blocked}</li>`; }
                 } catch(e) {}
 
                 // 3. MX
@@ -126,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const mxData = await results[1].value.json();
                         if(mxData.Answer && mxList) {
                             mxList.innerHTML = mxData.Answer.slice(0,2).map(r => `<li>🎯 ${r.data}</li>`).join('');
-                        } else if (mxList) { mxList.innerHTML = '<li>No hay servicios de correo.</li>'; }
+                        } else if (mxList) { mxList.innerHTML = `<li>${t.nomx}</li>`; }
                     }
                 } catch(e) {}
 
@@ -137,10 +175,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         let html = '';
                         if(txtData.Answer) {
                             txtData.Answer.forEach(r => {
-                                if(r.data.includes('v=spf1')) html += `<li style="color:#00ff00;">✅ <strong>SPF:</strong> Encontrado</li>`;
+                                if(r.data.includes('v=spf1')) html += `<li style="color:#00ff00;">✅ <strong>SPF:</strong> ${t.spfFound}</li>`;
                             });
                         }
-                        if(txtList) txtList.innerHTML = html || '<li style="color:#ff4444;">❌ <strong>SPF:</strong> Riesgo de Phishing</li>';
+                        if(txtList) txtList.innerHTML = html || `<li style="color:#ff4444;">❌ <strong>SPF:</strong> ${t.spfRisk}</li>`;
                     }
                 } catch(e) {}
 
@@ -150,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const nsData = await results[3].value.json();
                         if(nsData.Answer && nsList) {
                             nsList.innerHTML = nsData.Answer.slice(0,2).map(r => `<li>🔗 ${r.data}</li>`).join('');
-                        } else if (nsList) { nsList.innerHTML = '<li>Sin registros NS.</li>'; }
+                        } else if (nsList) { nsList.innerHTML = `<li>${t.nons}</li>`; }
                     }
                 } catch(e) {}
 
@@ -160,11 +198,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         const arData = await results[4].value.json();
                         if(arData.archived_snapshots?.closest && archList) {
                             let ts = arData.archived_snapshots.closest.timestamp;
-                            archList.innerHTML = `<li><strong>Archivado:</strong> Sí</li><li><strong>Captura:</strong> ${ts.substring(6,8)}/${ts.substring(4,6)}/${ts.substring(0,4)}</li>`;
-                        } else if (archList) { archList.innerHTML = '<li>Sin registros en Wayback Machine.</li>'; }
-                    } else if (archList) {
-                        archList.innerHTML = '<li style="color:#ff4444;">Bloqueado por Firewall (CSP)</li>';
-                    }
+                            archList.innerHTML = `<li><strong>${t.archived}:</strong> ${t.yes}</li><li><strong>${t.capture}:</strong> ${ts.substring(6,8)}/${ts.substring(4,6)}/${ts.substring(0,4)}</li>`;
+                        } else if (archList) { archList.innerHTML = `<li>${t.noArchive}</li>`; }
+                    } else if (archList) { archList.innerHTML = `<li style="color:#ff4444;">${t.blocked}</li>`; }
                 } catch(e) {}
 
                 // 7. DMARC
@@ -172,8 +208,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     if(results[5].status === 'fulfilled') {
                         const dmData = await results[5].value.json();
                         if(dmData.Answer && dmarcList) {
-                            dmarcList.innerHTML = `<li style="color:#00ff00;">✅ Configurado:</li><li style="font-size:0.8rem; color:#aaaaaa;">${dmData.Answer[0].data}</li>`;
-                        } else if (dmarcList) { dmarcList.innerHTML = '<li style="color:#ff4444;">❌ No se detecta política DMARC</li>'; }
+                            dmarcList.innerHTML = `<li style="color:#00ff00;">✅ ${t.dmarcOk}:</li><li style="font-size:0.8rem; color:#aaaaaa;">${dmData.Answer[0].data}</li>`;
+                        } else if (dmarcList) { dmarcList.innerHTML = `<li style="color:#ff4444;">❌ ${t.dmarcFail}</li>`; }
                     }
                 } catch(e) {}
 
@@ -183,8 +219,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         const soaData = await results[6].value.json();
                         if(soaData.Answer && soaList) {
                             let parts = soaData.Answer[0].data.split(' ');
-                            soaList.innerHTML = `<li><strong>Admin:</strong> ${parts[1].replace('.', '@')}</li><li><strong>Primario:</strong> ${parts[0]}</li>`;
-                        } else if (soaList) { soaList.innerHTML = '<li>Sin registro SOA.</li>'; }
+                            soaList.innerHTML = `<li><strong>${t.admin}:</strong> ${parts[1].replace('.', '@')}</li><li><strong>${t.primary}:</strong> ${parts[0]}</li>`;
+                        } else if (soaList) { soaList.innerHTML = `<li>${t.nosoa}</li>`; }
                     }
                 } catch(e) {}
 
@@ -193,8 +229,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     if(results[7].status === 'fulfilled') {
                         const caaData = await results[7].value.json();
                         if(caaData.Answer && caaList) {
-                            caaList.innerHTML = `<li style="color:#00ff00;">✅ Restringido</li><li style="font-size:0.8rem;">Emisores autorizados encontrados.</li>`;
-                        } else if (caaList) { caaList.innerHTML = '<li style="color:#ff4444;">⚠️ Libre (Cualquiera puede emitir SSL)</li>'; }
+                            caaList.innerHTML = `<li style="color:#00ff00;">✅ ${t.caaOk}</li><li style="font-size:0.8rem;">${t.caaOkSub}</li>`;
+                        } else if (caaList) { caaList.innerHTML = `<li style="color:#ff4444;">⚠️ ${t.caaFail}</li>`; }
                     }
                 } catch(e) {}
 
@@ -203,34 +239,33 @@ document.addEventListener('DOMContentLoaded', () => {
                     if(results[8].status === 'fulfilled') {
                         const v6Data = await results[8].value.json();
                         if(v6Data.Answer && ipv6List) {
-                            ipv6List.innerHTML = `<li>✅ Soportado</li><li style="font-size:0.8rem; font-family:monospace;">${v6Data.Answer[0].data}</li>`;
-                        } else if (ipv6List) { ipv6List.innerHTML = '<li>⚠️ Solo IPv4 soportado</li>'; }
+                            ipv6List.innerHTML = `<li>✅ ${t.v6Ok}</li><li style="font-size:0.8rem; font-family:monospace;">${v6Data.Answer[0].data}</li>`;
+                        } else if (ipv6List) { ipv6List.innerHTML = `<li>⚠️ ${t.v6Fail}</li>`; }
                     }
                 } catch(e) {}
 
-                if(typeof window.showToast === 'function') window.showToast('Análisis OSINT Finalizado', 'success');
+                if(typeof window.showToast === 'function') window.showToast(t.toastSuccess, 'success');
 
             } catch (error) {
                 console.error("Error global:", error);
-                if(typeof window.showToast === 'function') window.showToast('Error en el escaneo', 'error');
+                if(typeof window.showToast === 'function') window.showToast(t.toastError, 'error');
             }
         });
     }
 
-    /* --- LÓGICA DEL PDF (Soporte Multipágina Automático) --- */
+    /* --- LÓGICA DEL PDF --- */
     if (btnExport && modal && btnFree && resultsDiv) {
         btnExport.addEventListener('click', (e) => { e.preventDefault(); modal.classList.remove('hidden'); });
 
         btnFree.addEventListener('click', () => {
             modal.classList.add('hidden');
-            if(typeof window.showToast === 'function') window.showToast('Generando reporte PDF...', 'success');
+            if(typeof window.showToast === 'function') window.showToast(t.toastPdf, 'success');
 
             window.scrollTo(0, 0);
 
-            // Se añade el parámetro pagebreak para que no corte cajas
             const opt = {
                 margin:       [0, 0, 0, 0], 
-                filename:     'Reporte-Inteligencia-CyberEscudo.pdf',
+                filename:     isEn ? 'CyberEscudo-Intelligence-Report.pdf' : 'Reporte-Inteligencia-CyberEscudo.pdf',
                 image:        { type: 'jpeg', quality: 0.98 },
                 html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#0a0f14' }, 
                 jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
@@ -240,7 +275,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (typeof html2pdf !== 'undefined') {
                 setTimeout(() => {
                     html2pdf().set(opt).from(resultsDiv).save().then(() => {
-                        if(typeof window.showToast === 'function') window.showToast('PDF descargado con éxito', 'success');
+                        if(typeof window.showToast === 'function') window.showToast(t.toastPdfOk, 'success');
                     });
                 }, 400);
             }
