@@ -28,6 +28,7 @@ header('Referrer-Policy: strict-origin-when-cross-origin');
 // Disable browser features not needed by the site
 header('Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()');
 // Content Security Policy with nonce for inline scripts AND Google Analytics support
+// Content Security Policy with nonce for inline scripts AND Google Analytics support
 header(
     "Content-Security-Policy: " .
     "default-src 'self'; " .
@@ -35,7 +36,7 @@ header(
     "font-src 'self' https://fonts.gstatic.com; " .
     "script-src 'self' 'nonce-{$cspNonce}' https://*.googletagmanager.com; " .
     "img-src 'self' data: https://*.googletagmanager.com https://*.google-analytics.com; " .
-    "connect-src 'self' https://ipapi.co https://cloudflare-dns.com https://internetdb.shodan.io https://networkcalc.com https://archive.org https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; " .
+    "connect-src 'self' https://ipapi.co https://cloudflare-dns.com https://internetdb.shodan.io https://networkcalc.com https://archive.org https://*.archive.org https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; " .
     "frame-src 'none'; " .
     "object-src 'none'; " .
     "base-uri 'self'; " .

@@ -204,7 +204,11 @@
         </li>
 
         <li><a href="<?= BASE_URL ?>/index.php#about"><?= e($t['nav']['about']) ?></a></li>
-        
+        <li>
+    <a href="/tool-osint-report.php" style="color: var(--cyan); font-weight: 600;">
+        📄 Reporte OSINT
+    </a>
+</li>
         <li class="nav-donate-item">
             <a href="<?= BASE_URL ?>/index.php#donate" class="nav-support-btn">
                 ♥ <?= $lang === 'es' ? 'Apóyame' : 'Support' ?> 
