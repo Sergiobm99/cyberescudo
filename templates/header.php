@@ -209,7 +209,11 @@
                 📄 <?= $lang === 'es' ? 'Reporte OSINT' : 'Osint Report' ?>
             </a>
         </li>
-       
+        <li class="nav-donate-item">
+            <a href="<?= BASE_URL ?>/index.php#donate" class="nav-support-btn">
+                ♥ <?= $lang === 'es' ? 'Apóyame' : 'Support' ?> 
+            </a>
+        </li>
     </ul>
   </div>
 </nav>
