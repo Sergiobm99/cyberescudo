@@ -206,7 +206,7 @@
         <li><a href="<?= BASE_URL ?>/index.php#about"><?= e($t['nav']['about']) ?></a></li>
         <li class="nav-osint-item">
             <a href="<?= BASE_URL ?>/tool-osint-report.php" style="color: var(--cyan); font-weight: 600;">
-                📄 Reporte OSINT
+                📄 <?= $lang === 'es' ? 'Reporte OSINT' : 'Osint Report' ?>
             </a>
         </li>
         <li class="nav-donate-item">
