@@ -322,23 +322,29 @@ function processCommand(cmd) {
             if(terminal) terminal.classList.add('hidden');
             break;
         case 'submit':
-                const flagIngresada = args[1];
-                if (!flagIngresada) {
-                    printLine("Uso: submit FLAG{...}", "cmd-error");
-                } else if (flagIngresada === 'FLAG{sql_bypass_master}') {
-                    printLine("🏆 ¡ENHORABUENA! Has resuelto el CTF de inyección SQL.", "cmd-echo");
-                    printLine("Otorgando rol de [ SQL_NINJA ] a tu sesión actual...");
-                    document.body.style.border = "5px solid #00ff00"; // Efecto visual global
-                    setTimeout(() => printLine("¡Sigue practicando en la sección de manuales!"), 1500);
-                } else if (flagIngresada === 'FLAG{default_creds_hunter}') {
-                    printLine("🏅 Bandera válida. Las credenciales por defecto son el pan de cada día.", "cmd-echo");
-                } else {
-                    printLine("❌ Bandera incorrecta o no reconocida.", "cmd-error");
-                }
-                break;
+            const flagIngresada = args[1];
+            if (!flagIngresada) {
+                printLine("Uso: submit FLAG{...}", "cmd-error");
+            } else if (flagIngresada === 'FLAG{sql_bypass_master}') {
+                printLine("🏆 ¡ENHORABUENA! Has resuelto el CTF de inyección SQL.", "cmd-echo");
+                printLine("Otorgando rol de [ SQL_NINJA ] a tu sesión actual...");
+                document.body.style.border = "5px solid #00ff00"; // Efecto visual global
+                setTimeout(() => printLine("¡Sigue practicando en la sección de manuales!"), 1500);
+            } else if (flagIngresada === 'FLAG{default_creds_hunter}') {
+                printLine("🏅 Bandera válida. Las credenciales por defecto son el pan de cada día.", "cmd-echo");
+            } else if (flagIngresada === 'FLAG{cmd_inj_explorer}') {
+                printLine("🏅 Has explotado tu primera Inyección de Comandos.", "cmd-echo");
+            } else if (flagIngresada === 'FLAG{rce_root_master}') {
+                printLine("🏆 ¡BRUTAL! Ejecución Remota de Código (RCE) conseguida.", "cmd-echo");
+                printLine("Otorgando rol de [ ROOT_PIMPER ] a tu sesión...");
+                document.body.style.border = "5px solid #ff2a2a"; // Borde Rojo agresivo
+            } else {
+                printLine("❌ Bandera incorrecta o no reconocida.", "cmd-error");
+            }
+            break;
 
-            default:
-                printLine(`bash: ${escapeHTML(mainCmd)}: comando no encontrado`, 'cmd-error');
-        }
+        default:
+            printLine(`bash: ${escapeHTML(mainCmd)}: comando no encontrado`, 'cmd-error');
+    }
 }
 })();
