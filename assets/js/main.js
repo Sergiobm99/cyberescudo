@@ -338,6 +338,12 @@ function processCommand(cmd) {
                 printLine("🏆 ¡BRUTAL! Ejecución Remota de Código (RCE) conseguida.", "cmd-echo");
                 printLine("Otorgando rol de [ ROOT_PIMPER ] a tu sesión...");
                 document.body.style.border = "5px solid #ff2a2a"; // Borde Rojo agresivo
+                } else if (flagIngresada === 'FLAG{xss_alert_master}') {
+                printLine("🏅 Ejecución de JavaScript simulada con éxito. Has vulnerado el frontend.", "cmd-echo");
+            } else if (flagIngresada === 'FLAG{xss_cookie_thief}') {
+                printLine("🏆 ¡BRUTAL! Has conseguido robar las cookies de sesión mediante XSS.", "cmd-echo");
+                printLine("Otorgando rol de [ SESSION_HIJACKER ] a tu sesión...");
+                document.body.style.border = "5px dashed #00ffff"; // Borde Cyberpunk
             } else {
                 printLine("❌ Bandera incorrecta o no reconocida.", "cmd-error");
             }
