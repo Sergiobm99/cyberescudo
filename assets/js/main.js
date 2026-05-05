@@ -358,6 +358,9 @@ function processCommand(cmd) {
                 } else if (flagIngresada === 'FLAG{ir_containment_expert}') {
                 printLine("🛡️ ¡Excelente Triage! Has contenido la brecha de seguridad con éxito.", "cmd-echo");
                 printLine("Asignando rol de [ SOC_ANALYST_L2 ] a tu expediente...");
+                } else if (flagIngresada === 'FLAG{secure_code_reviewer}') {
+                printLine("🏅 ¡Aprobado! Sabes aplicar el parche adecuado a cada vulnerabilidad web.", "cmd-echo");
+                printLine("Rol actualizado a [ DEVSECOPS_ENGINEER ]...");
             } else {
                 printLine("❌ Bandera incorrecta o no reconocida.", "cmd-error");
             }
