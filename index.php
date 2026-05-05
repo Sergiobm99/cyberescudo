@@ -12,7 +12,7 @@ $projectMeta = [
   'projects/inyeccion-comandos-rfi-lfi.php' => ['cat'=>'offensive',  'diff'=>'intermediate'],
   'projects/sqlmap.php'                     => ['cat'=>'offensive',  'diff'=>'intermediate'],
   'projects/xss-practica.php'               => ['cat'=>'offensive',  'diff'=>'intermediate'],
-  'projects/sql-injection-manual.php'       => ['cat'=>'offensive',  'diff'=>'intermediate'],
+  'projects/sql-injection-manual.php'       => ['cat'=>'offensive',  'diff'=>'intermediate' ],
   'projects/android-reversing.php'          => ['cat'=>'android',    'diff'=>'advanced'],
   'projects/diva-auditoria.php'             => ['cat'=>'android',    'diff'=>'intermediate'],
   'projects/insecurebank-analisis.php'      => ['cat'=>'android',    'diff'=>'intermediate'],
@@ -134,8 +134,25 @@ require __DIR__ . '/templates/header.php';
          data-diff="<?= e($meta['diff']) ?>"
          data-search="<?= e(strtolower($item['title'] . ' ' . $item['desc'])) ?>">
         <div class="card-icon"><?= icon($item['icon']) ?></div>
-        <?php if ($dText): ?><span class="diff-badge <?= e($meta['diff']) ?>"><?= e($dText) ?></span><?php endif; ?>
-        <h3><?= e($item['title']) ?></h3>
+        
+        <!-- Contenedor flex para que las etiquetas queden alineadas -->
+        <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 0.8rem;">
+            
+            <!-- 1. Etiqueta de dificultad normal (Básico, Intermedio...) -->
+            <?php if ($dText): ?>
+                <span class="diff-badge <?= e($meta['diff']) ?>" style="margin: 0;"><?= e($dText) ?></span>
+            <?php endif; ?>
+            
+            <!-- 2. NUEVO: Insignia del CTF (Solo para el manual de SQLi) -->
+            <?php if ($item['link'] === 'projects/sql-injection-manual.php'): ?>
+                <span style="background: rgba(0, 255, 255, 0.1); color: var(--cyan); border: 1px solid var(--cyan); padding: 2px 8px; border-radius: 4px; font-size: 0.65rem; font-family: var(--mono); font-weight: bold; letter-spacing: 1px; display: inline-flex; align-items: center; gap: 5px; animation: pulse 2s infinite;">
+                    <span style="font-size: 0.8rem;">🎯</span> <?= $lang === 'es' ? 'RETO CTF INCLUIDO' : 'CTF INSIDE' ?>
+                </span>
+            <?php endif; ?>
+            
+        </div>
+
+        <h3 style="margin-top: 0;"><?= e($item['title']) ?></h3>
         <p><?= e($item['desc']) ?></p>
       </a>
       <?php endforeach; ?>
