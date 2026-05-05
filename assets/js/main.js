@@ -361,6 +361,9 @@ function processCommand(cmd) {
                 } else if (flagIngresada === 'FLAG{secure_code_reviewer}') {
                 printLine("🏅 ¡Aprobado! Sabes aplicar el parche adecuado a cada vulnerabilidad web.", "cmd-echo");
                 printLine("Rol actualizado a [ DEVSECOPS_ENGINEER ]...");
+                } else if (flagIngresada === 'FLAG{nmap_recon_analyst}') {
+                printLine("🏅 ¡Aprobado! Sabes leer entre líneas y encontrar vulnerabilidades ocultas.", "cmd-echo");
+                printLine("Rol actualizado a [ RECON_SPECIALIST ]...");
             } else {
                 printLine("❌ Bandera incorrecta o no reconocida.", "cmd-error");
             }
