@@ -215,35 +215,52 @@
     });
   }
   /* ─── LÓGICA DE LA TERMINAL EASTER EGG ─── */
-document.addEventListener('DOMContentLoaded', () => {
-    const terminal = document.getElementById('cyber-terminal');
-    const termInput = document.getElementById('term-input');
-    const termHistory = document.getElementById('term-history');
-    const termClose = document.getElementById('term-close');
-const btnOpenTerm = document.getElementById('btn-open-terminal');
-    if (btnOpenTerm) {
-        btnOpenTerm.addEventListener('click', () => {
-            terminal.classList.toggle('hidden');
-            if (!terminal.classList.contains('hidden')) termInput.focus();
-        });
-    }
-    if(!terminal) return;
+/* ─── CEREBRO DE LA TERMINAL EASTER EGG (MODO DIOS) ─── */
+console.log("🚀 Sistema de terminal iniciado.");
 
-    // Abrir/Cerrar la terminal al pulsar la tecla ` o ~
-    document.addEventListener('keydown', (e) => {
-        if (e.key === '`' || e.key === '~' || e.key === 'º') {
-            e.preventDefault(); // Evita que se escriba la tilde en la web
+// Como el script se carga al final del body, no necesitamos DOMContentLoaded
+const terminal = document.getElementById('cyber-terminal');
+const termInput = document.getElementById('term-input');
+const termHistory = document.getElementById('term-history');
+
+if(terminal) console.log("✅ HTML de la terminal detectado en la página.");
+
+// 1. ESCUCHAR CLICS EN TODA LA PÁGINA (Delegación de eventos)
+document.addEventListener('click', (e) => {
+    // Si el clic fue en el botón flotante o dentro de él
+    const btnOpen = e.target.closest('#btn-open-terminal');
+    // Si el clic fue en la X de cerrar
+    const btnClose = e.target.closest('#term-close');
+
+    if (btnOpen) {
+        console.log("🖱️ Clic interceptado. Abriendo/Cerrando terminal...");
+        if(terminal) {
             terminal.classList.toggle('hidden');
-            if (!terminal.classList.contains('hidden')) {
-                termInput.focus(); // Pone el cursor directo en la consola
+            if (!terminal.classList.contains('hidden') && termInput) termInput.focus();
+        }
+    }
+
+    if (btnClose && terminal) {
+        terminal.classList.add('hidden');
+    }
+});
+
+// 2. ESCUCHAR TECLAS PARA ABRIR (`, ~, º)
+document.addEventListener('keydown', (e) => {
+    if (e.key === '`' || e.key === '~' || e.key === 'º') {
+        if (document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+            e.preventDefault();
+            console.log("⌨️ Tecla detectada. Abriendo terminal...");
+            if(terminal) {
+                terminal.classList.toggle('hidden');
+                if (!terminal.classList.contains('hidden') && termInput) termInput.focus();
             }
         }
-    });
+    }
+});
 
-    // Cerrar con el botón X
-    termClose.addEventListener('click', () => terminal.classList.add('hidden'));
-
-    // Escuchar el Enter
+// 3. PROCESAR COMANDOS AL PULSAR ENTER
+if(termInput) {
     termInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             const command = termInput.value.trim();
@@ -251,53 +268,60 @@ const btnOpenTerm = document.getElementById('btn-open-terminal');
             if (command) processCommand(command);
         }
     });
+}
 
-    function printLine(text, className = '') {
-        const div = document.createElement('div');
-        div.innerHTML = text; 
-        if (className) div.className = className;
-        termHistory.appendChild(div);
-        termHistory.scrollTop = termHistory.scrollHeight; // Auto-scroll
+function printLine(text, className = '') {
+    if(!termHistory) return;
+    const div = document.createElement('div');
+    div.innerHTML = text; 
+    if (className) div.className = className;
+    termHistory.appendChild(div);
+    termHistory.scrollTop = termHistory.scrollHeight;
+}
+
+function escapeHTML(str) {
+    return str.replace(/[&<>'"]/g, tag => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+    }[tag] || tag));
+}
+
+function processCommand(cmd) {
+    printLine(`$&gt; ${escapeHTML(cmd)}`, 'cmd-echo');
+    const args = cmd.split(' ').filter(Boolean);
+    const mainCmd = args[0].toLowerCase();
+
+    switch (mainCmd) {
+        case 'help':
+            printLine("Comandos instalados:");
+            printLine("&nbsp;&nbsp;<strong style='color:#fff'>whoami</strong>&nbsp;&nbsp;&nbsp;- Muestra tu identidad");
+            printLine("&nbsp;&nbsp;<strong style='color:#fff'>clear</strong>&nbsp;&nbsp;&nbsp;&nbsp;- Limpia la pantalla");
+            printLine("&nbsp;&nbsp;<strong style='color:#fff'>osint</strong>&nbsp;&nbsp;&nbsp;&nbsp;- Atajo a OSINT Recon");
+            printLine("&nbsp;&nbsp;<strong style='color:#fff'>matrix</strong>&nbsp;&nbsp;&nbsp;- (Clasificado)");
+            printLine("&nbsp;&nbsp;<strong style='color:#fff'>exit</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Cierra la terminal");
+            break;
+        case 'clear':
+            if(termHistory) termHistory.innerHTML = '<div style="color: var(--cyan);">CyberEscudo OS v1.0.0</div><div>Escribe <strong style="color: #fff;">help</strong> para ver comandos.</div>';
+            break;
+        case 'whoami':
+            printLine("guest@cyberescudo - Nivel de privilegio: bajo");
+            break;
+        case 'sudo':
+            printLine("¿En serio? Tu intento de escalada de privilegios ha sido registrado.", "cmd-error");
+            break;
+        case 'matrix':
+            printLine("Despierta, Neo...", "cmd-echo");
+            document.body.style.filter = "hue-rotate(90deg)"; 
+            setTimeout(() => printLine("Sigue al conejo blanco."), 2000);
+            break;
+        case 'osint':
+            printLine("Redirigiendo a OSINT...");
+            setTimeout(() => window.location.href = "/tool-osint-report.php", 1000);
+            break;
+        case 'exit':
+            if(terminal) terminal.classList.add('hidden');
+            break;
+        default:
+            printLine(`bash: ${escapeHTML(mainCmd)}: comando no encontrado`, 'cmd-error');
     }
-
-    function processCommand(cmd) {
-        printLine(`$&gt; ${cmd}`, 'cmd-echo');
-        const args = cmd.split(' ').filter(Boolean);
-        const mainCmd = args[0].toLowerCase();
-
-        switch (mainCmd) {
-            case 'help':
-                printLine("Comandos instalados:");
-                printLine("&nbsp;&nbsp;<strong style='color:#fff'>whoami</strong>&nbsp;&nbsp;&nbsp;- Muestra tu identidad");
-                printLine("&nbsp;&nbsp;<strong style='color:#fff'>clear</strong>&nbsp;&nbsp;&nbsp;&nbsp;- Limpia la pantalla");
-                printLine("&nbsp;&nbsp;<strong style='color:#fff'>osint</strong>&nbsp;&nbsp;&nbsp;&nbsp;- Atajo a las herramientas OSINT");
-                printLine("&nbsp;&nbsp;<strong style='color:#fff'>matrix</strong>&nbsp;&nbsp;&nbsp;- (Clasificado)");
-                printLine("&nbsp;&nbsp;<strong style='color:#fff'>exit</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Cierra la terminal");
-                break;
-            case 'clear':
-                termHistory.innerHTML = '';
-                break;
-            case 'whoami':
-                printLine("guest@cyberescudo - Nivel de privilegio: bajo");
-                break;
-            case 'sudo':
-                printLine("¿En serio? Tu intento de escalada de privilegios ha sido registrado y reportado al administrador.", "cmd-error");
-                break;
-            case 'matrix':
-                printLine("Despierta, Neo...", "cmd-echo");
-                document.body.style.filter = "hue-rotate(90deg)"; // Pone la web entera verde
-                setTimeout(() => printLine("Sigue al conejo blanco."), 2000);
-                break;
-            case 'osint':
-                printLine("Iniciando módulos OSINT... Redirigiendo...");
-                setTimeout(() => window.location.href = "/tool-osint-report.php", 1000);
-                break;
-            case 'exit':
-                terminal.classList.add('hidden');
-                break;
-            default:
-                printLine(`bash: ${mainCmd}: comando no encontrado`, 'cmd-error');
-        }
-    }
-});
+}
 })();

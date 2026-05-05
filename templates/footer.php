@@ -14,8 +14,6 @@
   </div>
 </footer>
 
-<script src="<?= BASE_URL ?>/assets/js/main.js"></script>
-<script src="<?= BASE_URL ?>/assets/js/html2pdf.min.js"></script>
 <!-- MODAL DE DONACIÓN / DESCARGA -->
 <div id="donation-modal" class="cyber-modal hidden">
     <div class="cyber-modal-content">
@@ -55,5 +53,7 @@
     </div>
     
 </div>
+<script src="/assets/js/main.js?v=<?= time() ?>"></script>
+<script src="<?= BASE_URL ?>/assets/js/html2pdf.min.js"></script>
 </body>
 </html>
