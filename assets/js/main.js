@@ -347,6 +347,8 @@ function processCommand(cmd) {
                 } else if (flagIngresada === 'FLAG{csrf_forgery_expert}') {
                 printLine("🏅 Payload validado. Acabas de vaciar las cuentas del banco simulado.", "cmd-echo");
                 printLine("Rol actualizado a [ FORGERY_MASTER ]...");
+                } else if (flagIngresada === 'FLAG{xxe_xml_parser_pwned}') {
+                printLine("🏅 ¡Excelente! Has manipulado un parser XML usando Entidades Externas.", "cmd-echo");
             } else {
                 printLine("❌ Bandera incorrecta o no reconocida.", "cmd-error");
             }
