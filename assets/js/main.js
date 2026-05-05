@@ -353,6 +353,8 @@ function processCommand(cmd) {
                 printLine("🏆 ¡SISTEMA COMPROMETIDO! Has escalado privilegios a ROOT abusando de sudo.", "cmd-echo");
                 printLine("Rol actualizado a [ ROOT_ELEVATED ]...");
                 document.body.style.border = "5px solid #ff00ff"; // Borde fucsia para PrivEsc
+                } else if (flagIngresada === 'FLAG{ffuf_filter_ninja}') {
+                printLine("🏅 ¡Comando perfecto! Has dominado la evasión de falsos positivos en Fuzzing.", "cmd-echo");
             } else {
                 printLine("❌ Bandera incorrecta o no reconocida.", "cmd-error");
             }

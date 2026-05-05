@@ -9,278 +9,151 @@ ob_start(); if ($lang==='es'): ?>
 <div class="prose">
   <p><strong>Gobuster</strong> y <strong>ffuf</strong> son dos de las herramientas de fuzzing más usadas en pentesting web. Permiten descubrir directorios ocultos, archivos, parámetros y subdominios mediante ataques de diccionario. Son rápidas, modulares y esenciales en la fase de reconocimiento.</p>
 
-  <h2>1. Instalación</h2>
+  <h2>1. Instalación y Wordlists</h2>
   <pre><code># Gobuster (Go):
 apt install gobuster
 
-# ffuf (Go — más flexible):
+# ffuf (Go — más flexible y rápido):
 apt install ffuf
-# o compilar desde código fuente:
-go install github.com/ffuf/ffuf/v2@latest
 
 # Wordlists recomendadas (incluidas en Kali/SecLists):
 apt install seclists
-# Ruta: /usr/share/seclists/</code></pre>
+# Ruta principal: /usr/share/seclists/</code></pre>
 
-  <h2>2. Gobuster — Enumeración de directorios</h2>
+  <h2>2. Códigos HTTP Clave en Fuzzing</h2>
+  <p>Al hacer fuzzing, el servidor responde con códigos de estado. Saber interpretarlos te indica qué hacer a continuación:</p>
+  <ul>
+      <li><strong>200 OK:</strong> El recurso existe y es accesible.</li>
+      <li><strong>301 / 302 Redirect:</strong> El recurso existe, pero te redirige. (Conviene explorar hacia dónde).</li>
+      <li><strong>401 Unauthorized:</strong> Requiere autenticación HTTP básica.</li>
+      <li><strong>403 Forbidden:</strong> El recurso existe, pero no tienes permisos (¡Interesante para intentar bypassear!).</li>
+      <li><strong>404 Not Found:</strong> El recurso no existe (Ruido).</li>
+      <li><strong>500 Internal Error:</strong> Has roto algo o el servidor no sabe manejar tu payload (Interesante en inyecciones).</li>
+  </ul>
+
+  <h2>3. Gobuster — Enumeración de directorios</h2>
   <pre><code># Escaneo básico de directorios:
 gobuster dir -u http://objetivo.com -w /usr/share/seclists/Discovery/Web-Content/common.txt
 
-# Con extensiones de archivo:
-gobuster dir -u http://objetivo.com \
-  -w /usr/share/seclists/Discovery/Web-Content/raft-medium-files.txt \
-  -x php,html,txt,bak,zip
+# Buscar archivos con extensiones específicas:
+gobuster dir -u http://objetivo.com -w wordlist.txt -x php,html,txt,bak,zip
 
-# Ignorar códigos de respuesta concretos:
-gobuster dir -u http://objetivo.com \
-  -w /usr/share/wordlists/dirb/big.txt \
-  -b 404,403
+# Ignorar códigos de respuesta concretos (eliminar ruido):
+gobuster dir -u http://objetivo.com -w wordlist.txt -b 404,403</code></pre>
 
-# Con cabeceras HTTP personalizadas (útil con cookies de sesión):
-gobuster dir -u http://objetivo.com \
-  -w /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt \
-  -H "Cookie: session=abc123" \
-  -H "Authorization: Bearer TOKEN"
+  <h2>4. ffuf — Fuzzing avanzado (El rey actual)</h2>
+  <p>A diferencia de Gobuster, <code>ffuf</code> usa la palabra clave <strong>FUZZ</strong> para inyectar el diccionario en cualquier parte de la petición (URL, Cabeceras, POST data).</p>
+  <pre><code># Fuzzing de directorios:
+ffuf -u http://objetivo.com/FUZZ -w dicc.txt
 
-# Con proxy (Burp Suite):
-gobuster dir -u http://objetivo.com \
-  -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt \
-  --proxy http://127.0.0.1:8080</code></pre>
+# Fuzzing de parámetros GET (Ej: id=1, file=algo):
+ffuf -u "http://objetivo.com/page.php?FUZZ=test" -w parametros.txt
 
-  <h2>3. Gobuster — Enumeración de subdominios</h2>
-  <pre><code># Bruteforce de subdominios DNS:
-gobuster dns -d objetivo.com \
-  -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt
-
-# Con resolución de IPs:
-gobuster dns -d objetivo.com \
-  -w /usr/share/seclists/Discovery/DNS/bitquark-subdomains-top100000.txt \
-  --show-ips
-
-# Con servidor DNS personalizado (evitar detección):
-gobuster dns -d objetivo.com \
-  -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-20000.txt \
-  -r 8.8.8.8</code></pre>
-
-  <h2>4. Gobuster — VHost fuzzing</h2>
-  <pre><code># Descubrir Virtual Hosts en un mismo servidor:
-gobuster vhost -u http://objetivo.com \
-  -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt \
-  --append-domain
-
-# Filtrar por tamaño de respuesta (excluir falsos positivos):
-gobuster vhost -u http://objetivo.com \
-  -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt \
-  --append-domain \
-  --exclude-length 250</code></pre>
-
-  <h2>5. ffuf — Fuzzing avanzado</h2>
-  <pre><code># Fuzzing de directorios (FUZZ = marcador de posición):
-ffuf -u http://objetivo.com/FUZZ \
-  -w /usr/share/seclists/Discovery/Web-Content/raft-medium-directories.txt
-
-# Con extensiones múltiples:
-ffuf -u http://objetivo.com/FUZZ \
-  -w /usr/share/seclists/Discovery/Web-Content/raft-medium-files.txt \
-  -e .php,.html,.txt,.bak
-
-# Fuzzing de parámetros GET:
-ffuf -u "http://objetivo.com/page.php?FUZZ=test" \
-  -w /usr/share/seclists/Discovery/Web-Content/burp-parameter-names.txt
-
-# Fuzzing de valores de parámetros:
-ffuf -u "http://objetivo.com/page.php?id=FUZZ" \
-  -w /usr/share/seclists/Fuzzing/LFI/LFI-Jhaddix.txt
-
-# Fuzzing POST (formularios, APIs):
+# Fuzzing POST (formularios de login, APIs JSON):
 ffuf -u http://objetivo.com/login \
   -w /usr/share/wordlists/rockyou.txt \
   -X POST \
   -d "username=admin&password=FUZZ" \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  -fc 302</code></pre>
+  -H "Content-Type: application/x-www-form-urlencoded"</code></pre>
 
-  <h2>6. ffuf — Filtros para eliminar falsos positivos</h2>
+  <!-- ─── SECCIÓN DEL RETO CTF 07 (ESPAÑOL) ─── -->
+  <div style="margin: 3rem 0; padding: 1.5rem; background: rgba(0, 255, 255, 0.05); border-left: 4px solid var(--cyan); border-radius: 4px;">
+      <h3 style="margin-top: 0; color: var(--cyan); display: flex; align-items: center; gap: 10px;">
+          <span style="animation: pulse 2s infinite;">🔴</span> Simulador de Fuzzing
+      </h3>
+      <p style="margin-bottom: 1.5rem;">Te enfrentas a un servidor configurado como "Catch-all" (miente y siempre devuelve código 200 OK). Demuestra tus habilidades construyendo el comando ffuf exacto para filtrar la basura y encontrar el panel oculto.</p>
+      <a href="/ctf/ctf-07.php" style="display: inline-block; padding: 8px 20px; background: transparent; border: 1px solid var(--cyan); color: var(--cyan); text-decoration: none; font-family: var(--mono); transition: all 0.3s; font-size: 0.9rem;" onmouseover="this.style.background='var(--cyan)'; this.style.color='#000';" onmouseout="this.style.background='transparent'; this.style.color='var(--cyan)';">
+          &gt;_ INICIAR RETO CTF 07
+      </a>
+  </div>
+
+  <h2>5. El problema del "Catch-all" (Filtrando resultados)</h2>
+  <p>A veces, los servidores están mal configurados y devuelven un <strong>200 OK incluso si la página no existe</strong> (mostrando una página de error personalizada). Esto inunda nuestro fuzzing de miles de falsos positivos.</p>
+  <p>Para solucionarlo, analizamos el tamaño (Size) o la cantidad de palabras (Words) de la página de error genérica y le decimos a <code>ffuf</code> que <strong>filtre y oculte</strong> las respuestas que coincidan con ese tamaño exacto.</p>
+
   <pre><code># Filtrar por código HTTP:
-ffuf -u http://objetivo.com/FUZZ -w wordlist.txt -fc 404,403
+ffuf -u http://objetivo.com/FUZZ -w dicc.txt -fc 404,403
 
-# Filtrar por tamaño de respuesta (bytes):
-ffuf -u http://objetivo.com/FUZZ -w wordlist.txt -fs 1234
+# Filtrar por tamaño de respuesta en Bytes (evadir Catch-all):
+ffuf -u http://objetivo.com/FUZZ -w dicc.txt -fs 512
 
-# Filtrar por número de palabras en la respuesta:
-ffuf -u http://objetivo.com/FUZZ -w wordlist.txt -fw 10
+# Filtrar por número de palabras o líneas:
+ffuf -u http://objetivo.com/FUZZ -w dicc.txt -fw 10 -fl 25</code></pre>
 
-# Filtrar por número de líneas:
-ffuf -u http://objetivo.com/FUZZ -w wordlist.txt -fl 25
+  <h2>6. Enumeración de Subdominios y VHosts</h2>
+  <pre><code># Subdominios DNS (Gobuster):
+gobuster dns -d objetivo.com -w subdomains.txt
 
-# Modo silencioso + guardar en fichero JSON:
-ffuf -u http://objetivo.com/FUZZ \
-  -w /usr/share/seclists/Discovery/Web-Content/raft-large-directories.txt \
-  -o resultados.json -of json -s</code></pre>
-
-  <h2>7. ffuf — Fuzzing de subdominios y VHosts</h2>
-  <pre><code># Subdominios con ffuf:
-ffuf -u http://FUZZ.objetivo.com \
-  -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt \
-  -fs 0
-
-# VHost fuzzing (cabecera Host):
-ffuf -u http://IP_DEL_SERVIDOR \
+# Virtual Hosts con ffuf (Inyectando en la cabecera Host):
+ffuf -u http://10.10.10.10 \
   -H "Host: FUZZ.objetivo.com" \
-  -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt \
-  -fs 4242    # excluir respuesta default por tamaño</code></pre>
-
-  <h2>8. Wordlists recomendadas por escenario</h2>
-  <table>
-    <thead><tr><th>Escenario</th><th>Wordlist</th></tr></thead>
-    <tbody>
-      <tr><td>Directorios comunes</td><td><code>Discovery/Web-Content/common.txt</code></td></tr>
-      <tr><td>Directorios completo</td><td><code>Discovery/Web-Content/directory-list-2.3-medium.txt</code></td></tr>
-      <tr><td>Archivos (con ext.)</td><td><code>Discovery/Web-Content/raft-medium-files.txt</code></td></tr>
-      <tr><td>Parámetros GET/POST</td><td><code>Discovery/Web-Content/burp-parameter-names.txt</code></td></tr>
-      <tr><td>Subdominios (rápido)</td><td><code>Discovery/DNS/subdomains-top1million-5000.txt</code></td></tr>
-      <tr><td>Subdominios (completo)</td><td><code>Discovery/DNS/bitquark-subdomains-top100000.txt</code></td></tr>
-      <tr><td>LFI payloads</td><td><code>Fuzzing/LFI/LFI-Jhaddix.txt</code></td></tr>
-    </tbody>
-  </table>
+  -w subdomains.txt \
+  -fs 4242  # Muy importante excluir el tamaño de la respuesta por defecto</code></pre>
 </div>
+
 <?php else: ?>
 <div class="prose">
-  <p><strong>Gobuster</strong> and <strong>ffuf</strong> are two of the most popular fuzzing tools in web penetration testing. They discover hidden directories, files, parameters, and subdomains through dictionary-based attacks. Both are fast, flexible, and essential during the reconnaissance phase.</p>
+  <p><strong>Gobuster</strong> and <strong>ffuf</strong> are two of the most popular fuzzing tools in web penetration testing. They discover hidden directories, files, parameters, and subdomains through dictionary-based attacks.</p>
 
-  <h2>1. Installation</h2>
+  <h2>1. Installation & Wordlists</h2>
   <pre><code># Gobuster (Go):
 apt install gobuster
 
-# ffuf (Go — more flexible):
+# ffuf (Go — faster and more flexible):
 apt install ffuf
-# or build from source:
-go install github.com/ffuf/ffuf/v2@latest
 
 # Recommended wordlists (SecLists):
-apt install seclists
-# Path: /usr/share/seclists/</code></pre>
+apt install seclists</code></pre>
 
-  <h2>2. Gobuster — Directory Enumeration</h2>
-  <pre><code># Basic directory scan:
-gobuster dir -u http://target.com -w /usr/share/seclists/Discovery/Web-Content/common.txt
+  <h2>2. Key HTTP Codes in Fuzzing</h2>
+  <ul>
+      <li><strong>200 OK:</strong> Resource exists.</li>
+      <li><strong>301 / 302:</strong> Redirect (Explore where it leads).</li>
+      <li><strong>401 Unauthorized:</strong> Requires basic auth.</li>
+      <li><strong>403 Forbidden:</strong> Exists, but access denied (Target for bypasses!).</li>
+      <li><strong>404 Not Found:</strong> Doesn't exist (Noise).</li>
+      <li><strong>500 Internal Error:</strong> Server crashed handling your payload.</li>
+  </ul>
 
-# With file extensions:
-gobuster dir -u http://target.com \
-  -w /usr/share/seclists/Discovery/Web-Content/raft-medium-files.txt \
-  -x php,html,txt,bak,zip
+  <h2>3. Gobuster — Directory Enumeration</h2>
+  <pre><code>gobuster dir -u http://target.com -w common.txt -x php,txt,bak
+gobuster dir -u http://target.com -w wordlist.txt -b 404,403</code></pre>
 
-# Ignore specific status codes:
-gobuster dir -u http://target.com \
-  -w /usr/share/wordlists/dirb/big.txt \
-  -b 404,403
-
-# With custom HTTP headers (session cookies):
-gobuster dir -u http://target.com \
-  -w /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt \
-  -H "Cookie: session=abc123" \
-  -H "Authorization: Bearer TOKEN"
-
-# Through Burp Suite proxy:
-gobuster dir -u http://target.com \
-  -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt \
-  --proxy http://127.0.0.1:8080</code></pre>
-
-  <h2>3. Gobuster — Subdomain Enumeration</h2>
-  <pre><code># DNS subdomain brute-force:
-gobuster dns -d target.com \
-  -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt
-
-# Show resolved IPs:
-gobuster dns -d target.com \
-  -w /usr/share/seclists/Discovery/DNS/bitquark-subdomains-top100000.txt \
-  --show-ips
-
-# Custom DNS resolver:
-gobuster dns -d target.com \
-  -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-20000.txt \
-  -r 8.8.8.8</code></pre>
-
-  <h2>4. Gobuster — VHost Fuzzing</h2>
-  <pre><code># Discover Virtual Hosts on the same IP:
-gobuster vhost -u http://target.com \
-  -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt \
-  --append-domain
-
-# Filter false positives by response size:
-gobuster vhost -u http://target.com \
-  -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt \
-  --append-domain \
-  --exclude-length 250</code></pre>
-
-  <h2>5. ffuf — Advanced Fuzzing</h2>
-  <pre><code># Directory fuzzing (FUZZ = placeholder):
-ffuf -u http://target.com/FUZZ \
-  -w /usr/share/seclists/Discovery/Web-Content/raft-medium-directories.txt
-
-# With multiple extensions:
-ffuf -u http://target.com/FUZZ \
-  -w /usr/share/seclists/Discovery/Web-Content/raft-medium-files.txt \
-  -e .php,.html,.txt,.bak
+  <h2>4. ffuf — Advanced Fuzzing (The Modern King)</h2>
+  <p><code>ffuf</code> uses the <strong>FUZZ</strong> keyword to inject the wordlist anywhere in the request.</p>
+  <pre><code># Directory fuzzing:
+ffuf -u http://target.com/FUZZ -w dict.txt
 
 # GET parameter name fuzzing:
-ffuf -u "http://target.com/page.php?FUZZ=test" \
-  -w /usr/share/seclists/Discovery/Web-Content/burp-parameter-names.txt
+ffuf -u "http://target.com/page.php?FUZZ=test" -w params.txt
 
-# GET parameter value fuzzing (LFI):
-ffuf -u "http://target.com/page.php?id=FUZZ" \
-  -w /usr/share/seclists/Fuzzing/LFI/LFI-Jhaddix.txt
-
-# POST fuzzing (login forms, APIs):
+# POST fuzzing:
 ffuf -u http://target.com/login \
-  -w /usr/share/wordlists/rockyou.txt \
-  -X POST \
-  -d "username=admin&password=FUZZ" \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  -fc 302</code></pre>
+  -w rockyou.txt \
+  -X POST -d "username=admin&password=FUZZ" \
+  -H "Content-Type: application/x-www-form-urlencoded"</code></pre>
 
-  <h2>6. ffuf — Filtering False Positives</h2>
-  <pre><code># Filter by HTTP status code:
-ffuf -u http://target.com/FUZZ -w wordlist.txt -fc 404,403
+  <!-- ─── SECCIÓN DEL RETO CTF 07 (INGLÉS) ─── -->
+  <div style="margin: 3rem 0; padding: 1.5rem; background: rgba(0, 255, 255, 0.05); border-left: 4px solid var(--cyan); border-radius: 4px;">
+      <h3 style="margin-top: 0; color: var(--cyan); display: flex; align-items: center; gap: 10px;">
+          <span style="animation: pulse 2s infinite;">🔴</span> Fuzzing Simulator
+      </h3>
+      <p style="margin-bottom: 1.5rem;">You are facing a "Catch-all" server (it lies and always returns 200 OK). Prove your skills by crafting the exact ffuf command to filter the garbage and find the hidden panel.</p>
+      <a href="/ctf/ctf-07.php" style="display: inline-block; padding: 8px 20px; background: transparent; border: 1px solid var(--cyan); color: var(--cyan); text-decoration: none; font-family: var(--mono); transition: all 0.3s; font-size: 0.9rem;" onmouseover="this.style.background='var(--cyan)'; this.style.color='#000';" onmouseout="this.style.background='transparent'; this.style.color='var(--cyan)';">
+          &gt;_ START CTF 07 CHALLENGE
+      </a>
+  </div>
 
-# Filter by response size (bytes):
-ffuf -u http://target.com/FUZZ -w wordlist.txt -fs 1234
+  <h2>5. The "Catch-all" Problem (Filtering)</h2>
+  <p>Sometimes servers return <strong>200 OK for everything</strong>, flooding our results with false positives. We analyze the default error page size and tell <code>ffuf</code> to filter it out.</p>
+  <pre><code># Filter by size in Bytes (-fs):
+ffuf -u http://target.com/FUZZ -w dict.txt -fs 512
 
-# Filter by word count:
-ffuf -u http://target.com/FUZZ -w wordlist.txt -fw 10
+# Filter by word (-fw) or line count (-fl):
+ffuf -u http://target.com/FUZZ -w dict.txt -fw 10 -fl 25</code></pre>
 
-# Filter by line count:
-ffuf -u http://target.com/FUZZ -w wordlist.txt -fl 25
-
-# Silent mode + save JSON output:
-ffuf -u http://target.com/FUZZ \
-  -w /usr/share/seclists/Discovery/Web-Content/raft-large-directories.txt \
-  -o results.json -of json -s</code></pre>
-
-  <h2>7. ffuf — Subdomain & VHost Fuzzing</h2>
-  <pre><code># Subdomain fuzzing:
-ffuf -u http://FUZZ.target.com \
-  -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt \
-  -fs 0
-
-# VHost fuzzing via Host header:
-ffuf -u http://SERVER_IP \
-  -H "Host: FUZZ.target.com" \
-  -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt \
-  -fs 4242    # filter out default response by size</code></pre>
-
-  <h2>8. Recommended Wordlists by Scenario</h2>
-  <table>
-    <thead><tr><th>Scenario</th><th>Wordlist</th></tr></thead>
-    <tbody>
-      <tr><td>Common directories</td><td><code>Discovery/Web-Content/common.txt</code></td></tr>
-      <tr><td>Full directory list</td><td><code>Discovery/Web-Content/directory-list-2.3-medium.txt</code></td></tr>
-      <tr><td>Files (with extensions)</td><td><code>Discovery/Web-Content/raft-medium-files.txt</code></td></tr>
-      <tr><td>GET/POST parameters</td><td><code>Discovery/Web-Content/burp-parameter-names.txt</code></td></tr>
-      <tr><td>Subdomains (fast)</td><td><code>Discovery/DNS/subdomains-top1million-5000.txt</code></td></tr>
-      <tr><td>Subdomains (full)</td><td><code>Discovery/DNS/bitquark-subdomains-top100000.txt</code></td></tr>
-      <tr><td>LFI payloads</td><td><code>Fuzzing/LFI/LFI-Jhaddix.txt</code></td></tr>
-    </tbody>
-  </table>
+  <h2>6. Subdomains & VHosts</h2>
+  <pre><code># VHost fuzzing via Host header:
+ffuf -u http://SERVER_IP -H "Host: FUZZ.target.com" -w subdomains.txt -fs 4242</code></pre>
 </div>
 <?php endif; $contentBody=ob_get_clean(); require __DIR__.'/../templates/content-page.php';
