@@ -291,14 +291,15 @@ function processCommand(cmd) {
     const mainCmd = args[0].toLowerCase();
 
     switch (mainCmd) {
-        case 'help':
-            printLine("Comandos instalados:");
-            printLine("&nbsp;&nbsp;<strong style='color:#fff'>whoami</strong>&nbsp;&nbsp;&nbsp;- Muestra tu identidad");
-            printLine("&nbsp;&nbsp;<strong style='color:#fff'>clear</strong>&nbsp;&nbsp;&nbsp;&nbsp;- Limpia la pantalla");
-            printLine("&nbsp;&nbsp;<strong style='color:#fff'>osint</strong>&nbsp;&nbsp;&nbsp;&nbsp;- Atajo a OSINT Recon");
-            printLine("&nbsp;&nbsp;<strong style='color:#fff'>matrix</strong>&nbsp;&nbsp;&nbsp;- (Clasificado)");
-            printLine("&nbsp;&nbsp;<strong style='color:#fff'>exit</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Cierra la terminal");
-            break;
+            case 'help':
+                printLine("Comandos instalados:");
+                printLine("&nbsp;&nbsp;<strong style='color:#fff'>whoami</strong>&nbsp;&nbsp;&nbsp;- Muestra tu identidad");
+                printLine("&nbsp;&nbsp;<strong style='color:#fff'>clear</strong>&nbsp;&nbsp;&nbsp;&nbsp;- Limpia la pantalla");
+                printLine("&nbsp;&nbsp;<strong style='color:#fff'>osint</strong>&nbsp;&nbsp;&nbsp;&nbsp;- Atajo a OSINT Recon");
+                printLine("&nbsp;&nbsp;<strong style='color:#fff'>matrix</strong>&nbsp;&nbsp;&nbsp;- (Clasificado)");
+                printLine("&nbsp;&nbsp;<strong style='color:#fff'>submit</strong>&nbsp;&nbsp;&nbsp;- Canjear banderas CTF");
+                printLine("&nbsp;&nbsp;<strong style='color:#fff'>exit</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Cierra la terminal");
+                break;
         case 'clear':
             if(termHistory) termHistory.innerHTML = '<div style="color: var(--cyan);">CyberEscudo OS v1.0.0</div><div>Escribe <strong style="color: #fff;">help</strong> para ver comandos.</div>';
             break;
@@ -320,8 +321,24 @@ function processCommand(cmd) {
         case 'exit':
             if(terminal) terminal.classList.add('hidden');
             break;
-        default:
-            printLine(`bash: ${escapeHTML(mainCmd)}: comando no encontrado`, 'cmd-error');
-    }
+        case 'submit':
+                const flagIngresada = args[1];
+                if (!flagIngresada) {
+                    printLine("Uso: submit FLAG{...}", "cmd-error");
+                } else if (flagIngresada === 'FLAG{sql_bypass_master}') {
+                    printLine("🏆 ¡ENHORABUENA! Has resuelto el CTF de inyección SQL.", "cmd-echo");
+                    printLine("Otorgando rol de [ SQL_NINJA ] a tu sesión actual...");
+                    document.body.style.border = "5px solid #00ff00"; // Efecto visual global
+                    setTimeout(() => printLine("¡Sigue practicando en la sección de manuales!"), 1500);
+                } else if (flagIngresada === 'FLAG{default_creds_hunter}') {
+                    printLine("🏅 Bandera válida. Las credenciales por defecto son el pan de cada día.", "cmd-echo");
+                } else {
+                    printLine("❌ Bandera incorrecta o no reconocida.", "cmd-error");
+                }
+                break;
+
+            default:
+                printLine(`bash: ${escapeHTML(mainCmd)}: comando no encontrado`, 'cmd-error');
+        }
 }
 })();
