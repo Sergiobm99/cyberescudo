@@ -72,6 +72,13 @@ require __DIR__ . '/templates/header.php';
       <?= e($t['hero']['cta']) ?> <span class="arrow">↓</span>
     </button>
   </div>
+  <!-- AVISO DE THREAT INTEL EN LA CABECERA -->
+<div style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;">
+    <a href="#threat-intel" style="color: var(--cyan); text-decoration: none; font-size: 0.85rem; font-family: var(--mono); border: 1px solid rgba(0,255,255,0.3); padding: 6px 16px; border-radius: 20px; background: rgba(0,255,255,0.05); transition: all 0.3s;" onmouseover="this.style.background='rgba(0,255,255,0.1)'; this.style.borderColor='var(--cyan)';" onmouseout="this.style.background='rgba(0,255,255,0.05)'; this.style.borderColor='rgba(0,255,255,0.3)';">
+        <span style="display:inline-block; margin-right:5px; animation: pulse 2s infinite;">🔴</span> 
+        <?= $lang === 'es' ? 'Ver Últimas Alertas y 0-Days ↓' : 'View Latest Alerts & 0-Days ↓' ?>
+    </a>
+</div>
 </section>
 
 <section id="projects" class="section">
@@ -207,5 +214,57 @@ require __DIR__ . '/templates/header.php';
     </div>
   </div>
 </section>
+<!-- ─── THREAT INTELLIGENCE DASHBOARD ─── -->
+<div id="threat-intel" class="md-container" style="max-width: 900px; margin-left: auto; margin-right: auto; padding-top: 2rem; margin-bottom: 6rem;">
+    <div class="section-label">// THREAT INTEL FEED</div>
+    <h2 style="margin-top: 0.5rem; margin-bottom: 1.5rem;">
+        <?= $lang === 'es' ? 'Últimas Amenazas y 0-Days' : 'Latest Threats & 0-Days' ?>
+    </h2>
+    
+    <div class="cyber-rss-grid">
+        <?php
+        // Función segura para leer el RSS
+        function getThreatNews($url, $limit = 4) {
+            $context = stream_context_create(['http' => ['timeout' => 2]]);
+            $xmlString = @file_get_contents($url, false, $context);
+            if (!$xmlString) return false;
+            
+            $xml = @simplexml_load_string($xmlString);
+            if (!$xml) return false;
 
+            $news = [];
+            $count = 0;
+            foreach ($xml->channel->item as $item) {
+                if ($count >= $limit) break;
+                $news[] = [
+                    'title' => (string)$item->title,
+                    'link'  => (string)$item->link,
+                    'date'  => date('d M Y', strtotime((string)$item->pubDate))
+                ];
+                $count++;
+            }
+            return $news;
+        }
+
+        $rssUrl = 'https://feeds.feedburner.com/TheHackersNews';
+        $noticias = getThreatNews($rssUrl, 4);
+
+        // Textos traducidos
+        $sourceText = $lang === 'es' ? 'Fuente: The Hacker News' : 'Source: The Hacker News';
+        $errorText = $lang === 'es' ? 'No se pudo conectar con los satélites de inteligencia. Reintentando...' : 'Could not connect to intelligence satellites. Retrying...';
+
+        if ($noticias && count($noticias) > 0) {
+            foreach ($noticias as $n) {
+                echo '<a href="'. htmlspecialchars($n['link']) .'" target="_blank" rel="noopener noreferrer" class="cyber-rss-card">';
+                echo '  <div class="rss-date">'. htmlspecialchars($n['date']) .'</div>';
+                echo '  <h4 class="rss-title">'. htmlspecialchars($n['title']) .'</h4>';
+                echo '  <div class="rss-source">'. $sourceText .'</div>';
+                echo '</a>';
+            }
+        } else {
+            echo '<div style="color: var(--gray);">'. $errorText .'</div>';
+        }
+        ?>
+    </div>
+</div>
 <?php require __DIR__ . '/templates/footer.php'; ?>

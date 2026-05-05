@@ -1923,3 +1923,65 @@ nav ul li a, .submenu-toggle {
     box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
     transform: translateY(-3px);
 }
+/* ─── THREAT INTELLIGENCE FEED (MODO COMPACTO) ─── */
+.cyber-rss-grid {
+    display: grid;
+    /* Fuerza 2 columnas en PC, 1 en móvil */
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 1rem;
+}
+
+.cyber-rss-card {
+    background: rgba(10, 15, 20, 0.4); /* Fondo más sutil */
+    border: 1px solid rgba(0, 255, 255, 0.1); /* Borde más fino */
+    border-left: 2px solid var(--cyan);
+    padding: 1rem; /* Menos espacio interior */
+    border-radius: 4px;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.2s ease;
+}
+
+.cyber-rss-card:hover {
+    background: rgba(0, 255, 255, 0.08);
+    border-color: rgba(0, 255, 255, 0.4);
+    border-left: 4px solid var(--cyan);
+    transform: translateX(5px); /* Movimiento hacker lateral, no vertical */
+}
+
+.rss-date {
+    font-family: var(--mono);
+    color: var(--cyan);
+    font-size: 0.7rem; /* Letra más pequeña y fina */
+    margin-bottom: 0.4rem;
+    opacity: 0.8;
+}
+
+.rss-title {
+    color: var(--white);
+    font-size: 0.95rem; /* Título más contenido */
+    margin: 0 0 0.8rem 0;
+    line-height: 1.4;
+    font-weight: 500;
+}
+
+.cyber-rss-card:hover .rss-title {
+    color: var(--cyan);
+}
+
+.rss-source {
+    margin-top: auto;
+    font-size: 0.7rem;
+    color: #666;
+}
+
+/* Animación de latido para el puntito rojo del botón superior */
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.4; }
+    100% { opacity: 1; }
+}
+#threat-intel {
+    scroll-margin-top: 100px; /* Ajusta este valor según la altura de tu menú */
+}

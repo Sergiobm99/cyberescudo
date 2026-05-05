@@ -36,11 +36,6 @@
 
     gtag('config', 'G-T1D83JWZV1');
   </script>
-  
-  <script nonce="<?= e($cspNonce) ?>">
-    window.LANG = '<?= $lang ?>';
-    window.BASE_URL = '<?= BASE_URL ?>';
-  </script>
 </head>
 <body class="<?= $lang ?>">
 
@@ -136,7 +131,6 @@
 </a>
       </li>
     </ul>
-    
     <div class="lang-toggle">
       <a href="<?= e(langUrl('es')) ?>" class="lang-btn <?= $lang === 'es' ? 'active' : '' ?>">ES</a>
       <a href="<?= e(langUrl('en')) ?>" class="lang-btn <?= $lang === 'en' ? 'active' : '' ?>">EN</a>
