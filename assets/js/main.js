@@ -344,6 +344,9 @@ function processCommand(cmd) {
                 printLine("🏆 ¡BRUTAL! Has conseguido robar las cookies de sesión mediante XSS.", "cmd-echo");
                 printLine("Otorgando rol de [ SESSION_HIJACKER ] a tu sesión...");
                 document.body.style.border = "5px dashed #00ffff"; // Borde Cyberpunk
+                } else if (flagIngresada === 'FLAG{csrf_forgery_expert}') {
+                printLine("🏅 Payload validado. Acabas de vaciar las cuentas del banco simulado.", "cmd-echo");
+                printLine("Rol actualizado a [ FORGERY_MASTER ]...");
             } else {
                 printLine("❌ Bandera incorrecta o no reconocida.", "cmd-error");
             }
