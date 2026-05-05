@@ -364,6 +364,9 @@ function processCommand(cmd) {
                 } else if (flagIngresada === 'FLAG{nmap_recon_analyst}') {
                 printLine("🏅 ¡Aprobado! Sabes leer entre líneas y encontrar vulnerabilidades ocultas.", "cmd-echo");
                 printLine("Rol actualizado a [ RECON_SPECIALIST ]...");
+                } else if (flagIngresada === 'FLAG{hydra_syntax_master}') {
+                printLine("🏅 ¡Aprobado! Has dominado la infernal sintaxis web de Hydra.", "cmd-echo");
+                printLine("Rol actualizado a [ BRUTEFORCER ]...");
             } else {
                 printLine("❌ Bandera incorrecta o no reconocida.", "cmd-error");
             }
