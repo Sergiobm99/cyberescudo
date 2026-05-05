@@ -349,6 +349,10 @@ function processCommand(cmd) {
                 printLine("Rol actualizado a [ FORGERY_MASTER ]...");
                 } else if (flagIngresada === 'FLAG{xxe_xml_parser_pwned}') {
                 printLine("🏅 ¡Excelente! Has manipulado un parser XML usando Entidades Externas.", "cmd-echo");
+                } else if (flagIngresada === 'FLAG{sudo_find_root_shell}') {
+                printLine("🏆 ¡SISTEMA COMPROMETIDO! Has escalado privilegios a ROOT abusando de sudo.", "cmd-echo");
+                printLine("Rol actualizado a [ ROOT_ELEVATED ]...");
+                document.body.style.border = "5px solid #ff00ff"; // Borde fucsia para PrivEsc
             } else {
                 printLine("❌ Bandera incorrecta o no reconocida.", "cmd-error");
             }
