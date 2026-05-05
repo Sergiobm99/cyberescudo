@@ -355,6 +355,9 @@ function processCommand(cmd) {
                 document.body.style.border = "5px solid #ff00ff"; // Borde fucsia para PrivEsc
                 } else if (flagIngresada === 'FLAG{ffuf_filter_ninja}') {
                 printLine("🏅 ¡Comando perfecto! Has dominado la evasión de falsos positivos en Fuzzing.", "cmd-echo");
+                } else if (flagIngresada === 'FLAG{ir_containment_expert}') {
+                printLine("🛡️ ¡Excelente Triage! Has contenido la brecha de seguridad con éxito.", "cmd-echo");
+                printLine("Asignando rol de [ SOC_ANALYST_L2 ] a tu expediente...");
             } else {
                 printLine("❌ Bandera incorrecta o no reconocida.", "cmd-error");
             }

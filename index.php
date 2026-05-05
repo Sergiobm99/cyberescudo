@@ -144,7 +144,7 @@ require __DIR__ . '/templates/header.php';
             <?php endif; ?>
             
             <!-- 2. Insignia del CTF -->
-            <?php if ($item['link'] === 'projects/sql-injection-manual.php' || $item['link'] === 'projects/inyeccion-comandos-rfi-lfi.php' || $item['link'] === 'projects/xss-practica.php' || $item['link'] === 'projects/csrf-clickjacking.php' || $item['link'] === 'projects/xxe-path-traversal.php' || $item['link'] === 'projects/privilege-escalation-linux.php' || $item['link'] === 'projects/gobuster.php'): ?>
+            <?php if ($item['link'] === 'projects/sql-injection-manual.php' || $item['link'] === 'projects/inyeccion-comandos-rfi-lfi.php' || $item['link'] === 'projects/xss-practica.php' || $item['link'] === 'projects/csrf-clickjacking.php' || $item['link'] === 'projects/xxe-path-traversal.php' || $item['link'] === 'projects/privilege-escalation-linux.php' || $item['link'] === 'projects/gobuster.php' || $item['link'] === 'projects/incident-response.php'): ?>
                 <span style="background: rgba(0, 255, 255, 0.1); color: var(--cyan); border: 1px solid var(--cyan); padding: 2px 8px; border-radius: 4px; font-size: 0.65rem; font-family: var(--mono); font-weight: bold; letter-spacing: 1px; display: inline-flex; align-items: center; gap: 5px; animation: pulse 2s infinite;">
                     <span style="font-size: 0.8rem;">🎯</span> <?= $lang === 'es' ? 'RETO CTF INCLUIDO' : 'CTF INSIDE' ?>
                 </span>
