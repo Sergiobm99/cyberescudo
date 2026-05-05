@@ -33,5 +33,26 @@
         </div>
     </div>
 </div>
+<!-- ─── BOTÓN FLOTANTE PARA ABRIR LA TERMINAL ─── -->
+<button id="btn-open-terminal" class="cyber-term-float-btn" title="Iniciar Terminal OS">
+    &gt;_
+</button>
+
+<!-- Aquí debajo ya tienes tu <div id="cyber-terminal"... del paso anterior -->
+<!-- ─── TERMINAL EASTER EGG ─── -->
+<div id="cyber-terminal" class="cyber-terminal hidden">
+    <div class="terminal-header">
+        <span>guest@cyberescudo: ~</span>
+        <button id="term-close" title="Cerrar terminal">X</button>
+    </div>
+    <div id="term-history" class="term-history">
+        <div style="color: var(--cyan);">CyberEscudo OS v1.0.0</div>
+        <div>Escribe <strong style="color: #fff;">help</strong> para ver los comandos disponibles.</div>
+    </div>
+    <div class="term-input-line">
+        <span class="term-prompt">$&gt;</span>
+        <input type="text" id="term-input" autocomplete="off" spellcheck="false" autofocus>
+    </div>
+</div>
 </body>
 </html>

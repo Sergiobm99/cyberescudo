@@ -214,4 +214,90 @@
       observer.observe(el);
     });
   }
+  /* ─── LÓGICA DE LA TERMINAL EASTER EGG ─── */
+document.addEventListener('DOMContentLoaded', () => {
+    const terminal = document.getElementById('cyber-terminal');
+    const termInput = document.getElementById('term-input');
+    const termHistory = document.getElementById('term-history');
+    const termClose = document.getElementById('term-close');
+const btnOpenTerm = document.getElementById('btn-open-terminal');
+    if (btnOpenTerm) {
+        btnOpenTerm.addEventListener('click', () => {
+            terminal.classList.toggle('hidden');
+            if (!terminal.classList.contains('hidden')) termInput.focus();
+        });
+    }
+    if(!terminal) return;
+
+    // Abrir/Cerrar la terminal al pulsar la tecla ` o ~
+    document.addEventListener('keydown', (e) => {
+        if (e.key === '`' || e.key === '~' || e.key === 'º') {
+            e.preventDefault(); // Evita que se escriba la tilde en la web
+            terminal.classList.toggle('hidden');
+            if (!terminal.classList.contains('hidden')) {
+                termInput.focus(); // Pone el cursor directo en la consola
+            }
+        }
+    });
+
+    // Cerrar con el botón X
+    termClose.addEventListener('click', () => terminal.classList.add('hidden'));
+
+    // Escuchar el Enter
+    termInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const command = termInput.value.trim();
+            termInput.value = '';
+            if (command) processCommand(command);
+        }
+    });
+
+    function printLine(text, className = '') {
+        const div = document.createElement('div');
+        div.innerHTML = text; 
+        if (className) div.className = className;
+        termHistory.appendChild(div);
+        termHistory.scrollTop = termHistory.scrollHeight; // Auto-scroll
+    }
+
+    function processCommand(cmd) {
+        printLine(`$&gt; ${cmd}`, 'cmd-echo');
+        const args = cmd.split(' ').filter(Boolean);
+        const mainCmd = args[0].toLowerCase();
+
+        switch (mainCmd) {
+            case 'help':
+                printLine("Comandos instalados:");
+                printLine("&nbsp;&nbsp;<strong style='color:#fff'>whoami</strong>&nbsp;&nbsp;&nbsp;- Muestra tu identidad");
+                printLine("&nbsp;&nbsp;<strong style='color:#fff'>clear</strong>&nbsp;&nbsp;&nbsp;&nbsp;- Limpia la pantalla");
+                printLine("&nbsp;&nbsp;<strong style='color:#fff'>osint</strong>&nbsp;&nbsp;&nbsp;&nbsp;- Atajo a las herramientas OSINT");
+                printLine("&nbsp;&nbsp;<strong style='color:#fff'>matrix</strong>&nbsp;&nbsp;&nbsp;- (Clasificado)");
+                printLine("&nbsp;&nbsp;<strong style='color:#fff'>exit</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Cierra la terminal");
+                break;
+            case 'clear':
+                termHistory.innerHTML = '';
+                break;
+            case 'whoami':
+                printLine("guest@cyberescudo - Nivel de privilegio: bajo");
+                break;
+            case 'sudo':
+                printLine("¿En serio? Tu intento de escalada de privilegios ha sido registrado y reportado al administrador.", "cmd-error");
+                break;
+            case 'matrix':
+                printLine("Despierta, Neo...", "cmd-echo");
+                document.body.style.filter = "hue-rotate(90deg)"; // Pone la web entera verde
+                setTimeout(() => printLine("Sigue al conejo blanco."), 2000);
+                break;
+            case 'osint':
+                printLine("Iniciando módulos OSINT... Redirigiendo...");
+                setTimeout(() => window.location.href = "/tool-osint-report.php", 1000);
+                break;
+            case 'exit':
+                terminal.classList.add('hidden');
+                break;
+            default:
+                printLine(`bash: ${mainCmd}: comando no encontrado`, 'cmd-error');
+        }
+    }
+});
 })();

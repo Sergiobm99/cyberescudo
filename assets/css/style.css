@@ -1826,3 +1826,99 @@ nav ul li a, .submenu-toggle {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+/* ─── TERMINAL EASTER EGG ─── */
+.cyber-terminal {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 350px;
+    background: rgba(5, 10, 15, 0.98);
+    border-top: 2px solid var(--cyan);
+    z-index: 99999;
+    font-family: var(--mono);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease-in-out;
+    box-shadow: 0 -5px 30px rgba(0, 255, 255, 0.15);
+}
+.cyber-terminal.hidden {
+    transform: translateY(100%);
+}
+.terminal-header {
+    background: rgba(0, 255, 255, 0.1);
+    color: var(--cyan);
+    padding: 6px 15px;
+    font-size: 0.8rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+}
+#term-close {
+    background: transparent;
+    border: none;
+    color: var(--cyan);
+    cursor: pointer;
+    font-weight: 900;
+    font-size: 1rem;
+    transition: color 0.2s;
+}
+#term-close:hover { color: #ff5050; }
+.term-history {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #a0d0c0;
+}
+.term-history .cmd-echo { color: var(--cyan); margin-top: 10px; font-weight: bold; }
+.term-history .cmd-error { color: #ff5050; }
+.term-input-line {
+    display: flex;
+    padding: 10px 15px;
+    background: rgba(0, 0, 0, 0.6);
+    align-items: center;
+}
+.term-prompt {
+    color: var(--cyan);
+    margin-right: 10px;
+    font-weight: bold;
+}
+#term-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #00ff00;
+    font-family: var(--mono);
+    font-size: 1rem;
+    outline: none;
+}
+/* ─── BOTÓN FLOTANTE TERMINAL ─── */
+.cyber-term-float-btn {
+    position: fixed;
+    bottom: 20px;
+    left: 20px; /* Esquina inferior izquierda */
+    background: rgba(5, 10, 15, 0.85);
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    color: var(--cyan);
+    font-family: var(--mono);
+    font-size: 1.1rem;
+    font-weight: 900;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    z-index: 99998; /* Un nivel por debajo de la propia terminal */
+    backdrop-filter: blur(4px);
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.1);
+}
+
+.cyber-term-float-btn:hover {
+    background: rgba(0, 255, 255, 0.1);
+    border-color: var(--cyan);
+    color: #fff;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+    transform: translateY(-3px);
+}
