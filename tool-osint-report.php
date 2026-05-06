@@ -12,7 +12,7 @@ require __DIR__ . '/templates/header.php';
 <main class="content-page">
   <div class="m-bottom-2">
     <span class="section-label"><?= $lang==='es' ? '// AUDITORÍA COMERCIAL' : '// COMMERCIAL AUDIT' ?></span>
-    <h1><?= $lang==='es' ? 'Generador de Reportes OSINT' : 'OSINT Report Generator' ?></h1>
+    <h1><?= $lang === 'es' ? 'Generador de Reportes OSINT' : 'OSINT Report Generator' ?></h1>
   </div>
   
   <div class="tool-select-wrapper">
@@ -27,7 +27,7 @@ require __DIR__ . '/templates/header.php';
 
   <div class="card">
     <div class="tool-header md-container" style="border-bottom:1px solid var(--border); margin-bottom: 1.5rem; padding-bottom: 1rem;">
-      <h2>📄 Reporte de Inteligencia Pública</h2>
+      <h2>📄 <?= $lang === 'es' ? 'Reporte de Inteligencia Pública' : 'Public Intelligence Report' ?></h2>
       <p><?= $lang==='es'
         ? 'Introduce un dominio y obtén un resumen de la información pública expuesta en internet. Proceso 100% legal y sin interacción con los servidores del objetivo.'
         : 'Enter a domain and get a summary of public information exposed on the internet. 100% legal process with no interaction with target servers.' ?></p>
