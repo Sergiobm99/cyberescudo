@@ -1986,163 +1986,93 @@ nav ul li a, .submenu-toggle {
     scroll-margin-top: 100px; /* Ajusta este valor según la altura de tu menú */
 }
 /* Estilos del Cliente de Correo Simulado */
-    .email-client {
-        background: #1e1e1e;
-        border: 1px solid #333;
-        border-radius: 8px;
-        overflow: hidden;
-        font-family: Arial, sans-serif;
-        color: #e0e0e0;
-        margin-bottom: 2rem;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-    }
-    .email-header {
-        background: #2d2d2d;
-        padding: 15px 20px;
-        border-bottom: 1px solid #444;
-    }
-    .email-header-row {
-        margin-bottom: 8px;
-        font-size: 0.95rem;
-    }
-    .email-label {
-        color: #888;
-        display: inline-block;
-        width: 70px;
-    }
-    .email-body {
-        background: #252525;
-        padding: 30px 20px;
-        font-size: 1.05rem;
-        line-height: 1.6;
-        min-height: 200px;
-    }
-    .email-attachment {
-        background: #2d2d2d;
-        padding: 15px 20px;
-        border-top: 1px solid #444;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    
-    /* Clases para el juego interactivo */
-    .suspicious-element {
-        cursor: help;
-        transition: all 0.3s ease;
-        border-bottom: 1px dashed transparent;
-    }
-    .suspicious-element:hover {
-        border-bottom: 1px dashed var(--cyan);
-    }
-    .suspicious-element.found {
-        background-color: rgba(255, 42, 42, 0.2);
-        border: 1px solid #ff2a2a;
-        border-radius: 4px;
-        padding: 2px 4px;
-        color: #ff2a2a;
-        pointer-events: none; /* Desactiva clics extra */
-        animation: pulse 1s;
-    }
-    
-    /* Panel de estado */
-    .soc-dashboard {
-        background: #050505;
-        border: 1px solid var(--cyan);
-        padding: 15px;
-        border-radius: 5px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-    }
-    .score-badge {
-        background: var(--cyan);
-        color: #000;
-        padding: 5px 15px;
-        border-radius: 15px;
-        font-weight: bold;
-        font-family: var(--mono);
-    }
-    
-    #success-message {
-        display: none;
-        background: rgba(0, 255, 0, 0.1);
-        border: 1px solid #00ff00;
-        color: #00ff00;
-        padding: 15px;
-        margin-top: 20px;
-        border-radius: 5px;
-        text-align: center;
-        font-family: var(--mono);
-    }
-    /* Estilos de la tarjeta interactiva */
-    .simulator-card {
-        display: block;
-        background: #0a0a0a;
-        border: 1px solid #ff2a2a;
-        border-radius: 8px;
-        padding: 2rem;
-        text-decoration: none;
-        transition: all 0.3s;
-        box-shadow: 0 0 15px rgba(255, 42, 42, 0.1);
-    }
-    .simulator-card:hover {
-        box-shadow: 0 0 25px rgba(255, 42, 42, 0.3);
-        border-color: #ff5555;
-        transform: translateY(-2px);
-    }
-    .sim-header {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        margin-bottom: 1rem;
-    }
-    .sim-icon {
-        font-size: 2.5rem;
-    }
-    .sim-title {
-        margin: 0;
-        color: #fff;
-    }
-    .sim-desc {
-        color: #aaa;
-        line-height: 1.6;
-        margin-bottom: 1.5rem;
-        font-size: 1.05rem;
-    }
-    .sim-btn {
-        background: rgba(255, 42, 42, 0.15);
-        color: #ff2a2a;
-        padding: 8px 16px;
-        border-radius: 4px;
-        font-family: var(--mono);
-        font-weight: bold;
-        font-size: 0.85rem;
-        display: inline-block;
-    }
+.email-client {
+    background: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 8px;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    color: #e0e0e0;
+    margin-bottom: 2rem;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+}
+.email-header {
+    background: #2d2d2d;
+    padding: 15px 20px;
+    border-bottom: 1px solid #444;
+}
+.email-header-row {
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+}
+.email-label {
+    color: #888;
+    display: inline-block;
+    width: 70px;
+}
+.email-body {
+    background: #252525;
+    padding: 30px 20px;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    min-height: 200px;
+}
+.email-attachment {
+    background: #2d2d2d;
+    padding: 15px 20px;
+    border-top: 1px solid #444;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
 
-    /* 🔥 AJUSTES PARA VERSIÓN MÓVIL 🔥 */
-    @media (max-width: 768px) {
-        .simulator-card {
-            padding: 1.2rem; /* Relleno interior mucho menor */
-        }
-        .sim-header {
-            gap: 10px;
-            margin-bottom: 0.8rem;
-        }
-        .sim-icon {
-            font-size: 1.8rem; /* Icono del pez más pequeño */
-        }
-        .sim-title {
-            font-size: 1.15rem; /* Título más compacto */
-        }
-        .sim-desc {
-            font-size: 0.9rem; /* Texto descriptivo más pequeño */
-            margin-bottom: 1.2rem;
-        }
-        .sim-btn {
-            font-size: 0.75rem; /* Botón un poco más pequeño */
-            padding: 6px 12px;
-        }
-    }
+/* Clases para el juego interactivo */
+.suspicious-element {
+    cursor: help;
+    transition: all 0.3s ease;
+    border-bottom: 1px dashed transparent;
+}
+.suspicious-element:hover {
+    border-bottom: 1px dashed var(--cyan);
+}
+.suspicious-element.found {
+    background-color: rgba(255, 42, 42, 0.2);
+    border: 1px solid #ff2a2a;
+    border-radius: 4px;
+    padding: 2px 4px;
+    color: #ff2a2a;
+    pointer-events: none; /* Desactiva clics extra */
+    animation: pulse 1s;
+}
+
+/* Panel de estado */
+.soc-dashboard {
+    background: #050505;
+    border: 1px solid var(--cyan);
+    padding: 15px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.score-badge {
+    background: var(--cyan);
+    color: #000;
+    padding: 5px 15px;
+    border-radius: 15px;
+    font-weight: bold;
+    font-family: var(--mono);
+}
+
+#success-message {
+    display: none;
+    background: rgba(0, 255, 0, 0.1);
+    border: 1px solid #00ff00;
+    color: #00ff00;
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 5px;
+    text-align: center;
+    font-family: var(--mono);
+}
