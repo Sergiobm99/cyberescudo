@@ -385,6 +385,9 @@ function processCommand(cmd) {
                 } else if (flagIngresada === 'FLAG{nikto_recon_expert}') {
                 printLine("🏅 ¡Aprobado! Sabes separar el ruido de las vulnerabilidades críticas reales.", "cmd-echo");
                 printLine("Rol actualizado a [ DAST_SPECIALIST ]...");
+                } else if (flagIngresada === 'FLAG{burp_suite_jedi}') {
+                printLine("🏅 ¡Aprobado! Tienes un conocimiento profundo de la arquitectura de Burp Suite.", "cmd-echo");
+                printLine("Rol actualizado a [ BURP_MASTER ]...");
             } else {
                 printLine("❌ Bandera incorrecta o no reconocida.", "cmd-error");
             }
