@@ -412,6 +412,9 @@ function processCommand(cmd) {
                 } else if (flagIngresada === 'FLAG{android_ipc_pwned}') {
                 printLine("🏅 ¡Aprobado! Has abusado de la comunicación inter-procesos del sistema Android.", "cmd-echo");
                 printLine("Rol actualizado a [ IPC_EXPLOITER ]...");
+                } else if (flagIngresada === 'FLAG{smali_patching_ninja}') {
+                printLine("🏅 ¡Aprobado! Sabes cómo reescribir las reglas alterando el ADN de las aplicaciones.", "cmd-echo");
+                printLine("Rol actualizado a [ REVERSE_ENGINEER ]...");
             } else {
                 printLine("❌ Bandera incorrecta o no reconocida.", "cmd-error");
             }
