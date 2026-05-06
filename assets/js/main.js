@@ -367,6 +367,9 @@ function processCommand(cmd) {
                 } else if (flagIngresada === 'FLAG{hydra_syntax_master}') {
                 printLine("🏅 ¡Aprobado! Has dominado la infernal sintaxis web de Hydra.", "cmd-echo");
                 printLine("Rol actualizado a [ BRUTEFORCER ]...");
+                } else if (flagIngresada === 'FLAG{python_scanner_architect}') {
+                printLine("🏅 ¡Aprobado! Has programado los cimientos de una herramienta ofensiva en Python.", "cmd-echo");
+                printLine("Rol actualizado a [ VULN_DEV ]...");
             } else {
                 printLine("❌ Bandera incorrecta o no reconocida.", "cmd-error");
             }
