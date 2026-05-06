@@ -403,6 +403,9 @@ function processCommand(cmd) {
                 } else if (flagIngresada === 'FLAG{apache_hardening_master}') {
                 printLine("🏅 ¡Aprobado! Sabes cómo cerrar las puertas antes de que los atacantes lleguen.", "cmd-echo");
                 printLine("Rol actualizado a [ SERVER_DEFENDER ]...");
+                } else if (flagIngresada === 'FLAG{android_activity_bypassed}') {
+                printLine("🏅 ¡Aprobado! Has saltado los controles lógicos explotando el Manifest de Android.", "cmd-echo");
+                printLine("Rol actualizado a [ MOBILE_PENTESTER ]...");
             } else {
                 printLine("❌ Bandera incorrecta o no reconocida.", "cmd-error");
             }
