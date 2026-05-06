@@ -373,6 +373,9 @@ function processCommand(cmd) {
                 } else if (flagIngresada === 'FLAG{iptables_defender_wall}') {
                 printLine("🏅 ¡Aprobado! Sabes usar Netfilter para fortificar el perímetro.", "cmd-echo");
                 printLine("Rol actualizado a [ SYSADMIN_SECURITY ]...");
+                } else if (flagIngresada === 'FLAG{snort_rule_engineer}') {
+                printLine("🏅 ¡Aprobado! Has creado una firma de red capaz de detener a los atacantes.", "cmd-echo");
+                printLine("Rol actualizado a [ IDS_ANALYST ]...");
             } else {
                 printLine("❌ Bandera incorrecta o no reconocida.", "cmd-error");
             }

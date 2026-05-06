@@ -3,301 +3,206 @@ require_once __DIR__ . '/../bootstrap.php';
 $pageTitle    = $lang==='es' ? 'Shodan: OSINT y Reconocimiento Pasivo — CyberEscudo' : 'Shodan: OSINT & Passive Reconnaissance — CyberEscudo';
 $contentTitle = $lang==='es' ? 'Shodan: OSINT y Reconocimiento Pasivo' : 'Shodan: OSINT & Passive Reconnaissance';
 $contentDate  = '2024-09-05';
-$contentDiff  = 'basic';
+$contentDiff  = 'intermediate';
 $contentTags  = ['Shodan','OSINT','Reconocimiento','IoT','CVE','Pasivo'];
 ob_start(); if ($lang==='es'): ?>
 <div class="prose">
-  <p><strong>Shodan</strong> es el motor de búsqueda de dispositivos conectados a Internet. Indexa banners de servicios, versiones de software y metadatos de millones de hosts globalmente. Es la herramienta más potente de reconocimiento pasivo: no enviamos ningún paquete al objetivo.</p>
+  <p><strong>Shodan</strong> es el motor de búsqueda más peligroso y fascinante de Internet. Mientras que Google rastrea páginas web buscando contenido, Shodan escanea puertos (Banner Grabbing) buscando dispositivos: servidores, webcams, sistemas de control industrial (SCADA), routers y bases de datos. Es la joya de la corona del <strong>Reconocimiento Pasivo</strong>: toda la información ya ha sido indexada por Shodan, por lo que tú nunca tocas la IP del objetivo (haciéndote invisible).</p>
 
-  <h2>1. Configuración de la CLI de Shodan</h2>
-  <pre><code># Instalar la CLI:
+  <h2>1. Arquitectura y Configuración (CLI)</h2>
+  <p>Aunque Shodan tiene interfaz web, los profesionales utilizan su CLI (Interfaz de Línea de Comandos) y su API para automatizar tareas y evadir las limitaciones visuales de la web.</p>
+  <pre><code># Instalación mediante Python:
 pip3 install shodan
 
-# Autenticar con tu API key (requiere cuenta gratuita o de pago):
-shodan init TU_API_KEY
+# Autenticación (Necesitas tu API Key de account.shodan.io):
+shodan init TU_API_KEY_AQUI
 
-# Ver información de tu cuenta:
-shodan info
-
-# Ayuda de comandos:
-shodan --help</code></pre>
-
-  <h2>2. Búsquedas básicas por web</h2>
-  <pre><code># Buscar por banner de servicio:
-apache
-nginx 1.18
-IIS/10.0
-
-# Buscar por país:
-country:ES apache
-country:US "webcam"
-
-# Buscar por ciudad:
-city:"Madrid" port:22
-city:"Barcelona" product:MySQL
-
-# Buscar por organización/ASN:
-org:"Telefonica"
-org:"Amazon" port:3389
-
-# Buscar por rango de red/CIDR:
-net:192.168.0.0/24
-net:203.0.113.0/24
-
-# Buscar por puerto específico:
-port:8080 product:Tomcat
-port:27017             # MongoDB expuesto
-port:9200              # Elasticsearch expuesto
-port:6379              # Redis sin autenticación</code></pre>
-
-  <h2>3. Filtros avanzados de Shodan</h2>
-  <pre><code># CVE específica en producción:
-vuln:CVE-2021-44228    # Log4Shell — servidores afectados en todo el mundo
-vuln:CVE-2019-19781    # Citrix ADC (Shitrix)
-vuln:CVE-2017-0144     # EternalBlue (MS17-010)
-
-# Producto + versión:
-product:OpenSSH version:7.4
-product:"Apache httpd" version:2.4.49   # Apache Path Traversal CVE-2021-41773
-
-# Sistemas de control industrial (ICS/SCADA):
-product:Siemens
-"Modbus" port:502
-"SCADA" port:102
-
-# Cámaras y dispositivos IoT:
-"Server: IP Webcam Server"
-"webcamXP"
-product:"Hikvision IP Camera"
-"GoAhead-Webs" port:80
-
-# Paneles de administración expuestos:
-http.title:"phpMyAdmin"
-http.title:"Grafana"
-http.title:"Kibana"
-http.title:"Jenkins"
-http.title:"Admin Panel"
-
-# Certificados SSL de un dominio:
-ssl:"objetivo.com"
-ssl.cert.subject.cn:"*.objetivo.com"</code></pre>
-
-  <h2>4. Uso de la CLI de Shodan</h2>
-  <pre><code># Búsqueda básica:
-shodan search "apache 2.4.49"
-
-# Contar resultados sin mostrarlos:
-shodan count "port:27017 MongoDB"
-
-# Buscar y mostrar solo IPs:
-shodan search --fields ip_str "port:6379 -auth" | awk '{print $1}'
-
-# Buscar hosts de una organización:
-shodan search --fields ip_str,port,org "org:Telefonica" 
-
-# Consultar información de una IP:
-shodan host 1.2.3.4
-
-# Monitorización de alertas (plan pago):
-shodan alert create "Mi empresa" 203.0.113.0/24
-shodan alert list</code></pre>
-
-  <h2>5. Shodan + Python API</h2>
-  <pre><code>import shodan
-import json
-
-API_KEY = "TU_API_KEY"
-api = shodan.Shodan(API_KEY)
-
-# Buscar servicios MongoDB expuestos en España:
-try:
-    results = api.search('port:27017 country:ES')
-    print(f'Total resultados: {results["total"]}')
-    
-    for r in results['matches']:
-        print(f"IP: {r['ip_str']}")
-        print(f"Puerto: {r['port']}")
-        print(f"Org: {r.get('org', 'N/A')}")
-        print(f"Versión: {r.get('version', 'N/A')}")
-        print("---")
-        
-except shodan.APIError as e:
-    print(f'Error: {e}')
-
-# Obtener información completa de un host:
-host = api.host("1.2.3.4")
-print(json.dumps(host, indent=2, default=str))</code></pre>
-
-  <h2>6. Búsquedas combinadas para pentesting</h2>
-  <pre><code># Paneles de login de VPN expuestos:
-http.title:"Pulse Connect Secure"
-http.title:"GlobalProtect"
-http.title:"Cisco AnyConnect"
-
-# Dispositivos de red con credenciales por defecto:
-"default password" http.title:"Router"
-product:"MikroTik" port:8291
-
-# Bases de datos sin autenticación:
-product:CouchDB port:5984
-"Elasticsearch" port:9200 country:ES
-
-# Servidores con versiones vulnerables antiguas:
-product:"Apache httpd" version:"2.2"
-product:OpenSSL version:1.0
-
-# RDP expuesto:
-port:3389 os:"Windows Server 2008"
-
-# Panels de control industrial en España:
-country:ES port:102 "Siemens"</code></pre>
-
-  <h2>7. Dorking con Google + Shodan combinados</h2>
-  <table>
-    <thead><tr><th>Objetivo</th><th>Filtro Shodan</th></tr></thead>
-    <tbody>
-      <tr><td>MongoDB sin auth</td><td><code>port:27017 -"requires auth"</code></td></tr>
-      <tr><td>Redis sin auth</td><td><code>port:6379 "redis_version" -"requirepass"</code></td></tr>
-      <tr><td>Elasticsearch abierto</td><td><code>port:9200 json country:ES</code></td></tr>
-      <tr><td>Log4Shell vulnerable</td><td><code>vuln:CVE-2021-44228</code></td></tr>
-      <tr><td>Cámaras IP</td><td><code>product:"Hikvision" port:80</code></td></tr>
-      <tr><td>Jenkins sin auth</td><td><code>http.title:"Dashboard [Jenkins]" -"Authentication"</code></td></tr>
-      <tr><td>Grafana expuesto</td><td><code>http.title:"Grafana" country:ES</code></td></tr>
-      <tr><td>phpMyAdmin</td><td><code>http.title:"phpMyAdmin" country:ES</code></td></tr>
-    </tbody>
-  </table>
-</div>
-<?php else: ?>
-<div class="prose">
-  <p><strong>Shodan</strong> is the search engine for internet-connected devices. It indexes service banners, software versions, and metadata from millions of hosts worldwide. It's the most powerful passive reconnaissance tool — we send no packets to the target.</p>
-
-  <h2>1. Shodan CLI Setup</h2>
-  <pre><code># Install CLI:
-pip3 install shodan
-
-# Authenticate with your API key (free account works):
-shodan init YOUR_API_KEY
-
-# Check account info:
+# Verificar el estado de tu cuenta (Créditos de búsqueda y escaneo):
 shodan info</code></pre>
 
-  <h2>2. Basic Web Searches</h2>
-  <pre><code># By service banner:
-apache
-nginx 1.18
+  <h2>2. Filtros de Red y Geometría</h2>
+  <p>Los operadores básicos permiten segmentar Internet por zonas geográficas o propiedades de red. Recuerda no dejar espacios después de los dos puntos (<code>:</code>).</p>
+  <pre><code># Buscar por ASN (Autonomous System Number - Identificador del proveedor):
+asn:AS3352
 
-# By country:
-country:US "webcam"
-country:ES apache
-
-# By city:
-city:"Madrid" port:22
-city:"London" product:MySQL
-
-# By organisation:
-org:"Amazon" port:3389
-org:"Cloudflare"
-
-# By CIDR range:
+# Rango de IPs (CIDR) - Ideal para auditar los activos de una empresa:
 net:203.0.113.0/24
 
-# By open port:
-port:27017          # Exposed MongoDB
-port:9200           # Exposed Elasticsearch
-port:6379           # Unauthenticated Redis</code></pre>
+# Filtros geográficos combinados:
+country:ES city:"Madrid" port:22
+country:US org:"Amazon.com"</code></pre>
 
-  <h2>3. Advanced Shodan Filters</h2>
-  <pre><code># Specific CVE in production:
-vuln:CVE-2021-44228    # Log4Shell
-vuln:CVE-2019-19781    # Citrix ADC
-vuln:CVE-2017-0144     # EternalBlue (MS17-010)
+  <h2>3. Filtros Web Avanzados y MurmurHash (Favicons)</h2>
+  <p>Una de las técnicas OSINT más potentes es el rastreo de <strong>Favicons</strong>. Shodan calcula un hash matemático (MurmurHash3) del icono de la pestaña de la web. Si un atacante de Phishing copia la web de un banco, a menudo copia el favicon. Buscando ese hash, puedes descubrir todas las webs de Phishing o paneles ocultos de un framework.</p>
+  <pre><code># Encontrar servidores Spring Boot expuestos por su favicon:
+http.favicon.hash:116323821
 
-# Product + version:
-product:"Apache httpd" version:2.4.49   # CVE-2021-41773
-product:OpenSSH version:7.4
+# Buscar en el título o cuerpo del HTML:
+http.title:"Dashboard [Jenkins]"
+http.html:"defaced by"
 
-# ICS/SCADA:
-product:Siemens
-"Modbus" port:502
+# Buscar por el asunto o emisor del Certificado SSL:
+ssl.cert.subject.cn:"*.empresa.com"
+ssl.cert.issuer.cn:"Let's Encrypt"</code></pre>
 
-# IoT cameras:
-product:"Hikvision IP Camera"
-"GoAhead-Webs" port:80
+  <!-- ─── SECCIÓN DEL RETO CTF 15 (ESPAÑOL) ─── -->
+  <div style="margin: 3rem 0; padding: 1.5rem; background: rgba(0, 255, 255, 0.05); border-left: 4px solid var(--cyan); border-radius: 4px;">
+      <h3 style="margin-top: 0; color: var(--cyan); display: flex; align-items: center; gap: 10px;">
+          <span style="animation: pulse 2s infinite;">🔴</span> Simulador Shodan Dorking
+      </h3>
+      <p style="margin-bottom: 1.5rem;">Inteligencia de Amenazas te ha asignado una tarea crítica: Necesitamos cuantificar cuántos servidores <strong>Tomcat</strong> están vulnerables a <strong>Log4Shell (CVE-2021-44228)</strong> en los <strong>Estados Unidos (US)</strong>. Construye el Shodan Dork exacto para obtener esta información.</p>
+      <a href="/ctf/ctf-15.php" style="display: inline-block; padding: 8px 20px; background: transparent; border: 1px solid var(--cyan); color: var(--cyan); text-decoration: none; font-family: var(--mono); transition: all 0.3s; font-size: 0.9rem;" onmouseover="this.style.background='var(--cyan)'; this.style.color='#000';" onmouseout="this.style.background='transparent'; this.style.color='var(--cyan)';">
+          &gt;_ INICIAR RETO CTF 15
+      </a>
+  </div>
 
-# Exposed admin panels:
-http.title:"phpMyAdmin"
-http.title:"Grafana"
-http.title:"Jenkins"
-http.title:"Kibana"
+  <h2>4. Búsqueda de Vulnerabilidades y Componentes</h2>
+  <p>Shodan cruza las versiones extraídas de los banners (ej. Apache 2.4.49) con la base de datos de CVEs (National Vulnerability Database). Esto permite encontrar objetivos explotables de forma instantánea.</p>
+  <pre><code># Buscar una vulnerabilidad específica (Log4Shell):
+vuln:CVE-2021-44228
 
-# SSL certificates:
-ssl:"target.com"
-ssl.cert.subject.cn:"*.target.com"</code></pre>
+# Filtrar servidores que tienen CUALQUIER vulnerabilidad verificada:
+has_vuln:True port:443 country:ES
 
-  <h2>4. Shodan CLI Usage</h2>
-  <pre><code># Basic search:
-shodan search "apache 2.4.49"
+# Buscar por producto y versión específica:
+product:"OpenSSH" version:"7.4"
+product:"Microsoft IIS" version:"10.0"</code></pre>
 
-# Count results only:
-shodan count "port:27017 MongoDB"
+  <h2>5. CLI Mastery: Descarga y Parseo Offline</h2>
+  <p>Trabajar mirando la pantalla del terminal no es escalable. Los profesionales de OSINT descargan los datos y los filtran en local para no consumir créditos de la API constantemente.</p>
+  <pre><code># 1. Descargar resultados a un archivo JSON comprimido (consume créditos de exportación):
+shodan download servidores_ftp "port:21 Anonymous access allowed" --limit 1000
 
-# Get IPs only:
-shodan search --fields ip_str "port:6379 -auth"
+# 2. Parsear el archivo descargado para extraer solo IPs y puertos:
+shodan parse --fields ip_str,port servidores_ftp.json.gz
 
-# Get host info:
-shodan host 1.2.3.4
+# 3. Generar estadísticas (Facets) sin descargar los datos:
+# ¿Cuáles son los 5 países con más bases de datos MongoDB abiertas?
+shodan stats --facets country:5 "port:27017 -auth"</code></pre>
 
-# Alerts (paid plan):
-shodan alert create "My company" 203.0.113.0/24
-shodan alert list</code></pre>
+  <h2>6. Detección de Honeypots (Señuelos)</h2>
+  <p>Los investigadores y el Blue Team despliegan "Honeypots" (sistemas falsos) para atrapar a los hackers. Shodan tiene un algoritmo de Machine Learning que calcula la probabilidad de que una IP sea una trampa.</p>
+  <pre><code># Evaluar la puntuación de Honeypot de una IP (1.0 = 100% Trampa, 0.0 = Real):
+shodan honeyscore 1.2.3.4</code></pre>
 
-  <h2>5. Shodan Python API</h2>
+  <h2>7. Scripting con Python API (Automatización)</h2>
+  <p>Integrar Shodan en tus propios scripts de Python te permite automatizar la vigilancia del perímetro corporativo de forma diaria.</p>
   <pre><code>import shodan
 import json
 
-API_KEY = "YOUR_API_KEY"
-api = shodan.Shodan(API_KEY)
+api = shodan.Shodan('TU_API_KEY')
 
-# Search for exposed MongoDB in the US:
-results = api.search('port:27017 country:US')
-print(f'Total: {results["total"]}')
+try:
+    # Buscar cámaras Hikvision en Madrid
+    query = 'product:"Hikvision" city:"Madrid"'
+    resultados = api.search(query)
+    
+    print(f"Dispositivos encontrados: {resultados['total']}")
+    for host in resultados['matches']:
+        print(f"IP: {host['ip_str']} | ISP: {host.get('isp', 'N/A')}")
+        
+except shodan.APIError as e:
+    print(f"Error en la API: {e}")</code></pre>
 
-for r in results['matches']:
-    print(f"IP: {r['ip_str']} | Org: {r.get('org','N/A')}")
-
-# Full host info:
-host = api.host("1.2.3.4")
-print(json.dumps(host, indent=2, default=str))</code></pre>
-
-  <h2>6. Pentesting-Oriented Searches</h2>
-  <pre><code># Exposed VPN login panels:
-http.title:"Pulse Connect Secure"
-http.title:"GlobalProtect"
-http.title:"Cisco AnyConnect"
-
-# Databases without authentication:
-product:CouchDB port:5984
-"Elasticsearch" port:9200
-
-# Old vulnerable versions:
-product:"Apache httpd" version:"2.2"
-product:OpenSSL version:1.0
-
-# Exposed RDP:
-port:3389 os:"Windows Server 2008"</code></pre>
-
-  <h2>7. Quick Reference Filters</h2>
+  <h2>8. Tabla de Dorks OSINT Clásicos</h2>
   <table>
-    <thead><tr><th>Target</th><th>Shodan Filter</th></tr></thead>
+    <thead><tr><th>Objetivo (Target)</th><th>Shodan Dork</th></tr></thead>
     <tbody>
-      <tr><td>MongoDB no auth</td><td><code>port:27017 -"requires auth"</code></td></tr>
-      <tr><td>Redis no auth</td><td><code>port:6379 "redis_version" -"requirepass"</code></td></tr>
-      <tr><td>Open Elasticsearch</td><td><code>port:9200 json</code></td></tr>
-      <tr><td>Log4Shell</td><td><code>vuln:CVE-2021-44228</code></td></tr>
-      <tr><td>IP Cameras</td><td><code>product:"Hikvision" port:80</code></td></tr>
-      <tr><td>Jenkins no auth</td><td><code>http.title:"Dashboard [Jenkins]" -"Authentication"</code></td></tr>
-      <tr><td>phpMyAdmin</td><td><code>http.title:"phpMyAdmin"</code></td></tr>
+      <tr><td>RDP (Escritorios Remotos) Expuestos</td><td><code>port:3389 has_screenshot:true</code></td></tr>
+      <tr><td>Bases de Datos MongoDB Abiertas</td><td><code>port:27017 "MongoDB Server Information" -"auth"</code></td></tr>
+      <tr><td>Cámaras Web IP Sin Contraseña</td><td><code>"Server: SQ-WEBCAM"</code> o <code>"GoAhead-Webs"</code></td></tr>
+      <tr><td>Paneles Solares / Sistemas SCADA</td><td><code>port:502 "Modbus"</code></td></tr>
+      <tr><td>Paneles de Jenkins vulnerables</td><td><code>http.title:"Dashboard [Jenkins]" -"Authentication"</code></td></tr>
     </tbody>
   </table>
+
+</div>
+
+<?php else: ?>
+<div class="prose">
+  <p><strong>Shodan</strong> is the most dangerous and fascinating search engine on the Internet. While Google crawls web pages looking for content, Shodan scans ports (Banner Grabbing) looking for devices: servers, webcams, industrial control systems (SCADA), routers, and databases. It is the crown jewel of <strong>Passive Reconnaissance</strong>.</p>
+
+  <h2>1. Architecture & Setup (CLI)</h2>
+  <p>Professionals use the CLI (Command Line Interface) and API to automate tasks and evade visual web limitations.</p>
+  <pre><code># Python installation:
+pip3 install shodan
+
+# Authentication (API Key from account.shodan.io):
+shodan init YOUR_API_KEY_HERE
+
+# Check account status (query/scan credits):
+shodan info</code></pre>
+
+  <h2>2. Network & Geometry Filters</h2>
+  <p>Basic operators allow you to segment the Internet by geography or network properties.</p>
+  <pre><code># By ASN (Autonomous System Number):
+asn:AS3352
+
+# By IP range (CIDR) - Great for corporate perimeter auditing:
+net:203.0.113.0/24
+
+# Combined geographic filters:
+country:US org:"Amazon.com" port:443</code></pre>
+
+  <h2>3. Advanced Web Filters & MurmurHash (Favicons)</h2>
+  <p>One of the most powerful OSINT techniques is <strong>Favicon hashing</strong>. Shodan calculates a mathematical hash (MurmurHash3) of the website's tab icon. You can use it to find phishing sites or hidden admin panels across the entire internet.</p>
+  <pre><code># Find exposed Spring Boot servers by their favicon hash:
+http.favicon.hash:116323821
+
+# Search inside HTML title or body:
+http.title:"Dashboard [Jenkins]"
+http.html:"defaced by"
+
+# Search by SSL Certificate issuer/subject:
+ssl.cert.subject.cn:"*.company.com"</code></pre>
+
+  <!-- ─── SECCIÓN DEL RETO CTF 15 (INGLÉS) ─── -->
+  <div style="margin: 3rem 0; padding: 1.5rem; background: rgba(0, 255, 255, 0.05); border-left: 4px solid var(--cyan); border-radius: 4px;">
+      <h3 style="margin-top: 0; color: var(--cyan); display: flex; align-items: center; gap: 10px;">
+          <span style="animation: pulse 2s infinite;">🔴</span> Shodan Dorking Simulator
+      </h3>
+      <p style="margin-bottom: 1.5rem;">Threat Intelligence has assigned you a critical task: We need to quantify how many <strong>Tomcat</strong> servers are vulnerable to <strong>Log4Shell (CVE-2021-44228)</strong> in the <strong>United States (US)</strong>. Construct the exact Shodan Dork to obtain this information.</p>
+      <a href="/ctf/ctf-15.php" style="display: inline-block; padding: 8px 20px; background: transparent; border: 1px solid var(--cyan); color: var(--cyan); text-decoration: none; font-family: var(--mono); transition: all 0.3s; font-size: 0.9rem;" onmouseover="this.style.background='var(--cyan)'; this.style.color='#000';" onmouseout="this.style.background='transparent'; this.style.color='var(--cyan)';">
+          &gt;_ START CTF 15 CHALLENGE
+      </a>
+  </div>
+
+  <h2>4. Vulnerability & Component Hunting</h2>
+  <p>Shodan cross-references extracted versions (e.g., Apache 2.4.49) with the CVE database. This allows instant discovery of exploitable targets.</p>
+  <pre><code># Search for a specific vulnerability (Log4Shell):
+vuln:CVE-2021-44228
+
+# Filter servers that have ANY verified vulnerability:
+has_vuln:True port:443 country:US
+
+# Search by specific product and version:
+product:"OpenSSH" version:"7.4"</code></pre>
+
+  <h2>5. CLI Mastery: Download & Offline Parsing</h2>
+  <p>Working on a terminal screen isn't scalable. OSINT pros download the data and filter it locally to save API credits.</p>
+  <pre><code># 1. Download results to a compressed JSON file:
+shodan download ftp_servers "port:21 Anonymous access allowed" --limit 1000
+
+# 2. Parse the downloaded file to extract only IPs and ports:
+shodan parse --fields ip_str,port ftp_servers.json.gz
+
+# 3. Generate statistics (Facets) without downloading data:
+# Top 5 countries with open MongoDB databases?
+shodan stats --facets country:5 "port:27017 -auth"</code></pre>
+
+  <h2>6. Honeypot Detection</h2>
+  <p>Blue Teams deploy "Honeypots" (fake systems) to trap hackers. Shodan has an ML algorithm that calculates the probability of an IP being a trap.</p>
+  <pre><code># Evaluate Honeypot score (1.0 = 100% Trap, 0.0 = Real):
+shodan honeyscore 1.2.3.4</code></pre>
+
+  <h2>7. Python API Scripting (Automation)</h2>
+  <pre><code>import shodan
+api = shodan.Shodan('YOUR_API_KEY')
+
+try:
+    results = api.search('product:"Hikvision" city:"London"')
+    print(f"Found: {results['total']}")
+except shodan.APIError as e:
+    print(f"Error: {e}")</code></pre>
 </div>
 <?php endif; $contentBody=ob_get_clean(); require __DIR__.'/../templates/content-page.php';
