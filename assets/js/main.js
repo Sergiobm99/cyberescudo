@@ -397,6 +397,9 @@ function processCommand(cmd) {
                 } else if (flagIngresada === 'FLAG{msfvenom_payload_crafter}') {
                 printLine("🏅 ¡Aprobado! Entiendes a fondo la arquitectura de payloads en MSF.", "cmd-echo");
                 printLine("Rol actualizado a [ METASPLOIT_OPERATOR ]...");
+                } else if (flagIngresada === 'FLAG{sqlmap_tamper_wizard}') {
+                printLine("🏅 ¡Aprobado! Has burlado las defensas perimetrales ofuscando tus payloads.", "cmd-echo");
+                printLine("Rol actualizado a [ WAF_BYPASSER ]...");
             } else {
                 printLine("❌ Bandera incorrecta o no reconocida.", "cmd-error");
             }

