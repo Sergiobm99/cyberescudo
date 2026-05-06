@@ -409,6 +409,9 @@ function processCommand(cmd) {
                 } else if (flagIngresada === 'FLAG{diva_android_auditor}') {
                 printLine("🏅 ¡Aprobado! Conoces a la perfección el sistema de archivos de Android y ADB.", "cmd-echo");
                 printLine("Rol actualizado a [ MOBILE_AUDITOR ]...");
+                } else if (flagIngresada === 'FLAG{android_ipc_pwned}') {
+                printLine("🏅 ¡Aprobado! Has abusado de la comunicación inter-procesos del sistema Android.", "cmd-echo");
+                printLine("Rol actualizado a [ IPC_EXPLOITER ]...");
             } else {
                 printLine("❌ Bandera incorrecta o no reconocida.", "cmd-error");
             }
