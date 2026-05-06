@@ -81,7 +81,26 @@ require __DIR__ . '/templates/header.php';
     </a>
 </div>
 </section>
+ <div class="md-container" style="max-width: 900px; margin: 0 auto 6rem auto;">
+    <a href="<?= e(BASE_URL . '/projects/skill-tree.php') ?>" style="display: flex; align-items: center; justify-content: space-between; background: linear-gradient(90deg, #050505 0%, #0a1515 100%); border: 1px solid var(--cyan); border-radius: 8px; padding: 2.5rem; text-decoration: none; transition: all 0.3s; position: relative; overflow: hidden;" onmouseover="this.style.boxShadow='0 0 30px rgba(0, 255, 255, 0.2)'; this.style.transform='scale(1.02)';" onmouseout="this.style.boxShadow='none'; this.style.transform='scale(1)';">
+        
+        <div style="position: absolute; right: -50px; top: -50px; opacity: 0.05; font-size: 15rem; font-family: monospace; transform: rotate(15deg); pointer-events: none;">
+            { }
+        </div>
 
+        <div style="position: relative; z-index: 1;">
+            <span style="color: var(--cyan); font-family: var(--mono); font-size: 0.9rem; letter-spacing: 2px;">// <?= $lang === 'es' ? 'DESCUBRE TU CAMINO' : 'DISCOVER YOUR PATH' ?></span>
+            <h3 style="color: #fff; font-size: 2rem; margin: 0.5rem 0;"><?= $lang === 'es' ? 'Explora el Árbol de Habilidades' : 'Explore the Skill Tree' ?></h3>
+            <p style="color: #aaa; margin: 0; font-size: 1.1rem;">
+                <?= $lang === 'es' ? 'Accede al roadmap interactivo y domina la ciberseguridad nivel a nivel.' : 'Access the interactive roadmap and master cybersecurity tier by tier.' ?>
+            </p>
+        </div>
+        
+        <div style="background: var(--cyan); color: #000; padding: 15px 30px; border-radius: 50px; font-weight: bold; font-family: var(--mono); display: flex; align-items: center; gap: 10px; position: relative; z-index: 1;">
+            <?= $lang === 'es' ? 'VER ROADMAP' : 'VIEW ROADMAP' ?> <span>→</span>
+        </div>
+    </a>
+</div>
 <!-- ─── BLUE TEAM SANDBOX (BLOQUE DESTACADO) ─── -->
 <div id="interactive-simulator" class="md-container" style="max-width: 900px; margin-left: auto; margin-right: auto; padding-top: 2rem; padding-bottom: 2rem;">
     <span class="section-label" style="color: #ff2a2a;">// <?= $lang === 'es' ? 'SIMULADOR INTERACTIVO' : 'INTERACTIVE SIMULATOR' ?></span>
@@ -259,6 +278,8 @@ require __DIR__ . '/templates/header.php';
     <h2 style="margin-top: 0.5rem; margin-bottom: 1.5rem;">
         <?= $lang === 'es' ? 'Últimas Amenazas y 0-Days' : 'Latest Threats & 0-Days' ?>
     </h2>
+
+   
     
     <div class="cyber-rss-grid">
         <?php

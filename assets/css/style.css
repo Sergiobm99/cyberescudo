@@ -2076,3 +2076,147 @@ nav ul li a, .submenu-toggle {
     text-align: center;
     font-family: var(--mono);
 }
+ /* =========================================
+       HACKER RPG SKILL TREE CSS
+    ========================================= */
+    .tree-container {
+        position: relative;
+        padding: 3rem 0;
+        max-width: 1000px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 4rem;
+    }
+
+    /* La columna vertebral de neón central */
+    .tree-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        width: 4px;
+        background: var(--cyan);
+        box-shadow: 0 0 15px var(--cyan);
+        transform: translateX(-50%);
+        z-index: 0;
+    }
+
+    .tree-tier {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+    }
+
+    .tier-badge {
+        background: #050505;
+        border: 2px dashed var(--cyan);
+        color: var(--cyan);
+        padding: 0.5rem 1.5rem;
+        font-family: var(--mono);
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        border-radius: 4px;
+        box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+    }
+
+    .tier-nodes {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 2rem;
+        width: 100%;
+    }
+
+    .node-card {
+        background: #111;
+        border: 2px solid #333;
+        border-radius: 8px;
+        padding: 1.5rem;
+        width: 260px;
+        text-align: center;
+        text-decoration: none;
+        color: #fff;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        z-index: 2;
+    }
+
+    /* Efecto Hover RPG */
+    .node-card:hover {
+        border-color: var(--cyan);
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.4), inset 0 0 10px rgba(0, 255, 255, 0.1);
+        transform: translateY(-5px) scale(1.05);
+    }
+
+    .node-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        display: block;
+    }
+
+    .node-title {
+        font-family: var(--mono);
+        font-size: 1.1rem;
+        color: #fff;
+        margin-bottom: 0.5rem;
+    }
+
+    .node-desc {
+        font-size: 0.85rem;
+        color: #888;
+        line-height: 1.4;
+    }
+
+    /* Líneas horizontales conectando los nodos a la columna vertebral */
+    @media (min-width: 769px) {
+        .node-card::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 2rem;
+            height: 2px;
+            background: var(--cyan);
+            z-index: -1;
+        }
+        /* Nodos a la izquierda */
+        .tier-nodes .node-card:nth-child(odd)::before {
+            right: -2rem;
+        }
+        /* Nodos a la derecha */
+        .tier-nodes .node-card:nth-child(even)::before {
+            left: -2rem;
+        }
+    }
+
+    /* Ajustes Móviles */
+    @media (max-width: 768px) {
+        .tree-container::before {
+            left: 20px; /* Mueve la línea a la izquierda en móvil */
+        }
+        .tree-tier {
+            align-items: flex-start;
+            padding-left: 40px;
+        }
+        .tier-badge {
+            margin-left: -30px; /* Alinea el badge con la línea */
+            background: #000;
+        }
+        .node-card {
+            width: 100%;
+        }
+        .node-card::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -20px;
+            width: 20px;
+            height: 2px;
+            background: var(--cyan);
+        }
+    }
