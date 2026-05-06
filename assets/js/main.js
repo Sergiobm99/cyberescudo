@@ -406,6 +406,9 @@ function processCommand(cmd) {
                 } else if (flagIngresada === 'FLAG{android_activity_bypassed}') {
                 printLine("🏅 ¡Aprobado! Has saltado los controles lógicos explotando el Manifest de Android.", "cmd-echo");
                 printLine("Rol actualizado a [ MOBILE_PENTESTER ]...");
+                } else if (flagIngresada === 'FLAG{diva_android_auditor}') {
+                printLine("🏅 ¡Aprobado! Conoces a la perfección el sistema de archivos de Android y ADB.", "cmd-echo");
+                printLine("Rol actualizado a [ MOBILE_AUDITOR ]...");
             } else {
                 printLine("❌ Bandera incorrecta o no reconocida.", "cmd-error");
             }
