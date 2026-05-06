@@ -19,6 +19,7 @@ Allow: /tool-regex.php
 Allow: /tool-revshell.php
 
 # Block internal directories and sensitive files
+Allow: /assets/img/
 Disallow: /lang/
 Disallow: /templates/
 Disallow: /assets/
