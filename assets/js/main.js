@@ -415,6 +415,9 @@ function processCommand(cmd) {
                 } else if (flagIngresada === 'FLAG{smali_patching_ninja}') {
                 printLine("🏅 ¡Aprobado! Sabes cómo reescribir las reglas alterando el ADN de las aplicaciones.", "cmd-echo");
                 printLine("Rol actualizado a [ REVERSE_ENGINEER ]...");
+                } else if (flagIngresada === 'FLAG{phishing_triage_expert}') {
+                printLine("🏅 ¡Aprobado! Tienes un ojo clínico para detectar Ingeniería Social.", "cmd-echo");
+                printLine("Rol actualizado a [ SOC_ANALYST ]...");
             } else {
                 printLine("❌ Bandera incorrecta o no reconocida.", "cmd-error");
             }

@@ -35,6 +35,7 @@ $projectMeta = [
   'projects/privilege-escalation-linux.php' => ['cat'=>'offensive',  'diff'=>'advanced'],
   'projects/docker-hardening.php'           => ['cat'=>'defensive',  'diff'=>'intermediate'],
   'projects/shodan.php'                     => ['cat'=>'network',    'diff'=>'basic'],
+  'projects/phishing-sandbox.php'           => ['cat'=>'defensive',  'diff'=>'basic'], // Añadido Sandbox
 ];
 
 // Difficulty display labels
@@ -81,6 +82,27 @@ require __DIR__ . '/templates/header.php';
 </div>
 </section>
 
+<!-- ─── BLUE TEAM SANDBOX (BLOQUE DESTACADO) ─── -->
+<div id="interactive-simulator" class="md-container" style="max-width: 900px; margin-left: auto; margin-right: auto; padding-top: 2rem; padding-bottom: 2rem;">
+    <span class="section-label" style="color: #ff2a2a;">// <?= $lang === 'es' ? 'SIMULADOR INTERACTIVO' : 'INTERACTIVE SIMULATOR' ?></span>
+    <h2 style="margin-top: 0.5rem; margin-bottom: 1.5rem;">
+        <?= $lang === 'es' ? 'Simulador SOC: Análisis de Phishing' : 'SOC Simulator: Phishing Analysis' ?>
+    </h2>
+
+    <a href="<?= e(BASE_URL . '/projects/phishing-sandbox.php') ?>" style="display: block; background: #0a0a0a; border: 1px solid #ff2a2a; border-radius: 8px; padding: 2rem; text-decoration: none; transition: all 0.3s; box-shadow: 0 0 15px rgba(255, 42, 42, 0.1);" onmouseover="this.style.boxShadow='0 0 25px rgba(255, 42, 42, 0.3)'; this.style.borderColor='#ff5555'; this.style.transform='translateY(-2px)';" onmouseout="this.style.boxShadow='0 0 15px rgba(255, 42, 42, 0.1)'; this.style.borderColor='#ff2a2a'; this.style.transform='translateY(0)';">
+        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 1rem;">
+            <span style="font-size: 2.5rem;">🎣</span>
+            <h3 style="margin: 0; color: #fff;"><?= $lang === 'es' ? 'Entrenamiento de Triaje (Nivel 1)' : 'Triage Training (Tier 1)' ?></h3>
+        </div>
+        <p style="color: #aaa; line-height: 1.6; margin-bottom: 1.5rem; font-size: 1.05rem;">
+            <?= $lang === 'es' ? 'Ponte en la piel de un analista de SOC. Analiza un correo electrónico malicioso interactivo y localiza visualmente las 3 banderas rojas (Red Flags) para neutralizar la amenaza.' : 'Step into the shoes of a SOC analyst. Analyze an interactive malicious email and visually locate the 3 red flags to neutralize the threat.' ?>
+        </p>
+        <span style="background: rgba(255, 42, 42, 0.15); color: #ff2a2a; padding: 8px 16px; border-radius: 4px; font-family: var(--mono); font-weight: bold; font-size: 0.85rem; display: inline-block;">
+            &gt;_ <?= $lang === 'es' ? 'INICIAR SIMULACIÓN' : 'START SIMULATION' ?>
+        </span>
+    </a>
+</div>
+
 <section id="projects" class="section">
   <div class="section-inner">
     <div class="section-header">
@@ -100,7 +122,6 @@ require __DIR__ . '/templates/header.php';
         : [''=>'All',  'basic'=>'Basic','intermediate'=>'Intermediate','advanced'=>'Advanced'];
       ?>
 
-      <!-- Se ha eliminado el style en línea problemático de la filter-bar -->
       <div class="filter-bar">
         <input type="search" class="filter-search" id="proj-search"
                placeholder="<?= $lang==='es' ? 'Buscar proyecto...' : 'Search project...' ?>">
@@ -144,7 +165,7 @@ require __DIR__ . '/templates/header.php';
             <?php endif; ?>
             
           <!-- Insignia del CTF -->
-            <?php if ($item['link'] === 'projects/sql-injection-manual.php' || $item['link'] === 'projects/inyeccion-comandos-rfi-lfi.php' || $item['link'] === 'projects/xss-practica.php' || $item['link'] === 'projects/csrf-clickjacking.php' || $item['link'] === 'projects/xxe-path-traversal.php' || $item['link'] === 'projects/privilege-escalation-linux.php' || $item['link'] === 'projects/gobuster.php' || $item['link'] === 'projects/incident-response.php' || $item['link'] === 'projects/secure-dev.php' || $item['link'] === 'projects/nmap.php' || $item['link'] === 'projects/hydra-brute-force.php' || $item['link'] === 'projects/vuln-scanner.php' || $item['link'] === 'projects/firewall.php' || $item['link'] === 'projects/network-monitoring.php' || $item['link'] === 'projects/shodan.php' || $item['link'] === 'projects/docker-hardening.php' || $item['link'] === 'projects/nikto-dirb.php' || $item['link'] === 'projects/burpsuite.php' || $item['link'] === 'projects/john-hashcat.php' || $item['link'] === 'projects/wireshark.php' || $item['link'] === 'projects/metasploit.php' || $item['link'] === 'projects/sqlmap.php' || $item['link'] === 'projects/hardening-apache.php' || $item['link'] === 'projects/insecurebank-analisis.php' || $item['link'] === 'projects/diva-auditoria.php' || $item['link'] === 'projects/diva-profundizacion.php' || $item['link'] === 'projects/android-reversing.php'): ?>
+            <?php if ($item['link'] === 'projects/sql-injection-manual.php' || $item['link'] === 'projects/inyeccion-comandos-rfi-lfi.php' || $item['link'] === 'projects/xss-practica.php' || $item['link'] === 'projects/csrf-clickjacking.php' || $item['link'] === 'projects/xxe-path-traversal.php' || $item['link'] === 'projects/privilege-escalation-linux.php' || $item['link'] === 'projects/gobuster.php' || $item['link'] === 'projects/incident-response.php' || $item['link'] === 'projects/secure-dev.php' || $item['link'] === 'projects/nmap.php' || $item['link'] === 'projects/hydra-brute-force.php' || $item['link'] === 'projects/vuln-scanner.php' || $item['link'] === 'projects/firewall.php' || $item['link'] === 'projects/network-monitoring.php' || $item['link'] === 'projects/shodan.php' || $item['link'] === 'projects/docker-hardening.php' || $item['link'] === 'projects/nikto-dirb.php' || $item['link'] === 'projects/burpsuite.php' || $item['link'] === 'projects/john-hashcat.php' || $item['link'] === 'projects/wireshark.php' || $item['link'] === 'projects/metasploit.php' || $item['link'] === 'projects/sqlmap.php' || $item['link'] === 'projects/hardening-apache.php' || $item['link'] === 'projects/insecurebank-analisis.php' || $item['link'] === 'projects/diva-auditoria.php' || $item['link'] === 'projects/diva-profundizacion.php' || $item['link'] === 'projects/android-reversing.php' || $item['link'] === 'projects/phishing-sandbox.php'): ?>
                 <span style="background: rgba(0, 255, 255, 0.1); color: var(--cyan); border: 1px solid var(--cyan); padding: 2px 8px; border-radius: 4px; font-size: 0.65rem; font-family: var(--mono); font-weight: bold; letter-spacing: 1px; display: inline-flex; align-items: center; gap: 5px; animation: pulse 2s infinite;">
                     <span style="font-size: 0.8rem;">🎯</span> <?= $lang === 'es' ? 'RETO CTF INCLUIDO' : 'CTF INSIDE' ?>
                 </span>
@@ -231,6 +252,7 @@ require __DIR__ . '/templates/header.php';
     </div>
   </div>
 </section>
+
 <!-- ─── THREAT INTELLIGENCE DASHBOARD ─── -->
 <div id="threat-intel" class="md-container" style="max-width: 900px; margin-left: auto; margin-right: auto; padding-top: 2rem; margin-bottom: 6rem;">
     <div class="section-label">// THREAT INTEL FEED</div>
