@@ -25,7 +25,11 @@
 
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/style.css?v=<?= time() ?>">
 
-  <link rel="icon" type="image/png" href="<?= BASE_URL ?>/assets/img/logo-cyberescudo.png">
+  <!-- Favicon principal para Google Search (Recomendado 192x192) -->
+<link rel="icon" href="<?= BASE_URL ?>/assets/img/logo-cyberescudo.png" sizes="192x192" type="image/png">
+
+<!-- Favicon para dispositivos Apple (Recomendado 180x180) -->
+<link rel="apple-touch-icon" href="<?= BASE_URL ?>/assets/img/logo-cyberescudo.png">
   
   <!-- Google tag (gtag.js) -->
   <script nonce="<?= e($cspNonce) ?>" async src="https://www.googletagmanager.com/gtag/js?id=G-T1D83JWZV1"></script>
