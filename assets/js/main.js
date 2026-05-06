@@ -400,6 +400,9 @@ function processCommand(cmd) {
                 } else if (flagIngresada === 'FLAG{sqlmap_tamper_wizard}') {
                 printLine("🏅 ¡Aprobado! Has burlado las defensas perimetrales ofuscando tus payloads.", "cmd-echo");
                 printLine("Rol actualizado a [ WAF_BYPASSER ]...");
+                } else if (flagIngresada === 'FLAG{apache_hardening_master}') {
+                printLine("🏅 ¡Aprobado! Sabes cómo cerrar las puertas antes de que los atacantes lleguen.", "cmd-echo");
+                printLine("Rol actualizado a [ SERVER_DEFENDER ]...");
             } else {
                 printLine("❌ Bandera incorrecta o no reconocida.", "cmd-error");
             }
