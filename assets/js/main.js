@@ -379,6 +379,9 @@ function processCommand(cmd) {
                 } else if (flagIngresada === 'FLAG{shodan_osint_master}') {
                 printLine("🏅 ¡Aprobado! Eres capaz de encontrar una aguja cibernética en un pajar global.", "cmd-echo");
                 printLine("Rol actualizado a [ OSINT_INVESTIGATOR ]...");
+                } else if (flagIngresada === 'FLAG{docker_socket_pwned}') {
+                printLine("🏅 ¡Aprobado! Conoces la vulnerabilidad más devastadora en entornos Cloud.", "cmd-echo");
+                printLine("Rol actualizado a [ CLOUD_BREACHER ]...");
             } else {
                 printLine("❌ Bandera incorrecta o no reconocida.", "cmd-error");
             }
