@@ -388,6 +388,12 @@ function processCommand(cmd) {
                 } else if (flagIngresada === 'FLAG{burp_suite_jedi}') {
                 printLine("🏅 ¡Aprobado! Tienes un conocimiento profundo de la arquitectura de Burp Suite.", "cmd-echo");
                 printLine("Rol actualizado a [ BURP_MASTER ]...");
+                } else if (flagIngresada === 'FLAG{gpu_hashcat_operator}') {
+                printLine("🏅 ¡Aprobado! Sabes usar la potencia gráfica bruta para romper criptografía.", "cmd-echo");
+                printLine("Rol actualizado a [ CRACKING_EXPERT ]...");
+                } else if (flagIngresada === 'FLAG{wireshark_pcap_hunter}') {
+                printLine("🏅 ¡Aprobado! Los paquetes no mienten, y tú sabes cómo leerlos.", "cmd-echo");
+                printLine("Rol actualizado a [ NETWORK_FORENSICS ]...");
             } else {
                 printLine("❌ Bandera incorrecta o no reconocida.", "cmd-error");
             }
