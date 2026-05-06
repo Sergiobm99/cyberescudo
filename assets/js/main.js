@@ -376,6 +376,9 @@ function processCommand(cmd) {
                 } else if (flagIngresada === 'FLAG{snort_rule_engineer}') {
                 printLine("🏅 ¡Aprobado! Has creado una firma de red capaz de detener a los atacantes.", "cmd-echo");
                 printLine("Rol actualizado a [ IDS_ANALYST ]...");
+                } else if (flagIngresada === 'FLAG{shodan_osint_master}') {
+                printLine("🏅 ¡Aprobado! Eres capaz de encontrar una aguja cibernética en un pajar global.", "cmd-echo");
+                printLine("Rol actualizado a [ OSINT_INVESTIGATOR ]...");
             } else {
                 printLine("❌ Bandera incorrecta o no reconocida.", "cmd-error");
             }
