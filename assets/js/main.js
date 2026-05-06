@@ -394,6 +394,9 @@ function processCommand(cmd) {
                 } else if (flagIngresada === 'FLAG{wireshark_pcap_hunter}') {
                 printLine("🏅 ¡Aprobado! Los paquetes no mienten, y tú sabes cómo leerlos.", "cmd-echo");
                 printLine("Rol actualizado a [ NETWORK_FORENSICS ]...");
+                } else if (flagIngresada === 'FLAG{msfvenom_payload_crafter}') {
+                printLine("🏅 ¡Aprobado! Entiendes a fondo la arquitectura de payloads en MSF.", "cmd-echo");
+                printLine("Rol actualizado a [ METASPLOIT_OPERATOR ]...");
             } else {
                 printLine("❌ Bandera incorrecta o no reconocida.", "cmd-error");
             }
