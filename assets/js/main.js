@@ -370,6 +370,9 @@ function processCommand(cmd) {
                 } else if (flagIngresada === 'FLAG{python_scanner_architect}') {
                 printLine("🏅 ¡Aprobado! Has programado los cimientos de una herramienta ofensiva en Python.", "cmd-echo");
                 printLine("Rol actualizado a [ VULN_DEV ]...");
+                } else if (flagIngresada === 'FLAG{iptables_defender_wall}') {
+                printLine("🏅 ¡Aprobado! Sabes usar Netfilter para fortificar el perímetro.", "cmd-echo");
+                printLine("Rol actualizado a [ SYSADMIN_SECURITY ]...");
             } else {
                 printLine("❌ Bandera incorrecta o no reconocida.", "cmd-error");
             }
