@@ -2076,3 +2076,73 @@ nav ul li a, .submenu-toggle {
         text-align: center;
         font-family: var(--mono);
     }
+    /* Estilos de la tarjeta interactiva */
+    .simulator-card {
+        display: block;
+        background: #0a0a0a;
+        border: 1px solid #ff2a2a;
+        border-radius: 8px;
+        padding: 2rem;
+        text-decoration: none;
+        transition: all 0.3s;
+        box-shadow: 0 0 15px rgba(255, 42, 42, 0.1);
+    }
+    .simulator-card:hover {
+        box-shadow: 0 0 25px rgba(255, 42, 42, 0.3);
+        border-color: #ff5555;
+        transform: translateY(-2px);
+    }
+    .sim-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 1rem;
+    }
+    .sim-icon {
+        font-size: 2.5rem;
+    }
+    .sim-title {
+        margin: 0;
+        color: #fff;
+    }
+    .sim-desc {
+        color: #aaa;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+        font-size: 1.05rem;
+    }
+    .sim-btn {
+        background: rgba(255, 42, 42, 0.15);
+        color: #ff2a2a;
+        padding: 8px 16px;
+        border-radius: 4px;
+        font-family: var(--mono);
+        font-weight: bold;
+        font-size: 0.85rem;
+        display: inline-block;
+    }
+
+    /* 🔥 AJUSTES PARA VERSIÓN MÓVIL 🔥 */
+    @media (max-width: 768px) {
+        .simulator-card {
+            padding: 1.2rem; /* Relleno interior mucho menor */
+        }
+        .sim-header {
+            gap: 10px;
+            margin-bottom: 0.8rem;
+        }
+        .sim-icon {
+            font-size: 1.8rem; /* Icono del pez más pequeño */
+        }
+        .sim-title {
+            font-size: 1.15rem; /* Título más compacto */
+        }
+        .sim-desc {
+            font-size: 0.9rem; /* Texto descriptivo más pequeño */
+            margin-bottom: 1.2rem;
+        }
+        .sim-btn {
+            font-size: 0.75rem; /* Botón un poco más pequeño */
+            padding: 6px 12px;
+        }
+    }
