@@ -124,13 +124,11 @@
       </li>
       <li>
     <a href="<?= e(BASE_URL . '/missions/') ?>" style="color: #ff2a2a; font-weight: bold; font-family: var(--mono);">
-        [ BLACK OPS ]
+        [ TOP SECRET ]
     </a>
 </li>
       <!-- FIN DEL MEGA MENÚ -->
 
-      <li><a href="<?= BASE_URL ?>/index.php#about"><?= e($t['nav']['about']) ?></a></li>
-      <li>
         <a href="<?= BASE_URL ?>/index.php#donate" class="nav-support-btn">
             ♥ <?= $lang === 'es' ? 'Apóyame' : 'Support' ?>
         </a></li>

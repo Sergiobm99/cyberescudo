@@ -10,7 +10,15 @@ require __DIR__ . '/../templates/header.php';
         --cyan: #00ffff;
         --terminal-green: #00ff41;
     }
-
+body {
+        background-color: #050505 !important;
+        background-image: 
+            linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px),
+            radial-gradient(circle at center, #0a1a1a 0%, #050505 100%) !important;
+        background-size: 40px 40px, 40px 40px, 100% 100% !important;
+        background-attachment: fixed !important; /* Esto hace que el fondo no se corte al hacer scroll hacia abajo */
+    }
     .mission-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -122,14 +130,58 @@ require __DIR__ . '/../templates/header.php';
         display: none; /* Se activa mediante JavaScript */
         box-shadow: 0 0 10px var(--terminal-green);
     }
+    /* Hacer el navbar y el footer sólidos para ocultar la rejilla de fondo */
+    #navbar, .navbar, footer {
+        background-color: #050505 !important;
+        background-image: none !important;
+        position: relative;
+        z-index: 100; /* Asegura que estén siempre por encima del fondo */
+    }
+    /* 1. ANIMACIÓN DE FONDO: Reducimos la opacidad para que sea muy sutil */
+    body::before {
+        content: "";
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        /* Creamos una línea horizontal de luz cian */
+        background: linear-gradient(0deg, 
+            transparent 0%, 
+            rgba(0, 255, 255, 0.02) 45%, 
+            rgba(0, 255, 255, 0.08) 50%, 
+            rgba(0, 255, 255, 0.02) 55%, 
+            transparent 100%);
+        background-size: 100% 200px; /* Tamaño de la onda */
+        z-index: -1; /* Detrás de todo */
+        animation: scanline 10s linear infinite; /* 10 segundos por vuelta */
+        opacity: 0.6; /* Un extra de sutilidad */
+    }
+
+    @keyframes scanline {
+        0% { background-position: 0 -200px; }
+        100% { background-position: 0 100vh; }
+    }
+
+    /* 2. EFECTO GLITCH PARA EL TÍTULO (Solo al cargar) */
+    .glitch-title {
+        position: relative;
+        animation: glitch-reveal 0.5s ease-out forwards;
+        opacity: 0;
+    }
+
+    @keyframes glitch-reveal {
+        0% { opacity: 0; transform: translateX(-10px); filter: blur(5px); }
+        80% { opacity: 1; transform: translateX(2px); filter: blur(0px); }
+        85% { opacity: 1; transform: translateX(-2px) skewX(5deg); color: #fff; }
+        90% { opacity: 1; transform: translateX(2px) skewX(-5deg); color: var(--danger); }
+        100% { opacity: 1; transform: translateX(0) skewX(0deg); color: #fff; }
+    }
 </style>
 
-<main class="content-page" style="background: radial-gradient(circle at center, #0a0a0a 0%, #000 100%);">
+<main class="content-page">
     <div class="md-container" style="padding-top: 5rem; padding-bottom: 6rem;">
         
         <header class="ops-header" style="position: relative; overflow: hidden; border-left: 4px solid var(--danger); padding-left: 20px; margin-bottom: 40px; background: rgba(255, 42, 42, 0.05); padding: 1.5rem;">
             <div style="position: relative; z-index: 1;">
-                <h1 style="font-family: var(--mono); font-size: 2.5rem; text-transform: uppercase; margin-top: 0;">
+                <h1 class="glitch-title" style="font-family: var(--mono); font-size: 2.5rem; text-transform: uppercase;">
                     <?= $lang === 'es' ? 'Centro de Operaciones: Black Ops' : 'Black Ops: Mission Center' ?>
                 </h1>
                 <p style="color: #888; font-family: var(--mono);">
