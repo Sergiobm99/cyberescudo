@@ -40,8 +40,6 @@
     var code = pre.querySelector('code');
     if (!code) return;
 
-    // Wrap pre in a relative container so the button sits OUTSIDE the
-    // overflow-x:auto scroll area and is never clipped
     var wrapper = document.createElement('div');
     wrapper.className = 'code-wrapper';
     pre.parentNode.insertBefore(wrapper, pre);
@@ -129,7 +127,6 @@
       });
       tocAnchor.appendChild(toc);
 
-      // Highlight active section while scrolling
       if ('IntersectionObserver' in window) {
         var tocLinks = ul.querySelectorAll('a');
         var activeLink = null;
@@ -214,26 +211,22 @@
       observer.observe(el);
     });
   }
+
   /* ─── LÓGICA DE LA TERMINAL EASTER EGG ─── */
-/* ─── CEREBRO DE LA TERMINAL EASTER EGG (MODO DIOS) ─── */
-console.log("🚀 Sistema de terminal iniciado.");
+  console.log("🚀 Sistema de terminal iniciado.");
 
-// Como el script se carga al final del body, no necesitamos DOMContentLoaded
-const terminal = document.getElementById('cyber-terminal');
-const termInput = document.getElementById('term-input');
-const termHistory = document.getElementById('term-history');
+  const terminal = document.getElementById('cyber-terminal');
+  const termInput = document.getElementById('term-input');
+  const termHistory = document.getElementById('term-history');
 
-if(terminal) console.log("✅ HTML de la terminal detectado en la página.");
+  if(terminal) console.log("✅ HTML de la terminal detectado en la página.");
 
-// 1. ESCUCHAR CLICS EN TODA LA PÁGINA (Delegación de eventos)
-document.addEventListener('click', (e) => {
-    // Si el clic fue en el botón flotante o dentro de él
+  // 1. ESCUCHAR CLICS EN TODA LA PÁGINA
+  document.addEventListener('click', (e) => {
     const btnOpen = e.target.closest('#btn-open-terminal');
-    // Si el clic fue en la X de cerrar
     const btnClose = e.target.closest('#term-close');
 
     if (btnOpen) {
-        console.log("🖱️ Clic interceptado. Abriendo/Cerrando terminal...");
         if(terminal) {
             terminal.classList.toggle('hidden');
             if (!terminal.classList.contains('hidden') && termInput) termInput.focus();
@@ -243,24 +236,23 @@ document.addEventListener('click', (e) => {
     if (btnClose && terminal) {
         terminal.classList.add('hidden');
     }
-});
+  });
 
-// 2. ESCUCHAR TECLAS PARA ABRIR (`, ~, º)
-document.addEventListener('keydown', (e) => {
+  // 2. ESCUCHAR TECLAS PARA ABRIR (`, ~, º)
+  document.addEventListener('keydown', (e) => {
     if (e.key === '`' || e.key === '~' || e.key === 'º') {
         if (document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
             e.preventDefault();
-            console.log("⌨️ Tecla detectada. Abriendo terminal...");
             if(terminal) {
                 terminal.classList.toggle('hidden');
                 if (!terminal.classList.contains('hidden') && termInput) termInput.focus();
             }
         }
     }
-});
+  });
 
-// 3. PROCESAR COMANDOS AL PULSAR ENTER
-if(termInput) {
+  // 3. PROCESAR COMANDOS AL PULSAR ENTER
+  if(termInput) {
     termInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             const command = termInput.value.trim();
@@ -268,38 +260,37 @@ if(termInput) {
             if (command) processCommand(command);
         }
     });
-}
+  }
 
-function printLine(text, className = '') {
+  function printLine(text, className = '') {
     if(!termHistory) return;
     const div = document.createElement('div');
     div.innerHTML = text; 
     if (className) div.className = className;
     termHistory.appendChild(div);
     termHistory.scrollTop = termHistory.scrollHeight;
-}
+  }
 
-function escapeHTML(str) {
+  function escapeHTML(str) {
     return str.replace(/[&<>'"]/g, tag => ({
         '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
     }[tag] || tag));
-}
+  }
 
-function processCommand(cmd) {
+  function processCommand(cmd) {
     printLine(`$&gt; ${escapeHTML(cmd)}`, 'cmd-echo');
     const args = cmd.split(' ').filter(Boolean);
     const mainCmd = args[0].toLowerCase();
 
     switch (mainCmd) {
-            case 'help':
-                printLine("Comandos instalados:");
-                printLine("&nbsp;&nbsp;<strong style='color:#fff'>whoami</strong>&nbsp;&nbsp;&nbsp;- Muestra tu identidad");
-                printLine("&nbsp;&nbsp;<strong style='color:#fff'>clear</strong>&nbsp;&nbsp;&nbsp;&nbsp;- Limpia la pantalla");
-                printLine("&nbsp;&nbsp;<strong style='color:#fff'>osint</strong>&nbsp;&nbsp;&nbsp;&nbsp;- Atajo a OSINT Recon");
-                printLine("&nbsp;&nbsp;<strong style='color:#fff'>matrix</strong>&nbsp;&nbsp;&nbsp;- (Clasificado)");
-                printLine("&nbsp;&nbsp;<strong style='color:#fff'>submit</strong>&nbsp;&nbsp;&nbsp;- Canjear banderas CTF");
-                printLine("&nbsp;&nbsp;<strong style='color:#fff'>exit</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Cierra la terminal");
-                break;
+        case 'help':
+            printLine("Comandos instalados:");
+            printLine("&nbsp;&nbsp;<strong style='color:#fff'>whoami</strong>&nbsp;&nbsp;&nbsp;- Muestra tu identidad");
+            printLine("&nbsp;&nbsp;<strong style='color:#fff'>clear</strong>&nbsp;&nbsp;&nbsp;&nbsp;- Limpia la pantalla");
+            printLine("&nbsp;&nbsp;<strong style='color:#fff'>osint</strong>&nbsp;&nbsp;&nbsp;&nbsp;- Atajo a OSINT Recon");
+            printLine("&nbsp;&nbsp;<strong style='color:#fff'>submit</strong>&nbsp;&nbsp;&nbsp;- Canjear banderas CTF");
+            printLine("&nbsp;&nbsp;<strong style='color:#fff'>exit</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Cierra la terminal");
+            break;
         case 'clear':
             if(termHistory) termHistory.innerHTML = '<div style="color: var(--cyan);">CyberEscudo OS v1.0.0</div><div>Escribe <strong style="color: #fff;">help</strong> para ver comandos.</div>';
             break;
@@ -321,15 +312,49 @@ function processCommand(cmd) {
         case 'exit':
             if(terminal) terminal.classList.add('hidden');
             break;
+            
         case 'submit':
+            // Verificamos el formato del comando
+            if (args.length < 2) {
+                printLine("❌ Uso: submit [ID_MISION] [FLAG] o submit [FLAG]", "cmd-error");
+                break;
+            }
+
+            // --- NUEVO SISTEMA (CON API PHP) PARA LAS MISIONES ---
+            if (args.length >= 3) {
+                const missionId = args[1];
+                const flag = args[2];
+
+                printLine(`Validando credenciales para ${missionId}...`, "cmd-echo");
+
+                fetch('/api/validate-mission.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ missionId: missionId, flag: flag })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        printLine("========================================", "cmd-echo");
+                        printLine("✔️ " + data.message, "cmd-echo");
+                        printLine(`[ XP AÑADIDA: +${data.xp} ]`, "cmd-echo");
+                        printLine("========================================", "cmd-echo");
+                    } else {
+                        printLine("❌ " + data.message, "cmd-error");
+                    }
+                })
+                .catch(err => {
+                    printLine("❌ Error de conexión con el validador API.", "cmd-error");
+                });
+                break;
+            }
+
+            // --- SISTEMA ANTIGUO (HARDCODEADO) ---
             const flagIngresada = args[1];
-            if (!flagIngresada) {
-                printLine("Uso: submit FLAG{...}", "cmd-error");
-            } else if (flagIngresada === 'FLAG{sql_bypass_master}') {
+            if (flagIngresada === 'FLAG{sql_bypass_master}') {
                 printLine("🏆 ¡ENHORABUENA! Has resuelto el CTF de inyección SQL.", "cmd-echo");
                 printLine("Otorgando rol de [ SQL_NINJA ] a tu sesión actual...");
-                document.body.style.border = "5px solid #00ff00"; // Efecto visual global
-                setTimeout(() => printLine("¡Sigue practicando en la sección de manuales!"), 1500);
+                document.body.style.border = "5px solid #00ff00";
             } else if (flagIngresada === 'FLAG{default_creds_hunter}') {
                 printLine("🏅 Bandera válida. Las credenciales por defecto son el pan de cada día.", "cmd-echo");
             } else if (flagIngresada === 'FLAG{cmd_inj_explorer}') {
@@ -337,87 +362,63 @@ function processCommand(cmd) {
             } else if (flagIngresada === 'FLAG{rce_root_master}') {
                 printLine("🏆 ¡BRUTAL! Ejecución Remota de Código (RCE) conseguida.", "cmd-echo");
                 printLine("Otorgando rol de [ ROOT_PIMPER ] a tu sesión...");
-                document.body.style.border = "5px solid #ff2a2a"; // Borde Rojo agresivo
-                } else if (flagIngresada === 'FLAG{xss_alert_master}') {
-                printLine("🏅 Ejecución de JavaScript simulada con éxito. Has vulnerado el frontend.", "cmd-echo");
+                document.body.style.border = "5px solid #ff2a2a";
+            } else if (flagIngresada === 'FLAG{xss_alert_master}') {
+                printLine("🏅 Ejecución de JavaScript simulada con éxito.", "cmd-echo");
             } else if (flagIngresada === 'FLAG{xss_cookie_thief}') {
                 printLine("🏆 ¡BRUTAL! Has conseguido robar las cookies de sesión mediante XSS.", "cmd-echo");
-                printLine("Otorgando rol de [ SESSION_HIJACKER ] a tu sesión...");
-                document.body.style.border = "5px dashed #00ffff"; // Borde Cyberpunk
-                } else if (flagIngresada === 'FLAG{csrf_forgery_expert}') {
+                document.body.style.border = "5px dashed #00ffff";
+            } else if (flagIngresada === 'FLAG{csrf_forgery_expert}') {
                 printLine("🏅 Payload validado. Acabas de vaciar las cuentas del banco simulado.", "cmd-echo");
-                printLine("Rol actualizado a [ FORGERY_MASTER ]...");
-                } else if (flagIngresada === 'FLAG{xxe_xml_parser_pwned}') {
+            } else if (flagIngresada === 'FLAG{xxe_xml_parser_pwned}') {
                 printLine("🏅 ¡Excelente! Has manipulado un parser XML usando Entidades Externas.", "cmd-echo");
-                } else if (flagIngresada === 'FLAG{sudo_find_root_shell}') {
+            } else if (flagIngresada === 'FLAG{sudo_find_root_shell}') {
                 printLine("🏆 ¡SISTEMA COMPROMETIDO! Has escalado privilegios a ROOT abusando de sudo.", "cmd-echo");
-                printLine("Rol actualizado a [ ROOT_ELEVATED ]...");
-                document.body.style.border = "5px solid #ff00ff"; // Borde fucsia para PrivEsc
-                } else if (flagIngresada === 'FLAG{ffuf_filter_ninja}') {
+                document.body.style.border = "5px solid #ff00ff";
+            } else if (flagIngresada === 'FLAG{ffuf_filter_ninja}') {
                 printLine("🏅 ¡Comando perfecto! Has dominado la evasión de falsos positivos en Fuzzing.", "cmd-echo");
-                } else if (flagIngresada === 'FLAG{ir_containment_expert}') {
+            } else if (flagIngresada === 'FLAG{ir_containment_expert}') {
                 printLine("🛡️ ¡Excelente Triage! Has contenido la brecha de seguridad con éxito.", "cmd-echo");
-                printLine("Asignando rol de [ SOC_ANALYST_L2 ] a tu expediente...");
-                } else if (flagIngresada === 'FLAG{secure_code_reviewer}') {
+            } else if (flagIngresada === 'FLAG{secure_code_reviewer}') {
                 printLine("🏅 ¡Aprobado! Sabes aplicar el parche adecuado a cada vulnerabilidad web.", "cmd-echo");
-                printLine("Rol actualizado a [ DEVSECOPS_ENGINEER ]...");
-                } else if (flagIngresada === 'FLAG{nmap_recon_analyst}') {
+            } else if (flagIngresada === 'FLAG{nmap_recon_analyst}') {
                 printLine("🏅 ¡Aprobado! Sabes leer entre líneas y encontrar vulnerabilidades ocultas.", "cmd-echo");
-                printLine("Rol actualizado a [ RECON_SPECIALIST ]...");
-                } else if (flagIngresada === 'FLAG{hydra_syntax_master}') {
+            } else if (flagIngresada === 'FLAG{hydra_syntax_master}') {
                 printLine("🏅 ¡Aprobado! Has dominado la infernal sintaxis web de Hydra.", "cmd-echo");
-                printLine("Rol actualizado a [ BRUTEFORCER ]...");
-                } else if (flagIngresada === 'FLAG{python_scanner_architect}') {
+            } else if (flagIngresada === 'FLAG{python_scanner_architect}') {
                 printLine("🏅 ¡Aprobado! Has programado los cimientos de una herramienta ofensiva en Python.", "cmd-echo");
-                printLine("Rol actualizado a [ VULN_DEV ]...");
-                } else if (flagIngresada === 'FLAG{iptables_defender_wall}') {
+            } else if (flagIngresada === 'FLAG{iptables_defender_wall}') {
                 printLine("🏅 ¡Aprobado! Sabes usar Netfilter para fortificar el perímetro.", "cmd-echo");
-                printLine("Rol actualizado a [ SYSADMIN_SECURITY ]...");
-                } else if (flagIngresada === 'FLAG{snort_rule_engineer}') {
+            } else if (flagIngresada === 'FLAG{snort_rule_engineer}') {
                 printLine("🏅 ¡Aprobado! Has creado una firma de red capaz de detener a los atacantes.", "cmd-echo");
-                printLine("Rol actualizado a [ IDS_ANALYST ]...");
-                } else if (flagIngresada === 'FLAG{shodan_osint_master}') {
+            } else if (flagIngresada === 'FLAG{shodan_osint_master}') {
                 printLine("🏅 ¡Aprobado! Eres capaz de encontrar una aguja cibernética en un pajar global.", "cmd-echo");
-                printLine("Rol actualizado a [ OSINT_INVESTIGATOR ]...");
-                } else if (flagIngresada === 'FLAG{docker_socket_pwned}') {
+            } else if (flagIngresada === 'FLAG{docker_socket_pwned}') {
                 printLine("🏅 ¡Aprobado! Conoces la vulnerabilidad más devastadora en entornos Cloud.", "cmd-echo");
-                printLine("Rol actualizado a [ CLOUD_BREACHER ]...");
-                } else if (flagIngresada === 'FLAG{nikto_recon_expert}') {
+            } else if (flagIngresada === 'FLAG{nikto_recon_expert}') {
                 printLine("🏅 ¡Aprobado! Sabes separar el ruido de las vulnerabilidades críticas reales.", "cmd-echo");
-                printLine("Rol actualizado a [ DAST_SPECIALIST ]...");
-                } else if (flagIngresada === 'FLAG{burp_suite_jedi}') {
+            } else if (flagIngresada === 'FLAG{burp_suite_jedi}') {
                 printLine("🏅 ¡Aprobado! Tienes un conocimiento profundo de la arquitectura de Burp Suite.", "cmd-echo");
-                printLine("Rol actualizado a [ BURP_MASTER ]...");
-                } else if (flagIngresada === 'FLAG{gpu_hashcat_operator}') {
+            } else if (flagIngresada === 'FLAG{gpu_hashcat_operator}') {
                 printLine("🏅 ¡Aprobado! Sabes usar la potencia gráfica bruta para romper criptografía.", "cmd-echo");
-                printLine("Rol actualizado a [ CRACKING_EXPERT ]...");
-                } else if (flagIngresada === 'FLAG{wireshark_pcap_hunter}') {
+            } else if (flagIngresada === 'FLAG{wireshark_pcap_hunter}') {
                 printLine("🏅 ¡Aprobado! Los paquetes no mienten, y tú sabes cómo leerlos.", "cmd-echo");
-                printLine("Rol actualizado a [ NETWORK_FORENSICS ]...");
-                } else if (flagIngresada === 'FLAG{msfvenom_payload_crafter}') {
+            } else if (flagIngresada === 'FLAG{msfvenom_payload_crafter}') {
                 printLine("🏅 ¡Aprobado! Entiendes a fondo la arquitectura de payloads en MSF.", "cmd-echo");
-                printLine("Rol actualizado a [ METASPLOIT_OPERATOR ]...");
-                } else if (flagIngresada === 'FLAG{sqlmap_tamper_wizard}') {
+            } else if (flagIngresada === 'FLAG{sqlmap_tamper_wizard}') {
                 printLine("🏅 ¡Aprobado! Has burlado las defensas perimetrales ofuscando tus payloads.", "cmd-echo");
-                printLine("Rol actualizado a [ WAF_BYPASSER ]...");
-                } else if (flagIngresada === 'FLAG{apache_hardening_master}') {
+            } else if (flagIngresada === 'FLAG{apache_hardening_master}') {
                 printLine("🏅 ¡Aprobado! Sabes cómo cerrar las puertas antes de que los atacantes lleguen.", "cmd-echo");
-                printLine("Rol actualizado a [ SERVER_DEFENDER ]...");
-                } else if (flagIngresada === 'FLAG{android_activity_bypassed}') {
+            } else if (flagIngresada === 'FLAG{android_activity_bypassed}') {
                 printLine("🏅 ¡Aprobado! Has saltado los controles lógicos explotando el Manifest de Android.", "cmd-echo");
-                printLine("Rol actualizado a [ MOBILE_PENTESTER ]...");
-                } else if (flagIngresada === 'FLAG{diva_android_auditor}') {
+            } else if (flagIngresada === 'FLAG{diva_android_auditor}') {
                 printLine("🏅 ¡Aprobado! Conoces a la perfección el sistema de archivos de Android y ADB.", "cmd-echo");
-                printLine("Rol actualizado a [ MOBILE_AUDITOR ]...");
-                } else if (flagIngresada === 'FLAG{android_ipc_pwned}') {
+            } else if (flagIngresada === 'FLAG{android_ipc_pwned}') {
                 printLine("🏅 ¡Aprobado! Has abusado de la comunicación inter-procesos del sistema Android.", "cmd-echo");
-                printLine("Rol actualizado a [ IPC_EXPLOITER ]...");
-                } else if (flagIngresada === 'FLAG{smali_patching_ninja}') {
+            } else if (flagIngresada === 'FLAG{smali_patching_ninja}') {
                 printLine("🏅 ¡Aprobado! Sabes cómo reescribir las reglas alterando el ADN de las aplicaciones.", "cmd-echo");
-                printLine("Rol actualizado a [ REVERSE_ENGINEER ]...");
-                } else if (flagIngresada === 'FLAG{phishing_triage_expert}') {
+            } else if (flagIngresada === 'FLAG{phishing_triage_expert}') {
                 printLine("🏅 ¡Aprobado! Tienes un ojo clínico para detectar Ingeniería Social.", "cmd-echo");
-                printLine("Rol actualizado a [ SOC_ANALYST ]...");
             } else {
                 printLine("❌ Bandera incorrecta o no reconocida.", "cmd-error");
             }
@@ -426,35 +427,6 @@ function processCommand(cmd) {
         default:
             printLine(`bash: ${escapeHTML(mainCmd)}: comando no encontrado`, 'cmd-error');
     }
-}
-if (cmd.startsWith('submit ')) {
-    const parts = cmd.split(' ');
-    if (parts.length < 3) {
-        printLine("Uso correcto: submit [ID_MISION] [FLAG]", "error");
-        return;
-    }
+  }
 
-    const missionId = parts[1];
-    const flag = parts[2];
-
-    printLine(`Validando credenciales para ${missionId}...`, "cmd-echo");
-
-    fetch('/api/validate-mission.php', {
-        method: 'POST',
-        body: JSON.stringify({ missionId, flag })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.status === 'success') {
-            printLine("========================================", "success");
-            printLine(data.message, "success");
-            printLine(`XP GANADA: ${data.xp}`, "success");
-            printLine("========================================", "success");
-            // Aquí podrías guardar el progreso en LocalStorage o Base de Datos
-        } else {
-            printLine(data.message, "error");
-        }
-    });
-    return;
-}
 })();
