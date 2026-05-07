@@ -427,4 +427,34 @@ function processCommand(cmd) {
             printLine(`bash: ${escapeHTML(mainCmd)}: comando no encontrado`, 'cmd-error');
     }
 }
+if (cmd.startsWith('submit ')) {
+    const parts = cmd.split(' ');
+    if (parts.length < 3) {
+        printLine("Uso correcto: submit [ID_MISION] [FLAG]", "error");
+        return;
+    }
+
+    const missionId = parts[1];
+    const flag = parts[2];
+
+    printLine(`Validando credenciales para ${missionId}...`, "cmd-echo");
+
+    fetch('/api/validate-mission.php', {
+        method: 'POST',
+        body: JSON.stringify({ missionId, flag })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === 'success') {
+            printLine("========================================", "success");
+            printLine(data.message, "success");
+            printLine(`XP GANADA: ${data.xp}`, "success");
+            printLine("========================================", "success");
+            // Aquí podrías guardar el progreso en LocalStorage o Base de Datos
+        } else {
+            printLine(data.message, "error");
+        }
+    });
+    return;
+}
 })();

@@ -122,6 +122,11 @@
 
         </ul>
       </li>
+      <li>
+    <a href="<?= e(BASE_URL . '/missions/') ?>" style="color: #ff2a2a; font-weight: bold; font-family: var(--mono);">
+        [ BLACK OPS ]
+    </a>
+</li>
       <!-- FIN DEL MEGA MENÚ -->
 
       <li><a href="<?= BASE_URL ?>/index.php#about"><?= e($t['nav']['about']) ?></a></li>

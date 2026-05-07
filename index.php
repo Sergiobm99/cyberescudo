@@ -228,7 +228,31 @@ require __DIR__ . '/templates/header.php';
     </div>
   </div>
 </section>
+<div class="md-container" style="max-width: 900px; margin: 2rem auto 4rem auto;">
+    <div style="background: linear-gradient(45deg, #050505 0%, #1a0505 100%); border: 1px solid #ff2a2a; padding: 2rem; border-radius: 8px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: space-between; gap: 20px;">
+        
+        <div style="position: absolute; right: -20px; bottom: -20px; font-size: 8rem; opacity: 0.1; pointer-events: none;">💀</div>
 
+        <div style="position: relative; z-index: 1;">
+            <span style="color: #ff2a2a; font-family: var(--mono); font-size: 0.8rem; letter-spacing: 3px; display: block; margin-bottom: 0.5rem;">[ CLASSIFIED AREA ]</span>
+            <h2 style="margin: 0; font-size: 1.8rem; color: #fff;"><?= $lang === 'es' ? 'Centro de Misiones Black Ops' : 'Black Ops Mission Center' ?></h2>
+            <p style="color: #888; margin: 0.5rem 0 1.5rem 0; font-size: 1rem; max-width: 500px;">
+                <?= $lang === 'es' ? 'Retos de alto nivel: Análisis forense, auditoría de código y criptografía avanzada. ¿Tienes lo necesario?' : 'High-level challenges: Forensics, code audit, and advanced cryptography. Do you have what it takes?' ?>
+            </p>
+            <a href="<?= e(BASE_URL . '/missions/') ?>" 
+   style="display: inline-block; background: #ff2a2a; color: #fff; padding: 10px 25px; border-radius: 4px; text-decoration: none; font-family: var(--mono); font-weight: bold; font-size: 0.9rem; transition: 0.3s;"
+   onmouseover="this.style.background='#ff5555'; this.style.boxShadow='0 0 15px rgba(255,42,42,0.4)';"
+   onmouseout="this.style.background='#ff2a2a'; this.style.boxShadow='none';">
+    &gt;_ <?= $lang === 'es' ? 'ACCEDER AL SISTEMA' : 'ACCESS SYSTEM' ?>
+</a>
+        </div>
+
+        <div class="hide-mobile" style="border: 1px solid rgba(255,42,42,0.3); border-radius: 50%; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; position: relative;">
+            <div style="width: 80%; height: 80%; border: 1px solid rgba(255,42,42,0.5); border-radius: 50%; animation: pulse 2s infinite;"></div>
+            <span style="position: absolute; color: #ff2a2a; font-size: 0.7rem; font-family: var(--mono);">SCANNING</span>
+        </div>
+    </div>
+</div>
 <section id="about" class="section">
   <div class="section-inner">
     <div class="section-header">
@@ -278,7 +302,6 @@ require __DIR__ . '/templates/header.php';
     <h2 style="margin-top: 0.5rem; margin-bottom: 1.5rem;">
         <?= $lang === 'es' ? 'Últimas Amenazas y 0-Days' : 'Latest Threats & 0-Days' ?>
     </h2>
-
    
     
     <div class="cyber-rss-grid">
