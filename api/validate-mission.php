@@ -5,7 +5,8 @@ header('Content-Type: application/json');
 // Las claves deben coincidir EXACTAMENTE con el ID que el jugador pone en la terminal
 $flags = [
     'OP-GHOST-TRAFFIC' => 'FLAG{DNS_tunneling_detected_2026}',
-    'OP-SECURE-DEV'    => 'FLAG{python_eval_is_evil_99x}', // Ya preparado para la misión 2
+    'OP-SECURE-DEV'    => 'FLAG{python_eval_is_evil_99x}',
+    'OP-DEEP-STATE'    => 'FLAG{steg_hidden_data_recovered}', // <--- NUEVA MISIÓN AÑADIDA
     'OP-PHISHING'      => 'FLAG{phishing_triage_expert}'
 ];
 

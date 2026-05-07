@@ -149,18 +149,18 @@ require __DIR__ . '/../templates/header.php';
                 </div>
             </div>
 
-            <div class="mission-card" style="opacity: 0.5;">
+            <div class="mission-card">
                 <div>
-                    <span class="status-badge" style="background: #222; color: #555;">Locked</span>
-                    <div style="color: #444; font-family: var(--mono); font-size: 0.8rem;">OP: DEEP_STATE</div>
+                    <span class="status-badge" style="background: rgba(170, 0, 255, 0.2); color: #aa00ff; border: 1px solid #aa00ff;">Advanced</span>
+                    <div style="color: #aa00ff; font-family: var(--mono); font-size: 0.8rem;">OP: DEEP_STATE</div>
                     <h3 class="mission-title"><?= $lang === 'es' ? 'Mensajes en la Sombra' : 'Shadow Messages' ?></h3>
-                    <p style="color: #444; font-size: 0.9rem;">
-                        <?= $lang === 'es' ? 'Misión bloqueada. Requiere validar las misiones anteriores para acceder a los archivos cifrados.' : 'Mission locked. Requires clearing previous missions to access encrypted files.' ?>
+                    <p style="color: #888; font-size: 0.9rem;">
+                        <?= $lang === 'es' ? 'Un informante subió una imagen a un foro público antes de desaparecer. Extrae el mensaje oculto.' : 'An informant uploaded an image to a public forum before going dark. Extract the hidden message.' ?>
                     </p>
                 </div>
-                <div class="mission-footer" style="border-top-color: #111;">
+                <div class="mission-footer">
                     <span>TIPO: Steganography</span>
-                    <span style="color: #444; font-family: var(--mono);">[ OFFLINE ]</span>
+                    <a href="shadow-messages.php" class="btn-deploy" style="border-color: #aa00ff; color: #aa00ff;"><?= $lang === 'es' ? 'VER INFORME' : 'VIEW BRIEFING' ?></a>
                 </div>
             </div>
         </div>
