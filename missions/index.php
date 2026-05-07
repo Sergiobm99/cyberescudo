@@ -145,7 +145,7 @@ require __DIR__ . '/../templates/header.php';
                 </div>
                 <div class="mission-footer">
                     <span>TIPO: Source Audit</span>
-                   <a href="javascript:void(0);" onclick="alert('<?= $lang === 'es' ? 'Misión en desarrollo. Desbloqueo inminente.' : 'Mission in development. Unlocking soon.' ?>')" class="btn-deploy" style="border-color: #555; color: #aaa;"><?= $lang === 'es' ? 'VER CÓDIGO' : 'VIEW SOURCE' ?></a>
+                    <a href="logic-bomb.php" class="btn-deploy" style="border-color: var(--cyan); color: var(--cyan);"><?= $lang === 'es' ? 'VER CÓDIGO' : 'VIEW SOURCE' ?></a>
                 </div>
             </div>
 
