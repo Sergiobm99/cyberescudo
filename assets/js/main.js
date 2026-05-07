@@ -339,6 +339,11 @@
                         printLine("✔️ " + data.message, "cmd-echo");
                         printLine(`[ XP AÑADIDA: +${data.xp} ]`, "cmd-echo");
                         printLine("========================================", "cmd-echo");
+                        
+                        // --- ESTA ES LA LÍNEA MÁGICA NUEVA ---
+                        grantXP(missionId, data.xp);
+                        // -------------------------------------
+                        
                     } else {
                         printLine("❌ " + data.message, "cmd-error");
                     }
@@ -428,5 +433,97 @@
             printLine(`bash: ${escapeHTML(mainCmd)}: comando no encontrado`, 'cmd-error');
     }
   }
+/* ─── SISTEMA DE PROGRESO Y XP (LOCALSTORAGE) ─── */
+  const MAX_MISSIONS = 3; // Actualiza esto si añades más retos en el futuro
 
+  function updateHUD() {
+      const xpElement = document.getElementById('user-xp');
+      const barElement = document.getElementById('xp-bar');
+      const rankElement = document.getElementById('user-rank');
+      const countElement = document.getElementById('missions-count');
+      
+      let currentXP = parseInt(localStorage.getItem('cyber_xp')) || 0;
+      let completedMissions = JSON.parse(localStorage.getItem('cyber_missions')) || [];
+
+      // Si estamos en la página de misiones, actualizamos los gráficos
+      if (xpElement && barElement) {
+          xpElement.innerText = currentXP;
+          countElement.innerText = completedMissions.length;
+          
+          // Calcular porcentaje (500 XP por misión)
+          let percentage = (completedMissions.length / MAX_MISSIONS) * 100;
+          barElement.style.width = percentage + '%';
+
+          // Actualizar Rango
+          if (completedMissions.length === 1) rankElement.innerText = "OPERATOR";
+          if (completedMissions.length === 2) rankElement.innerText = "SPECIALIST";
+          if (completedMissions.length >= 3) {
+              rankElement.innerText = "GHOST_HACKER";
+              rankElement.style.color = "#ff2a2a";
+              rankElement.style.textShadow = "0 0 10px red";
+              barElement.style.background = "#ff2a2a";
+              barElement.style.boxShadow = "0 0 15px red";
+          }
+      }
+  }
+
+  function grantXP(missionId, xpGained) {
+      let completedMissions = JSON.parse(localStorage.getItem('cyber_missions')) || [];
+      
+      // Solo damos XP si no había completado esta misión antes
+      if (!completedMissions.includes(missionId)) {
+          completedMissions.push(missionId);
+          localStorage.setItem('cyber_missions', JSON.stringify(completedMissions));
+          
+          let currentXP = parseInt(localStorage.getItem('cyber_xp')) || 0;
+          localStorage.setItem('cyber_xp', currentXP + xpGained);
+          
+          updateHUD();
+
+          // COMPROBAR SI SE HA PASADO EL JUEGO (EL EFECTO HACKER)
+          if (completedMissions.length === MAX_MISSIONS) {
+              setTimeout(triggerSystemTakeover, 1500);
+          }
+      } else {
+          printLine(`[INFO] La misión ${missionId} ya estaba completada. Sin cambios en XP.`, "cmd-echo");
+      }
+  }
+
+  function triggerSystemTakeover() {
+      // Ocultar terminal temporalmente
+      if(terminal) terminal.classList.add('hidden');
+
+      // Crear pantalla de Glitch
+      const glitchOverlay = document.createElement('div');
+      glitchOverlay.style.cssText = `
+          position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+          background: #000; z-index: 999999; display: flex; flex-direction: column;
+          justify-content: center; align-items: center; font-family: monospace;
+          color: #00ff00; overflow: hidden;
+      `;
+      
+      glitchOverlay.innerHTML = `
+          <h1 style="font-size: 4rem; color: #ff2a2a; text-shadow: 0 0 20px red; margin-bottom: 20px; animation: glitch 0.2s infinite;">SYSTEM COMPROMISED</h1>
+          <p style="font-size: 1.5rem;">ALL BLACK OPS MISSIONS COMPLETED.</p>
+          <p style="color: #fff; margin-top: 30px;">AUTHORIZATION LEVEL: <strong style="color: #ff2a2a;">ROOT</strong></p>
+          <div style="margin-top: 50px; font-size: 0.8rem; opacity: 0.5;">REBOOTING SECURE ENVIRONMENT IN 5 SECONDS...</div>
+      `;
+      
+      // Inyectar animación CSS para el Glitch
+      const style = document.createElement('style');
+      style.innerHTML = `@keyframes glitch { 0% { transform: translate(2px, 2px); } 20% { transform: translate(-2px, -2px); } 40% { transform: translate(2px, -2px); } 60% { transform: translate(-2px, 2px); } 100% { transform: translate(0); } }`;
+      document.head.appendChild(style);
+      
+      document.body.appendChild(glitchOverlay);
+
+      // Quitar el efecto después de 6 segundos
+      setTimeout(() => {
+          glitchOverlay.style.transition = "opacity 1s";
+          glitchOverlay.style.opacity = "0";
+          setTimeout(() => glitchOverlay.remove(), 1000);
+      }, 6000);
+  }
+
+  // Inicializar la HUD al cargar la página
+  document.addEventListener('DOMContentLoaded', updateHUD);
 })();

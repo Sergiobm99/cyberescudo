@@ -105,21 +105,55 @@ require __DIR__ . '/../templates/header.php';
         color: #000;
         box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
     }
+
+    /* Insignia dinámica de completado (oculta por defecto, gestionada por JS) */
+    .badge-completed {
+        position: absolute;
+        top: -15px;
+        right: -35px;
+        background: var(--terminal-green);
+        color: #000;
+        font-family: var(--mono);
+        font-size: 0.7rem;
+        font-weight: bold;
+        padding: 20px 30px 5px 30px;
+        transform: rotate(45deg);
+        z-index: 10;
+        display: none; /* Se activa mediante JavaScript */
+        box-shadow: 0 0 10px var(--terminal-green);
+    }
 </style>
 
 <main class="content-page" style="background: radial-gradient(circle at center, #0a0a0a 0%, #000 100%);">
     <div class="md-container" style="padding-top: 5rem; padding-bottom: 6rem;">
-        <div style="border-left: 4px solid var(--danger); padding-left: 20px; margin-bottom: 40px;">
-            <h1 style="font-family: var(--mono); font-size: 2.5rem; text-transform: uppercase;">
-                <?= $lang === 'es' ? 'Centro de Operaciones: Black Ops' : 'Black Ops: Mission Center' ?>
-            </h1>
-            <p style="color: #666; font-family: var(--mono);">
-                <?= $lang === 'es' ? '[ ACCESO AUTORIZADO ] — Selecciona un objetivo para iniciar el despliegue.' : '[ ACCESS GRANTED ] — Select a target to initiate deployment.' ?>
-            </p>
-        </div>
+        
+        <header class="ops-header" style="position: relative; overflow: hidden; border-left: 4px solid var(--danger); padding-left: 20px; margin-bottom: 40px; background: rgba(255, 42, 42, 0.05); padding: 1.5rem;">
+            <div style="position: relative; z-index: 1;">
+                <h1 style="font-family: var(--mono); font-size: 2.5rem; text-transform: uppercase; margin-top: 0;">
+                    <?= $lang === 'es' ? 'Centro de Operaciones: Black Ops' : 'Black Ops: Mission Center' ?>
+                </h1>
+                <p style="color: #888; font-family: var(--mono);">
+                    <?= $lang === 'es' ? '[ ACCESO AUTORIZADO ] — Selecciona un objetivo para iniciar el despliegue.' : '[ ACCESS GRANTED ] — Select a target to initiate deployment.' ?>
+                </p>
+                
+                <div style="margin-top: 20px; background: rgba(0,0,0,0.8); border: 1px solid #333; padding: 15px; border-radius: 4px; max-width: 400px; box-shadow: inset 0 0 10px rgba(0,0,0,1);">
+                    <div style="display: flex; justify-content: space-between; font-family: var(--mono); font-size: 0.85rem; margin-bottom: 8px;">
+                        <span style="color: var(--cyan);">USER_XP: <span id="user-xp">0</span></span>
+                        <span style="color: #888;">RANK: <span id="user-rank" style="color: #fff;">RECRUIT</span></span>
+                    </div>
+                    <div style="width: 100%; height: 8px; background: #111; border-radius: 4px; overflow: hidden;">
+                        <div id="xp-bar" style="height: 100%; width: 0%; background: var(--cyan); box-shadow: 0 0 10px var(--cyan); transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);"></div>
+                    </div>
+                    <div style="text-align: right; font-family: var(--mono); font-size: 0.7rem; color: #555; margin-top: 5px;">
+                        <span id="missions-count">0</span>/3 MISSIONS COMPLETED
+                    </div>
+                </div>
+            </div>
+        </header>
 
         <div class="mission-grid">
-            <div class="mission-card">
+            <div class="mission-card" id="card-OP-GHOST-TRAFFIC">
+                <div class="badge-completed">CLEARED</div>
                 <div>
                     <span class="status-badge status-critical">Hardcore</span>
                     <div style="color: var(--danger); font-family: var(--mono); font-size: 0.8rem;">OP: GHOST_TRAFFIC</div>
@@ -134,7 +168,8 @@ require __DIR__ . '/../templates/header.php';
                 </div>
             </div>
 
-            <div class="mission-card">
+            <div class="mission-card" id="card-OP-SECURE-DEV">
+                <div class="badge-completed">CLEARED</div>
                 <div>
                     <span class="status-badge" style="color: #aaa; border: 1px solid #444;">Intermediate</span>
                     <div style="color: var(--cyan); font-family: var(--mono); font-size: 0.8rem;">OP: SECURE_DEV</div>
@@ -149,7 +184,8 @@ require __DIR__ . '/../templates/header.php';
                 </div>
             </div>
 
-            <div class="mission-card">
+            <div class="mission-card" id="card-OP-DEEP-STATE">
+                <div class="badge-completed">CLEARED</div>
                 <div>
                     <span class="status-badge" style="background: rgba(170, 0, 255, 0.2); color: #aa00ff; border: 1px solid #aa00ff;">Advanced</span>
                     <div style="color: #aa00ff; font-family: var(--mono); font-size: 0.8rem;">OP: DEEP_STATE</div>
@@ -166,5 +202,25 @@ require __DIR__ . '/../templates/header.php';
         </div>
     </div>
 </main>
+
+<script>
+    // Pequeño script exclusivo para esta página que comprueba qué misiones
+    // están completadas y muestra la insignia "CLEARED" en la esquina de la tarjeta.
+    document.addEventListener('DOMContentLoaded', () => {
+        let completedMissions = JSON.parse(localStorage.getItem('cyber_missions')) || [];
+        completedMissions.forEach(missionId => {
+            let card = document.getElementById('card-' + missionId);
+            if (card) {
+                // Hacer visible la etiqueta "CLEARED"
+                let badge = card.querySelector('.badge-completed');
+                if (badge) badge.style.display = 'block';
+                
+                // Efecto visual: oscurecer ligeramente la misión completada
+                card.style.opacity = '0.7';
+                card.style.borderColor = 'var(--terminal-green)';
+            }
+        });
+    });
+</script>
 
 <?php require __DIR__ . '/../templates/footer.php'; ?>
