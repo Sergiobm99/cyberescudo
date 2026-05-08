@@ -20,6 +20,7 @@ require __DIR__ . '/../templates/header.php';
         border: 1px solid #ffcc00;
         padding: 4px 10px;
         font-size: 0.8rem;
+        display: inline-block;
     }
     .intel-block {
         background: rgba(255, 204, 0, 0.02);
@@ -43,25 +44,34 @@ require __DIR__ . '/../templates/header.php';
 
 <main class="content-page">
     <div class="briefing-container">
-        <div class="classification">NIVEL: INICIACIÓN</div>
+        <div class="classification"><?= $lang === 'es' ? 'NIVEL: PRINCIPIANTE' : 'LEVEL: BEGINNER' ?></div>
         <h1 style="color: #fff; font-family: var(--mono); margin: 1rem 0;">OP: FOOTPRINT</h1>
         
         <div class="intel-block">
-            <strong>[ ANÁLISIS DE INCIDENTES ]</strong><br><br>
-            Hemos detectado una intrusión en un servidor de desarrollo. El atacante intentó borrar su rastro usando `history -c`, pero nuestro sistema de auditoría recuperó los comandos antes de que se perdieran.<br><br>
-            Tu misión: Analiza el historial de comandos, identifica qué archivos intentó robar el atacante y encuentra la flag que dejó expuesta accidentalmente.
+            <strong><?= $lang === 'es' ? '[ ANÁLISIS DE INCIDENTES ]' : '[ INCIDENT ANALYSIS ]' ?></strong><br><br>
+            <?= $lang === 'es' 
+                ? 'Hemos detectado una intrusión en un servidor de desarrollo. El atacante intentó borrar su rastro usando <code>history -c</code>, pero nuestro sistema de auditoría recuperó los comandos antes de que se perdieran.' 
+                : 'We detected an intrusion on a development server. The attacker tried to erase their tracks using <code>history -c</code>, but our audit system recovered the commands before they were lost.' 
+            ?><br><br>
+            <strong><?= $lang === 'es' ? 'Tu misión:' : 'Your mission:' ?></strong> <?= $lang === 'es' 
+                ? 'Analiza el historial de comandos, identifica qué archivos intentó robar el atacante y encuentra la flag que dejó expuesta accidentalmente.' 
+                : 'Analyze the command history, identify which files the attacker tried to steal, and find the flag they accidentally left exposed.' 
+            ?>
         </div>
 
         <div style="text-align: center; background: #050505; padding: 2rem; border: 1px dashed #333;">
-            <p style="color: #888; font-family: var(--mono);">Archivo: attacker_history.txt</p>
+            <p style="color: #888; font-family: var(--mono);"><?= $lang === 'es' ? 'Archivo:' : 'File:' ?> attacker_history.txt</p>
             <a href="<?= e(BASE_URL) ?>/assets/challenges/attacker_history.txt" class="btn-download" download>
-                DESCARGAR HISTORIAL
+                <?= $lang === 'es' ? 'DESCARGAR HISTORIAL' : 'DOWNLOAD HISTORY' ?>
             </a>
         </div>
 
         <div style="margin-top: 2rem; text-align: center; font-family: var(--mono); color: #555;">
-            Usa `grep`, `cat` o un editor de texto para inspeccionar el archivo.<br>
-            <strong style="color: #ffcc00;">submit OP-FOOTPRINT FLAG{...}</strong>
+            <?= $lang === 'es' 
+                ? 'Usa <code>grep</code>, <code>cat</code> o un editor de texto para inspeccionar el archivo.' 
+                : 'Use <code>grep</code>, <code>cat</code>, or a text editor to inspect the file.' 
+            ?><br>
+            <strong style="color: #ffcc00; display: inline-block; margin-top: 10px;">submit OP-FOOTPRINT FLAG{...}</strong>
         </div>
     </div>
 </main>

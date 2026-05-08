@@ -448,19 +448,40 @@
       // Si estamos en la página de misiones, actualizamos los gráficos
       if (xpElement && barElement) {
           xpElement.innerText = currentXP;
-          countElement.innerText = completedMissions.length;
           
-          // Calcular porcentaje (500 XP por misión)
+          // 1. TEXTO DINÁMICO: Actualiza el contador (Ej: 3 / 9 MISSIONS COMPLETED)
+          countElement.innerText = completedMissions.length + ' / ' + MAX_MISSIONS + ' MISSIONS COMPLETED';
+          
+          // Calcular porcentaje
           let percentage = (completedMissions.length / MAX_MISSIONS) * 100;
           barElement.style.width = percentage + '%';
 
-          // Actualizar Rango
-          if (completedMissions.length === 1) rankElement.innerText = "OPERATOR";
-          if (completedMissions.length === 2) rankElement.innerText = "SPECIALIST";
-          if (completedMissions.length >= 3) {
+          // 2. LIMPIEZA DE ESTILOS: Por si el usuario resetea su progreso
+          rankElement.style.color = "";
+          rankElement.style.textShadow = "";
+          barElement.style.background = "";
+          barElement.style.boxShadow = "";
+
+          // 3. ACTUALIZAR RANGO: Adaptado para 9 misiones
+          let progress = completedMissions.length;
+          
+          if (progress === 0) {
+              rankElement.innerText = "RECRUIT";
+          } 
+          else if (progress > 0 && progress <= 3) {
+              rankElement.innerText = "OPERATOR";
+              rankElement.style.color = "var(--cyan)";
+          } 
+          else if (progress > 3 && progress <= 7) {
+              rankElement.innerText = "SPECIALIST";
+              rankElement.style.color = "#aa00ff"; // Tono morado para nivel avanzado
+          } 
+          else if (progress >= 8) {
               rankElement.innerText = "GHOST_HACKER";
               rankElement.style.color = "#ff2a2a";
               rankElement.style.textShadow = "0 0 10px red";
+              
+              // Efecto visual hacker en la barra
               barElement.style.background = "#ff2a2a";
               barElement.style.boxShadow = "0 0 15px red";
           }

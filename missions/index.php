@@ -196,9 +196,9 @@ body {
                     <div style="width: 100%; height: 8px; background: #111; border-radius: 4px; overflow: hidden;">
                         <div id="xp-bar" style="height: 100%; width: 0%; background: var(--cyan); box-shadow: 0 0 10px var(--cyan); transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);"></div>
                     </div>
-                    <div style="text-align: right; font-family: var(--mono); font-size: 0.7rem; color: #555; margin-top: 5px;">
-                        <span id="missions-count">0</span>/3 MISSIONS COMPLETED
-                    </div>
+                    <div id="missions-count" style="font-family: var(--mono); font-size: 0.75rem; color: #666; text-align: right; margin-top: 0.5rem;">
+    0 / 9 MISSIONS COMPLETED
+</div>
                 </div>
             </div>
         </header>
@@ -207,16 +207,17 @@ body {
              <div class="mission-card" id="card-OP-FOOTPRINT" style="border-bottom: 3px solid #ffcc00;">
                 <div class="badge-completed">CLEARED</div>
                 <div>
-                    <span class="status-badge" style="color: #ffcc00; border: 1px solid #ffcc00; background: rgba(255, 204, 0, 0.1);">Beginner</span>
-                    <div style="color: #ffcc00; font-family: var(--mono); font-size: 0.75rem;">// OP: FOOTPRINT</div>
-                    <h3 class="mission-title">Análisis de Logs</h3>
-                    <p style="color: #999; font-size: 0.9rem; line-height: 1.6;">
-                        Recupera el rastro de un atacante analizando su historial de comandos de consola.
+                    <span class="status-badge" style="color: #00ff41; border: 1px solid #00ff41; background: rgba(0, 255, 65, 0.1);">Beginner</span>
+                    
+                    <div style="color: #ffcc00; font-family: var(--mono); font-size: 0.8rem;">OP: FOOTPRINT</div>
+                    <h3 class="mission-title"><?= $lang === 'es' ? 'Análisis de Logs' : 'Log Analysis' ?></h3>
+                    <p style="color: #888; font-size: 0.9rem;">
+                        <?= $lang === 'es' ? 'Recupera el rastro de un atacante analizando su historial de comandos de consola.' : 'Recover an attacker\'s trail by analyzing their console command history.' ?>
                     </p>
                 </div>
                 <div class="mission-footer">
-                    <span style="font-family: var(--mono); color: #555;">[ LOG_ANALYSIS ]</span>
-                    <a href="footprint.php" class="btn-deploy" style="border-color: #ffcc00; color: #ffcc00;">INICIAR</a>
+                    <span><?= $lang === 'es' ? 'TIPO: Logs' : 'TYPE: Logs' ?></span>
+                    <a href="footprint.php" class="btn-deploy" style="border-color: #ffcc00; color: #ffcc00;"><?= $lang === 'es' ? 'INICIAR' : 'START' ?></a>
                 </div>
             </div>
             <div class="mission-card" id="card-OP-GHOST-TRAFFIC">
@@ -230,7 +231,7 @@ body {
                     </p>
                 </div>
                 <div class="mission-footer">
-                    <span>TIPO: Forensics</span>
+                    <span><?= $lang === 'es' ? 'TIPO: Forense' : 'TYPE: Forensics' ?></span>
                     <a href="ghost-traffic.php" class="btn-deploy"><?= $lang === 'es' ? 'VER INFORME' : 'VIEW BRIEFING' ?></a>
                 </div>
             </div>
@@ -246,7 +247,7 @@ body {
                     </p>
                 </div>
                 <div class="mission-footer">
-                    <span>TIPO: Source Audit</span>
+                    <span><?= $lang === 'es' ? 'TIPO: Auditoría de Código' : 'TYPE: Source Audit' ?></span>
                     <a href="logic-bomb.php" class="btn-deploy" style="border-color: var(--cyan); color: var(--cyan);"><?= $lang === 'es' ? 'VER CÓDIGO' : 'VIEW SOURCE' ?></a>
                 </div>
             </div>
@@ -262,7 +263,7 @@ body {
                     </p>
                 </div>
                 <div class="mission-footer">
-                    <span>TIPO: Steganography</span>
+                    <span><?= $lang === 'es' ? 'TIPO: Esteganografía' : 'TYPE: Steganography' ?></span>
                     <a href="shadow-messages.php" class="btn-deploy" style="border-color: #aa00ff; color: #aa00ff;"><?= $lang === 'es' ? 'VER INFORME' : 'VIEW BRIEFING' ?></a>
                 </div>
             </div>
@@ -277,7 +278,7 @@ body {
                     </p>
                 </div>
                 <div class="mission-footer">
-                    <span>TIPO: Recon</span>
+                    <span><?= $lang === 'es' ? 'TIPO: Recon' : 'TYPE: Recon' ?></span>
                     <a href="robots-recon.php" class="btn-deploy" style="border-color: var(--cyan); color: var(--cyan);"><?= $lang === 'es' ? 'INICIAR' : 'START' ?></a>
                 </div>
             </div>
@@ -293,7 +294,7 @@ body {
                     </p>
                 </div>
                 <div class="mission-footer">
-                    <span>TIPO: Web</span>
+                    <span><?= $lang === 'es' ? 'TIPO: Web' : 'TYPE: Web' ?></span>
                     <a href="cookie-monster.php" class="btn-deploy" style="border-color: #aa00ff; color: #aa00ff;"><?= $lang === 'es' ? 'INICIAR' : 'START' ?></a>
                 </div>
             </div>
