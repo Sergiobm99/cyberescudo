@@ -250,3 +250,4 @@ document.addEventListener('DOMContentLoaded', () => {
     setupMenuSearch('mobile-menu-search', '.mobile-submenu li:not(.mobile-menu-title):not(.mobile-search-wrap)');
 });
 </script>
+<!-- Secret: FLAG{h1dd3n_1n_pl41n_s1ght} -->

@@ -448,21 +448,18 @@
       // Si estamos en la página de misiones, actualizamos los gráficos
       if (xpElement && barElement) {
           xpElement.innerText = currentXP;
-          
-          // 1. TEXTO DINÁMICO: Actualiza el contador (Ej: 3 / 9 MISSIONS COMPLETED)
           countElement.innerText = completedMissions.length + ' / ' + MAX_MISSIONS + ' MISSIONS COMPLETED';
           
-          // Calcular porcentaje
           let percentage = (completedMissions.length / MAX_MISSIONS) * 100;
           barElement.style.width = percentage + '%';
 
-          // 2. LIMPIEZA DE ESTILOS: Por si el usuario resetea su progreso
+          // 2. ESTILOS POR DEFECTO (¡AQUÍ ESTÁ LA SOLUCIÓN!)
           rankElement.style.color = "";
           rankElement.style.textShadow = "";
-          barElement.style.background = "";
-          barElement.style.boxShadow = "";
+          barElement.style.background = "var(--cyan)"; // Le devolvemos el color a la barra
+          barElement.style.boxShadow = "none";
 
-          // 3. ACTUALIZAR RANGO: Adaptado para 9 misiones
+          // 3. ACTUALIZAR RANGO
           let progress = completedMissions.length;
           
           if (progress === 0) {
@@ -474,14 +471,15 @@
           } 
           else if (progress > 3 && progress <= 7) {
               rankElement.innerText = "SPECIALIST";
-              rankElement.style.color = "#aa00ff"; // Tono morado para nivel avanzado
+              rankElement.style.color = "#aa00ff";
+              barElement.style.background = "#aa00ff"; // La barra se vuelve morada en este nivel
           } 
           else if (progress >= 8) {
               rankElement.innerText = "GHOST_HACKER";
               rankElement.style.color = "#ff2a2a";
               rankElement.style.textShadow = "0 0 10px red";
               
-              // Efecto visual hacker en la barra
+              // Efecto visual hacker
               barElement.style.background = "#ff2a2a";
               barElement.style.boxShadow = "0 0 15px red";
           }

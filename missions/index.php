@@ -298,6 +298,39 @@ body {
                     <a href="cookie-monster.php" class="btn-deploy" style="border-color: #aa00ff; color: #aa00ff;"><?= $lang === 'es' ? 'INICIAR' : 'START' ?></a>
                 </div>
             </div>
+            <div class="mission-card" id="card-OP-SOURCE" style="border-bottom: 3px solid var(--cyan);">
+                <div class="badge-completed">CLEARED</div>
+                <div>
+                    <span class="status-badge" style="color: #00ff41; border: 1px solid #00ff41; background: rgba(0, 255, 65, 0.1);">Beginner</span>
+                    
+                    <div style="color: var(--cyan); font-family: var(--mono); font-size: 0.8rem;">OP: SOURCE</div>
+                    <h3 class="mission-title"><?= $lang === 'es' ? '¿Ves lo que no se ve?' : 'Can you see what is hidden?' ?></h3>
+                    <p style="color: #888; font-size: 0.9rem;">
+                        <?= $lang === 'es' ? 'Analiza el código fuente HTML en busca de comentarios o rutas olvidadas.' : 'Analyze the HTML source code for comments or forgotten paths.' ?>
+                    </p>
+                </div>
+                <div class="mission-footer">
+                    <span><?= $lang === 'es' ? 'TIPO: Reconocimiento' : 'TYPE: Recon' ?></span>
+                    <a href="source-code.php" class="btn-deploy" style="border-color: var(--cyan); color: var(--cyan);"><?= $lang === 'es' ? 'INICIAR' : 'START' ?></a>
+                </div>
+            </div>
+
+            <div class="mission-card" id="card-OP-B64-DECODE" style="border-bottom: 3px solid var(--cyan);">
+                <div class="badge-completed">CLEARED</div>
+                <div>
+                    <span class="status-badge" style="color: #00ff41; border: 1px solid #00ff41; background: rgba(0, 255, 65, 0.1);">Beginner</span>
+                    
+                    <div style="color: var(--cyan); font-family: var(--mono); font-size: 0.8rem;">OP: B64-DECODE</div>
+                    <h3 class="mission-title"><?= $lang === 'es' ? 'Decodifica esto' : 'Decode this' ?></h3>
+                    <p style="color: #888; font-size: 0.9rem;">
+                        <?= $lang === 'es' ? 'La codificación no es cifrado. Demuestra que puedes revertir el Base64.' : 'Encoding is not encryption. Prove that you can reverse Base64.' ?>
+                    </p>
+                </div>
+                <div class="mission-footer">
+                    <span><?= $lang === 'es' ? 'TIPO: Criptografía' : 'TYPE: Crypto' ?></span>
+                    <a href="b64-decode.php" class="btn-deploy" style="border-color: var(--cyan); color: var(--cyan);"><?= $lang === 'es' ? 'INICIAR' : 'START' ?></a>
+                </div>
+            </div>
            
         </div>
     </div>

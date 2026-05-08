@@ -352,4 +352,4 @@ require __DIR__ . '/templates/header.php';
     </div>
 </div>
 <?php require __DIR__ . '/templates/footer.php'; ?>
-< ! - - Secret: FLAG{h1dd3n_1n_pl41n_s1ght} - - >
+<!-- Secret: FLAG{h1dd3n_1n_pl41n_s1ght} -->
