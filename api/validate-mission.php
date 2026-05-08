@@ -4,10 +4,16 @@ header('Content-Type: application/json');
 
 // Las claves deben coincidir EXACTAMENTE con el ID que el jugador pone en la terminal
 $flags = [
+    // Tus misiones anteriores
     'OP-GHOST-TRAFFIC' => 'FLAG{DNS_tunneling_detected_2026}',
     'OP-SECURE-DEV'    => 'FLAG{python_eval_is_evil_99x}',
-    'OP-DEEP-STATE'    => 'FLAG{steg_hidden_data_recovered}', // <--- NUEVA MISIÓN AÑADIDA
-    'OP-PHISHING'      => 'FLAG{phishing_triage_expert}'
+    'OP-DEEP-STATE'    => 'FLAG{steg_hidden_data_recovered}',
+    'OP-FOOTPRINT'     => 'FLAG{bash_history_leaks_secrets_88}',
+    'OP-ROBOTS'        => 'FLAG{r0b0ts_gu4rd_s3cr3ts}',
+    'OP-SOURCE'        => 'FLAG{h1dd3n_1n_pl41n_s1ght}',
+    'OP-HEADERS'       => 'FLAG{h34d3rs_4r3_t4lk4t1v3}',
+    'OP-B64-DECODE'    => 'FLAG{b4s364_1s_n0t_encryp710n}',
+    'OP-COOKIE-MONSTER' => 'FLAG{c00k13s_kn0w_3v3ryth1ng}'
 ];
 
 $input = json_decode(file_get_contents('php://input'), true);

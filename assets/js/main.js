@@ -434,7 +434,7 @@
     }
   }
 /* ─── SISTEMA DE PROGRESO Y XP (LOCALSTORAGE) ─── */
-  const MAX_MISSIONS = 3; // Actualiza esto si añades más retos en el futuro
+  const MAX_MISSIONS = 9; // Actualiza esto si añades más retos en el futuro
 
   function updateHUD() {
       const xpElement = document.getElementById('user-xp');

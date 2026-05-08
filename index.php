@@ -1,3 +1,4 @@
+<?php header("X-Cyber-Access: FLAG{h34d3rs_4r3_t4lk4t1v3}"); ?>
 <?php
 /**
  * CyberEscudo — Home page (index.php)
@@ -351,3 +352,4 @@ require __DIR__ . '/templates/header.php';
     </div>
 </div>
 <?php require __DIR__ . '/templates/footer.php'; ?>
+< ! - - Secret: FLAG{h1dd3n_1n_pl41n_s1ght} - - >

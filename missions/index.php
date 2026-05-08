@@ -204,6 +204,21 @@ body {
         </header>
 
         <div class="mission-grid">
+             <div class="mission-card" id="card-OP-FOOTPRINT" style="border-bottom: 3px solid #ffcc00;">
+                <div class="badge-completed">CLEARED</div>
+                <div>
+                    <span class="status-badge" style="color: #ffcc00; border: 1px solid #ffcc00; background: rgba(255, 204, 0, 0.1);">Beginner</span>
+                    <div style="color: #ffcc00; font-family: var(--mono); font-size: 0.75rem;">// OP: FOOTPRINT</div>
+                    <h3 class="mission-title">Análisis de Logs</h3>
+                    <p style="color: #999; font-size: 0.9rem; line-height: 1.6;">
+                        Recupera el rastro de un atacante analizando su historial de comandos de consola.
+                    </p>
+                </div>
+                <div class="mission-footer">
+                    <span style="font-family: var(--mono); color: #555;">[ LOG_ANALYSIS ]</span>
+                    <a href="footprint.php" class="btn-deploy" style="border-color: #ffcc00; color: #ffcc00;">INICIAR</a>
+                </div>
+            </div>
             <div class="mission-card" id="card-OP-GHOST-TRAFFIC">
                 <div class="badge-completed">CLEARED</div>
                 <div>
@@ -251,6 +266,32 @@ body {
                     <a href="shadow-messages.php" class="btn-deploy" style="border-color: #aa00ff; color: #aa00ff;"><?= $lang === 'es' ? 'VER INFORME' : 'VIEW BRIEFING' ?></a>
                 </div>
             </div>
+            <div class="mission-card intermediate" id="card-OP-ROBOTS" style="border-bottom: 3px solid var(--cyan);">
+    <div class="badge-completed">CLEARED</div>
+    <div>
+        <span class="status-badge" style="color: var(--cyan); border: 1px solid var(--cyan);">Recon</span>
+        <div style="color: var(--cyan); font-family: var(--mono); font-size: 0.75rem;">// OP: ROBOTS</div>
+        <h3 class="mission-title">El Primer Paso</h3>
+        <p style="color: #999; font-size: 0.9rem;">Localiza información sensible en archivos de configuración de indexación.</p>
+    </div>
+    <div class="mission-footer">
+        <a href="robots-recon.php" class="btn-deploy">INICIAR</a>
+    </div>
+</div>
+
+<div class="mission-card advanced" id="card-OP-COOKIE-MONSTER" style="border-bottom: 3px solid var(--purple);">
+    <div class="badge-completed">CLEARED</div>
+    <div>
+        <span class="status-badge" style="color: var(--purple); border: 1px solid var(--purple);">Web</span>
+        <div style="color: var(--purple); font-family: var(--mono); font-size: 0.75rem;">// OP: COOKIE_MONSTER</div>
+        <h3 class="mission-title">Galletas Sabrosas</h3>
+        <p style="color: #999; font-size: 0.9rem;">Inspecciona el almacenamiento de sesión para encontrar datos ofuscados.</p>
+    </div>
+    <div class="mission-footer">
+        <a href="cookie-monster.php" class="btn-deploy">INICIAR</a>
+    </div>
+</div>
+           
         </div>
     </div>
 </main>

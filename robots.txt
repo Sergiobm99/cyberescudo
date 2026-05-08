@@ -29,5 +29,7 @@ Disallow: /projects/_template.php
 Disallow: /manuales/_template.php
 Disallow: /.user.ini
 Disallow: /.htaccess
+Disallow: /api/
+# FLAG{r0b0ts_gu4rd_s3cr3ts}
 
 Sitemap: https://cyberescudo.com/sitemap.xml
