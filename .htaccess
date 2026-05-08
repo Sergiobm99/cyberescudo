@@ -100,3 +100,26 @@ ServerSignature Off
 ErrorDocument 403 /403.php
 ErrorDocument 404 /404.php
 ErrorDocument 500 /500.php
+# CyberEscudo CTF — Apache security rules for /ctf/
+
+# ── Block direct web access to sensitive files ─────────────────────────────
+<FilesMatch "^(config|submit_form)\.php$">
+    Require all denied
+</FilesMatch>
+
+# ── Prevent directory listing ──────────────────────────────────────────────
+Options -Indexes
+
+# ── Block access to assets directory listing ───────────────────────────────
+<IfModule mod_autoindex.c>
+    IndexIgnore *
+</IfModule>
+
+# ── Security headers specific to CTF pages ─────────────────────────────────
+<IfModule mod_headers.c>
+    # Prevent challenge answers leaking in Referer
+    Header always set Referrer-Policy "no-referrer"
+    # No caching of challenge responses (stops flag farming from cache)
+    Header always set Cache-Control "no-store, no-cache, must-revalidate"
+    Header always set Pragma "no-cache"
+</IfModule>

@@ -266,31 +266,37 @@ body {
                     <a href="shadow-messages.php" class="btn-deploy" style="border-color: #aa00ff; color: #aa00ff;"><?= $lang === 'es' ? 'VER INFORME' : 'VIEW BRIEFING' ?></a>
                 </div>
             </div>
-            <div class="mission-card intermediate" id="card-OP-ROBOTS" style="border-bottom: 3px solid var(--cyan);">
-    <div class="badge-completed">CLEARED</div>
-    <div>
-        <span class="status-badge" style="color: var(--cyan); border: 1px solid var(--cyan);">Recon</span>
-        <div style="color: var(--cyan); font-family: var(--mono); font-size: 0.75rem;">// OP: ROBOTS</div>
-        <h3 class="mission-title">El Primer Paso</h3>
-        <p style="color: #999; font-size: 0.9rem;">Localiza información sensible en archivos de configuración de indexación.</p>
-    </div>
-    <div class="mission-footer">
-        <a href="robots-recon.php" class="btn-deploy">INICIAR</a>
-    </div>
-</div>
+           <div class="mission-card" id="card-OP-ROBOTS" style="border-bottom: 3px solid var(--cyan);">
+                <div class="badge-completed">CLEARED</div>
+                <div>
+                    <span class="status-badge" style="color: #00ff41; border: 1px solid #00ff41; background: rgba(0, 255, 65, 0.1);">Beginner</span>
+                    <div style="color: var(--cyan); font-family: var(--mono); font-size: 0.8rem;">OP: ROBOTS</div>
+                    <h3 class="mission-title"><?= $lang === 'es' ? 'El Primer Paso' : 'The First Step' ?></h3>
+                    <p style="color: #888; font-size: 0.9rem;">
+                        <?= $lang === 'es' ? 'Localiza información sensible en archivos de configuración de indexación.' : 'Locate sensitive information in indexing configuration files.' ?>
+                    </p>
+                </div>
+                <div class="mission-footer">
+                    <span>TIPO: Recon</span>
+                    <a href="robots-recon.php" class="btn-deploy" style="border-color: var(--cyan); color: var(--cyan);"><?= $lang === 'es' ? 'INICIAR' : 'START' ?></a>
+                </div>
+            </div>
 
-<div class="mission-card advanced" id="card-OP-COOKIE-MONSTER" style="border-bottom: 3px solid var(--purple);">
-    <div class="badge-completed">CLEARED</div>
-    <div>
-        <span class="status-badge" style="color: var(--purple); border: 1px solid var(--purple);">Web</span>
-        <div style="color: var(--purple); font-family: var(--mono); font-size: 0.75rem;">// OP: COOKIE_MONSTER</div>
-        <h3 class="mission-title">Galletas Sabrosas</h3>
-        <p style="color: #999; font-size: 0.9rem;">Inspecciona el almacenamiento de sesión para encontrar datos ofuscados.</p>
-    </div>
-    <div class="mission-footer">
-        <a href="cookie-monster.php" class="btn-deploy">INICIAR</a>
-    </div>
-</div>
+            <div class="mission-card" id="card-OP-COOKIE-MONSTER" style="border-bottom: 3px solid #aa00ff;">
+                <div class="badge-completed">CLEARED</div>
+                <div>
+                    <span class="status-badge" style="color: #00ff41; border: 1px solid #00ff41; background: rgba(0, 255, 65, 0.1);">Beginner</span>
+                    <div style="color: #aa00ff; font-family: var(--mono); font-size: 0.8rem;">OP: COOKIE_MONSTER</div>
+                    <h3 class="mission-title"><?= $lang === 'es' ? 'Galletas Sabrosas' : 'Tasty Cookies' ?></h3>
+                    <p style="color: #888; font-size: 0.9rem;">
+                        <?= $lang === 'es' ? 'Inspecciona el almacenamiento de sesión para encontrar datos ofuscados.' : 'Inspect session storage to find obfuscated data.' ?>
+                    </p>
+                </div>
+                <div class="mission-footer">
+                    <span>TIPO: Web</span>
+                    <a href="cookie-monster.php" class="btn-deploy" style="border-color: #aa00ff; color: #aa00ff;"><?= $lang === 'es' ? 'INICIAR' : 'START' ?></a>
+                </div>
+            </div>
            
         </div>
     </div>
