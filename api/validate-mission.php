@@ -16,7 +16,11 @@ $flags = [
     'OP-COOKIE-MONSTER' => 'FLAG{c00k13s_kn0w_3v3ryth1ng}',
     'OP-DOUBLE-CIPHER' => 'FLAG{d0ubl3_c1ph3r}',
     'OP-JWT-TOKEN'     => 'FLAG{jwt_p4yl04d_3xp0s3d}',
-    'OP-BROKEN-HASH'   => 'FLAG{md5_1s_d34d_us3_bcrpyt}'
+    'OP-BROKEN-HASH'   => 'FLAG{md5_1s_d34d_us3_bcrpyt}',
+    'OP-DIGITAL-TRAIL' => 'FLAG{crt_sh_subd0m41n_l34k}',
+    'OP-IDOR-ACCESS'   => 'FLAG{1d0r_byp4ss_l1k3_4_b0ss}',
+    'OP-EXIF-DATA'     => 'FLAG{3x1f_m3t4d4t4_h1dd3n}',
+    'OP-XOR-CRYPTO'    => 'FLAG{x0r_pwnd}'
 ];
 
 $input = json_decode(file_get_contents('php://input'), true);

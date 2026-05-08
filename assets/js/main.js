@@ -434,7 +434,7 @@
     }
   }
 /* ─── SISTEMA DE PROGRESO Y XP (LOCALSTORAGE) ─── */
-  const MAX_MISSIONS = 12;
+  const MAX_MISSIONS = 16;
 
   function updateHUD() {
       const xpElement = document.getElementById('user-xp');
@@ -462,19 +462,20 @@
           // 3. ACTUALIZAR RANGO
           let progress = completedMissions.length;
           
-          if (progress === 0) {
+          // En tu función updateHUD(), ajusta los rangos así:
+if (progress === 0) {
     rankElement.innerText = "RECRUIT";
 } 
-else if (progress > 0 && progress <= 4) {         // De 1 a 4
+else if (progress > 0 && progress <= 5) {
     rankElement.innerText = "OPERATOR";
     rankElement.style.color = "var(--cyan)";
 } 
-else if (progress > 4 && progress <= 9) {         // De 5 a 9
+else if (progress > 5 && progress <= 12) {
     rankElement.innerText = "SPECIALIST";
     rankElement.style.color = "#aa00ff";
     barElement.style.background = "#aa00ff";
 } 
-else if (progress >= 10) {                        // 10, 11 o 12
+else if (progress >= 13) {
     rankElement.innerText = "GHOST_HACKER";
     rankElement.style.color = "#ff2a2a";
     rankElement.style.textShadow = "0 0 10px red";

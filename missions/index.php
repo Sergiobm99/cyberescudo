@@ -378,6 +378,69 @@ body {
                     <a href="broken-hash.php" class="btn-deploy" style="border-color: var(--cyan); color: var(--cyan);"><?= $lang === 'es' ? 'INICIAR' : 'START' ?></a>
                 </div>
             </div>
+            <div class="mission-card" id="card-OP-DIGITAL-TRAIL" style="border-bottom: 3px solid #00ff41;">
+                <div class="badge-completed">CLEARED</div>
+                <div>
+                    <span class="status-badge" style="color: #00ff41; border: 1px solid #00ff41; background: rgba(0, 255, 65, 0.1);">Beginner</span>
+                    <div style="color: #00ff41; font-family: var(--mono); font-size: 0.8rem;">OP: DIGITAL-TRAIL</div>
+                    <h3 class="mission-title"><?= $lang === 'es' ? 'El Rastro Digital' : 'The Digital Trail' ?></h3>
+                    <p style="color: #888; font-size: 0.9rem;">
+                        <?= $lang === 'es' ? 'Busca en registros públicos de certificados SSL para encontrar subdominios ocultos.' : 'Search public SSL certificate records to find hidden subdomains.' ?>
+                    </p>
+                </div>
+                <div class="mission-footer">
+                    <span><?= $lang === 'es' ? 'TIPO: OSINT' : 'TYPE: OSINT' ?></span>
+                    <a href="digital-trail.php" class="btn-deploy" style="border-color: #00ff41; color: #00ff41;"><?= $lang === 'es' ? 'INICIAR' : 'START' ?></a>
+                </div>
+            </div>
+
+            <div class="mission-card" id="card-OP-IDOR-ACCESS" style="border-bottom: 3px solid #ffcc00;">
+                <div class="badge-completed">CLEARED</div>
+                <div>
+                    <span class="status-badge" style="color: #ffcc00; border: 1px solid #ffcc00; background: rgba(255, 204, 0, 0.1);">Intermediate</span>
+                    <div style="color: #ffcc00; font-family: var(--mono); font-size: 0.8rem;">OP: IDOR-ACCESS</div>
+                    <h3 class="mission-title"><?= $lang === 'es' ? 'Acceso No Autorizado' : 'Unauthorized Access' ?></h3>
+                    <p style="color: #888; font-size: 0.9rem;">
+                        <?= $lang === 'es' ? 'Manipula las referencias directas a objetos (IDOR) en una API para acceder a otros usuarios.' : 'Manipulate Insecure Direct Object References (IDOR) in an API to access other users.' ?>
+                    </p>
+                </div>
+                <div class="mission-footer">
+                    <span><?= $lang === 'es' ? 'TIPO: Web' : 'TYPE: Web' ?></span>
+                    <a href="idor-access.php" class="btn-deploy" style="border-color: #ffcc00; color: #ffcc00;"><?= $lang === 'es' ? 'INICIAR' : 'START' ?></a>
+                </div>
+            </div>
+
+            <div class="mission-card" id="card-OP-EXIF-DATA" style="border-bottom: 3px solid #ffcc00;">
+                <div class="badge-completed">CLEARED</div>
+                <div>
+                    <span class="status-badge" style="color: #ffcc00; border: 1px solid #ffcc00; background: rgba(255, 204, 0, 0.1);">Intermediate</span>
+                    <div style="color: #ffcc00; font-family: var(--mono); font-size: 0.8rem;">OP: EXIF-DATA</div>
+                    <h3 class="mission-title"><?= $lang === 'es' ? 'Datos Ocultos' : 'Hidden Data' ?></h3>
+                    <p style="color: #888; font-size: 0.9rem;">
+                        <?= $lang === 'es' ? 'Analiza los metadatos de una imagen para extraer información clasificada.' : 'Analyze the metadata of an image to extract classified information.' ?>
+                    </p>
+                </div>
+                <div class="mission-footer">
+                    <span><?= $lang === 'es' ? 'TIPO: Forense' : 'TYPE: Forensics' ?></span>
+                    <a href="exif-data.php" class="btn-deploy" style="border-color: #ffcc00; color: #ffcc00;"><?= $lang === 'es' ? 'INICIAR' : 'START' ?></a>
+                </div>
+            </div>
+
+            <div class="mission-card" id="card-OP-XOR-CRYPTO" style="border-bottom: 3px solid #ff2a2a;">
+                <div class="badge-completed">CLEARED</div>
+                <div>
+                    <span class="status-badge" style="color: #ff2a2a; border: 1px solid #ff2a2a; background: rgba(255, 42, 42, 0.1);">Advanced</span>
+                    <div style="color: #ff2a2a; font-family: var(--mono); font-size: 0.8rem;">OP: XOR-CRYPTO</div>
+                    <h3 class="mission-title"><?= $lang === 'es' ? 'Operación XOR' : 'XOR Operation' ?></h3>
+                    <p style="color: #888; font-size: 0.9rem;">
+                        <?= $lang === 'es' ? 'Programa un script para revertir la ofuscación matemática XOR de un array de bytes.' : 'Program a script to reverse the mathematical XOR obfuscation of a byte array.' ?>
+                    </p>
+                </div>
+                <div class="mission-footer">
+                    <span><?= $lang === 'es' ? 'TIPO: Criptografía' : 'TYPE: Crypto' ?></span>
+                    <a href="xor-crypto.php" class="btn-deploy" style="border-color: #ff2a2a; color: #ff2a2a;"><?= $lang === 'es' ? 'INICIAR' : 'START' ?></a>
+                </div>
+            </div>
         </div>
     </div>
 </main>

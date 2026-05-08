@@ -1,0 +1,66 @@
+[
+    {
+        "issuer_ca_id": 16418,
+        "issuer_name": "C=US, O=Let's Encrypt, CN=R3",
+        "common_name": "cyberescudo.com",
+        "name_value": "cyberescudo.com\nwww.cyberescudo.com",
+        "id": 1122334455,
+        "entry_timestamp": "2024-01-10T10:00:00"
+    },
+    {
+        "issuer_ca_id": 16418,
+        "issuer_name": "C=US, O=Let's Encrypt, CN=R3",
+        "common_name": "mail.cyberescudo.com",
+        "name_value": "mail.cyberescudo.com",
+        "id": 1122334456,
+        "entry_timestamp": "2024-02-15T12:30:00"
+    },
+    {
+        "issuer_ca_id": 16418,
+        "issuer_name": "C=US, O=Let's Encrypt, CN=R3",
+        "common_name": "dev.cyberescudo.com",
+        "name_value": "dev.cyberescudo.com",
+        "id": 1122334457,
+        "entry_timestamp": "2024-03-20T08:15:00"
+    },
+    {
+        "issuer_ca_id": 16418,
+        "issuer_name": "C=US, O=Let's Encrypt, CN=R3",
+        "common_name": "api.cyberescudo.com",
+        "name_value": "api.cyberescudo.com",
+        "id": 1122334458,
+        "entry_timestamp": "2024-04-05T14:20:00"
+    },
+    {
+        "issuer_ca_id": 16418,
+        "issuer_name": "C=US, O=Let's Encrypt, CN=R3",
+        "common_name": "vpn.cyberescudo.com",
+        "name_value": "vpn.cyberescudo.com",
+        "id": 1122334459,
+        "entry_timestamp": "2024-04-10T09:45:00"
+    },
+    {
+        "issuer_ca_id": 16418,
+        "issuer_name": "C=US, O=Let's Encrypt, CN=R3",
+        "common_name": "FLAG{crt_sh_subd0m41n_l34k}.cyberescudo.com",
+        "name_value": "FLAG{crt_sh_subd0m41n_l34k}.cyberescudo.com",
+        "id": 1122334460,
+        "entry_timestamp": "2024-05-01T11:00:00"
+    },
+    {
+        "issuer_ca_id": 16418,
+        "issuer_name": "C=US, O=Let's Encrypt, CN=R3",
+        "common_name": "staging.cyberescudo.com",
+        "name_value": "staging.cyberescudo.com",
+        "id": 1122334461,
+        "entry_timestamp": "2024-05-05T16:55:00"
+    },
+    {
+        "issuer_ca_id": 18320,
+        "issuer_name": "C=BE, O=GlobalSign nv-sa, CN=GlobalSign Atlas R3",
+        "common_name": "internal-backup.cyberescudo.com",
+        "name_value": "internal-backup.cyberescudo.com",
+        "id": 1122334462,
+        "entry_timestamp": "2024-05-07T14:10:00"
+    }
+]
