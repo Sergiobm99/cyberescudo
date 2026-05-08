@@ -441,6 +441,23 @@ body {
                     <a href="xor-crypto.php" class="btn-deploy" style="border-color: #ff2a2a; color: #ff2a2a;"><?= $lang === 'es' ? 'INICIAR' : 'START' ?></a>
                 </div>
             </div>
+            <div class="mission-card" id="card-OP-SHADOW-PATH" style="border-bottom: 3px solid #aa00ff;">
+    <div class="badge-completed">CLEARED</div>
+    <div>
+        <span class="status-badge" style="color: #aa00ff; border: 1px solid #aa00ff; background: rgba(170, 0, 255, 0.1);">Intermediate</span>
+        <div style="color: #aa00ff; font-family: var(--mono); font-size: 0.8rem;">OP: SHADOW_PATH</div>
+        <h3 class="mission-title"><?= $lang === 'es' ? 'Operación Shadow Path' : 'Shadow Path Operation' ?></h3>
+        <p style="color: #888; font-size: 0.9rem;">
+            <?= $lang === 'es' 
+                ? 'Explota una vulnerabilidad de Directory Traversal en un servidor de reportes enemigo para extraer credenciales de una bóveda oculta.' 
+                : 'Exploit a Directory Traversal vulnerability on an enemy reporting server to extract credentials from a hidden vault.' ?>
+        </p>
+    </div>
+    <div class="mission-footer">
+        <span><?= $lang === 'es' ? 'TIPO: Web / LFI' : 'TYPE: Web / LFI' ?></span>
+        <a href="labs/shadow_path/index.php" class="btn-deploy" style="border-color: #aa00ff; color: #aa00ff;"><?= $lang === 'es' ? 'INICIAR' : 'START' ?></a>
+    </div>
+</div>
         </div>
     </div>
 </main>

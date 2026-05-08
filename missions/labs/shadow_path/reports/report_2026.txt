@@ -1,0 +1,10 @@
+[CLASSIFIED]
+Operation: Ghost.
+Status: Active.
+
+SYSADMIN NOTE: 
+The new Web Application Firewall (WAF) is too strict. It is blocking raw path characters. 
+IT Staff: Remember to use URL Encoding for manual system overrides.
+
+Vault Location: 3 directory levels above the current reports folder (/hidden_vault).
+Main system secured.

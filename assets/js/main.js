@@ -434,7 +434,7 @@
     }
   }
 /* ─── SISTEMA DE PROGRESO Y XP (LOCALSTORAGE) ─── */
-  const MAX_MISSIONS = 16;
+  const MAX_MISSIONS = 17;
 
   function updateHUD() {
       const xpElement = document.getElementById('user-xp');

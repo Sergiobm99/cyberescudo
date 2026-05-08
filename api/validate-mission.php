@@ -20,7 +20,8 @@ $flags = [
     'OP-DIGITAL-TRAIL' => 'FLAG{crt_sh_subd0m41n_l34k}',
     'OP-IDOR-ACCESS'   => 'FLAG{1d0r_byp4ss_l1k3_4_b0ss}',
     'OP-EXIF-DATA'     => 'FLAG{3x1f_m3t4d4t4_h1dd3n}',
-    'OP-XOR-CRYPTO'    => 'FLAG{x0r_pwnd}'
+    'OP-XOR-CRYPTO'    => 'FLAG{x0r_pwnd}',
+    'OP_SHADOW_PATH' => 'FLAG{d1r3ct0ry_tr4v3rs4l_unl0ck3d}'
 ];
 
 $input = json_decode(file_get_contents('php://input'), true);
