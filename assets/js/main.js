@@ -434,7 +434,7 @@
     }
   }
 /* ─── SISTEMA DE PROGRESO Y XP (LOCALSTORAGE) ─── */
-  const MAX_MISSIONS = 9; // Actualiza esto si añades más retos en el futuro
+  const MAX_MISSIONS = 12;
 
   function updateHUD() {
       const xpElement = document.getElementById('user-xp');
@@ -463,26 +463,24 @@
           let progress = completedMissions.length;
           
           if (progress === 0) {
-              rankElement.innerText = "RECRUIT";
-          } 
-          else if (progress > 0 && progress <= 3) {
-              rankElement.innerText = "OPERATOR";
-              rankElement.style.color = "var(--cyan)";
-          } 
-          else if (progress > 3 && progress <= 7) {
-              rankElement.innerText = "SPECIALIST";
-              rankElement.style.color = "#aa00ff";
-              barElement.style.background = "#aa00ff"; // La barra se vuelve morada en este nivel
-          } 
-          else if (progress >= 8) {
-              rankElement.innerText = "GHOST_HACKER";
-              rankElement.style.color = "#ff2a2a";
-              rankElement.style.textShadow = "0 0 10px red";
-              
-              // Efecto visual hacker
-              barElement.style.background = "#ff2a2a";
-              barElement.style.boxShadow = "0 0 15px red";
-          }
+    rankElement.innerText = "RECRUIT";
+} 
+else if (progress > 0 && progress <= 4) {         // De 1 a 4
+    rankElement.innerText = "OPERATOR";
+    rankElement.style.color = "var(--cyan)";
+} 
+else if (progress > 4 && progress <= 9) {         // De 5 a 9
+    rankElement.innerText = "SPECIALIST";
+    rankElement.style.color = "#aa00ff";
+    barElement.style.background = "#aa00ff";
+} 
+else if (progress >= 10) {                        // 10, 11 o 12
+    rankElement.innerText = "GHOST_HACKER";
+    rankElement.style.color = "#ff2a2a";
+    rankElement.style.textShadow = "0 0 10px red";
+    barElement.style.background = "#ff2a2a";
+    barElement.style.boxShadow = "0 0 15px red";
+}
       }
   }
 

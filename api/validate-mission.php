@@ -13,7 +13,10 @@ $flags = [
     'OP-SOURCE'        => 'FLAG{h1dd3n_1n_pl41n_s1ght}',
     'OP-HEADERS'       => 'FLAG{h34d3rs_4r3_t4lk4t1v3}',
     'OP-B64-DECODE'    => 'FLAG{b4s364_1s_n0t_encryp710n}',
-    'OP-COOKIE-MONSTER' => 'FLAG{c00k13s_kn0w_3v3ryth1ng}'
+    'OP-COOKIE-MONSTER' => 'FLAG{c00k13s_kn0w_3v3ryth1ng}',
+    'OP-DOUBLE-CIPHER' => 'FLAG{d0ubl3_c1ph3r}',
+    'OP-JWT-TOKEN'     => 'FLAG{jwt_p4yl04d_3xp0s3d}',
+    'OP-BROKEN-HASH'   => 'FLAG{md5_1s_d34d_us3_bcrpyt}'
 ];
 
 $input = json_decode(file_get_contents('php://input'), true);

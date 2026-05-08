@@ -331,7 +331,53 @@ body {
                     <a href="b64-decode.php" class="btn-deploy" style="border-color: var(--cyan); color: var(--cyan);"><?= $lang === 'es' ? 'INICIAR' : 'START' ?></a>
                 </div>
             </div>
-           
+           <div class="mission-card" id="card-OP-DOUBLE-CIPHER" style="border-bottom: 3px solid var(--cyan);">
+                <div class="badge-completed">CLEARED</div>
+                <div>
+                    <span class="status-badge" style="color: #00ff41; border: 1px solid #00ff41; background: rgba(0, 255, 65, 0.1);">Beginner</span>
+                    <div style="color: var(--cyan); font-family: var(--mono); font-size: 0.8rem;">OP: DOUBLE-CIPHER</div>
+                    <h3 class="mission-title"><?= $lang === 'es' ? 'Cifrado Doble' : 'Double Cipher' ?></h3>
+                    <p style="color: #888; font-size: 0.9rem;">
+                        <?= $lang === 'es' ? 'Deshaz múltiples capas de codificación para revelar el mensaje oculto.' : 'Undo multiple layers of encoding to reveal the hidden message.' ?>
+                    </p>
+                </div>
+                <div class="mission-footer">
+                    <span><?= $lang === 'es' ? 'TIPO: Criptografía' : 'TYPE: Crypto' ?></span>
+                    <a href="double-cipher.php" class="btn-deploy" style="border-color: var(--cyan); color: var(--cyan);"><?= $lang === 'es' ? 'INICIAR' : 'START' ?></a>
+                </div>
+            </div>
+
+            <div class="mission-card" id="card-OP-JWT-TOKEN" style="border-bottom: 3px solid #aa00ff;">
+                <div class="badge-completed">CLEARED</div>
+                <div>
+                    <span class="status-badge" style="color: #00ff41; border: 1px solid #00ff41; background: rgba(0, 255, 65, 0.1);">Beginner</span>
+                    <div style="color: #aa00ff; font-family: var(--mono); font-size: 0.8rem;">OP: JWT-TOKEN</div>
+                    <h3 class="mission-title"><?= $lang === 'es' ? 'Token Comprometido' : 'Compromised Token' ?></h3>
+                    <p style="color: #888; font-size: 0.9rem;">
+                        <?= $lang === 'es' ? 'Audita un token de sesión JWT vulnerable y extrae la flag de su payload.' : 'Audit a vulnerable JWT session token and extract the flag from its payload.' ?>
+                    </p>
+                </div>
+                <div class="mission-footer">
+                    <span><?= $lang === 'es' ? 'TIPO: Web' : 'TYPE: Web' ?></span>
+                    <a href="jwt-token.php" class="btn-deploy" style="border-color: #aa00ff; color: #aa00ff;"><?= $lang === 'es' ? 'INICIAR' : 'START' ?></a>
+                </div>
+            </div>
+
+            <div class="mission-card" id="card-OP-BROKEN-HASH" style="border-bottom: 3px solid var(--cyan);">
+                <div class="badge-completed">CLEARED</div>
+                <div>
+                    <span class="status-badge" style="color: #00ff41; border: 1px solid #00ff41; background: rgba(0, 255, 65, 0.1);">Beginner</span>
+                    <div style="color: var(--cyan); font-family: var(--mono); font-size: 0.8rem;">OP: BROKEN-HASH</div>
+                    <h3 class="mission-title"><?= $lang === 'es' ? 'Hash Roto' : 'Broken Hash' ?></h3>
+                    <p style="color: #888; font-size: 0.9rem;">
+                        <?= $lang === 'es' ? 'Descubre por qué los algoritmos antiguos como MD5 ya no son seguros.' : 'Discover why old algorithms like MD5 are no longer secure.' ?>
+                    </p>
+                </div>
+                <div class="mission-footer">
+                    <span><?= $lang === 'es' ? 'TIPO: Criptografía' : 'TYPE: Crypto' ?></span>
+                    <a href="broken-hash.php" class="btn-deploy" style="border-color: var(--cyan); color: var(--cyan);"><?= $lang === 'es' ? 'INICIAR' : 'START' ?></a>
+                </div>
+            </div>
         </div>
     </div>
 </main>
