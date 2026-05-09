@@ -188,19 +188,26 @@ body {
                     <?= $lang === 'es' ? '[ ACCESO AUTORIZADO ] — Selecciona un objetivo para iniciar el despliegue.' : '[ ACCESS GRANTED ] — Select a target to initiate deployment.' ?>
                 </p>
                 
-                <div style="margin-top: 20px; background: rgba(0,0,0,0.8); border: 1px solid #333; padding: 15px; border-radius: 4px; max-width: 400px; box-shadow: inset 0 0 10px rgba(0,0,0,1);">
-                    <div style="display: flex; justify-content: space-between; font-family: var(--mono); font-size: 0.85rem; margin-bottom: 8px;">
-                        <span style="color: var(--cyan);">USER_XP: <span id="user-xp">0</span></span>
-                        <span style="color: #888;">RANK: <span id="user-rank" style="color: #fff;">RECRUIT</span></span>
-                    </div>
-                    <div style="width: 100%; height: 8px; background: #111; border-radius: 4px; overflow: hidden;">
-                        <div id="xp-bar" style="height: 100%; width: 0%; background: var(--cyan); box-shadow: 0 0 10px var(--cyan); transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);"></div>
-                    </div>
-                    <div id="missions-count" style="font-family: var(--mono); font-size: 0.75rem; color: #666; text-align: right; margin-top: 0.5rem;">
-    0 / 9 MISSIONS COMPLETED
+                <div style="display: flex; gap: 1.5rem; align-items: center; margin-bottom: 3rem; flex-wrap: wrap;">
+
+    <div style="background: #0a0a0a; border: 1px solid #222; padding: 1.5rem; border-radius: 0.5rem; min-width: 350px;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; font-family: var(--mono);">
+            <div style="color: var(--cyan); font-size: 0.9rem;">USER_XP: <span id="user-xp">0</span></div>
+            <div style="color: #666; font-size: 0.9rem;">RANK: <span id="user-rank" style="color: var(--cyan);">RECRUIT</span></div>
+        </div>
+        <div style="background: #222; height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 0.5rem;">
+            <div id="xp-bar" style="width: 0%; height: 100%; background: var(--cyan); transition: width 0.5s ease-out;"></div>
+        </div>
+        <div id="missions-count" style="font-family: var(--mono); font-size: 0.75rem; color: #666; text-align: right;">
+            0 / 17 MISSIONS COMPLETED
+        </div>
+    </div>
+    <a href="writeups.php" class="btn-deploy" style="border-color: #666; color: #666; font-size: 0.8rem; padding: 0.75rem 1.5rem; height: fit-content; display: flex; align-items: center;">
+        📁 <?= $lang === 'es' ? 'WRITE-UPS' : 'WRITE-UPS' ?>
+    </a>
+
 </div>
-                </div>
-            </div>
+            
         </header>
 
         <div class="mission-grid">

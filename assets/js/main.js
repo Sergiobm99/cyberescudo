@@ -544,4 +544,31 @@ else if (progress >= 13) {
 
   // Inicializar la HUD al cargar la página
   document.addEventListener('DOMContentLoaded', updateHUD);
+  // ==========================================
+// SISTEMA DE SPOILERS PARA LOS WRITE-UPS
+// ==========================================
+document.addEventListener("DOMContentLoaded", function() {
+    // Buscamos todos los botones que tengan la clase .flag-spoiler
+    const spoilers = document.querySelectorAll('.flag-spoiler');
+    
+    spoilers.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            // Leemos la flag oculta en el atributo data-flag
+            let secretFlag = this.getAttribute('data-flag');
+            
+            if (secretFlag) {
+                // Cambiamos el texto
+                this.innerText = secretFlag;
+                
+                // Le damos el estilo cian de "Hackeado"
+                this.style.color = "var(--cyan)";
+                this.style.borderColor = "var(--cyan)";
+                this.style.cursor = "default";
+                
+                // Borramos el dato para mayor limpieza
+                this.removeAttribute('data-flag');
+            }
+        });
+    });
+});
 })();
