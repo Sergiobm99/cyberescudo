@@ -257,7 +257,7 @@ require __DIR__ . '/templates/header.php';
 <section id="about" class="section">
   <div class="section-inner">
     <div class="section-header">
-      <span class="section-label"><?= $lang === 'es' ? '// DONACIÓN' : '// DONATION' ?></span>
+      <span class="section-label"><?= $lang === 'es' ? '// DONACIÓN' : '// DONATIONrfaaaaaaaaaaaaaa' ?></span>
     </div>
 
     <div class="about-wrap">
