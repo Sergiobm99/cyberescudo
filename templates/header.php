@@ -54,6 +54,7 @@
     <ul class="nav-links">
       <li><a href="<?= BASE_URL ?>/index.php#projects"><?= e($t['nav']['projects']) ?></a></li>
       <li><a href="<?= BASE_URL ?>/index.php#manuals"><?= e($t['nav']['manuals']) ?></a></li>
+      <li><a href="sobre-mi.php" class="nav-link"><?= $lang === 'es' ? 'Sobre Mí' : 'About Me' ?></a></li>
       
       <!-- INICIO DEL MEGA MENÚ -->
       <li class="nav-dropdown">
@@ -124,7 +125,7 @@
       </li>
       <li>
     <a href="<?= e(BASE_URL . '/missions/') ?>" style="color: #ff2a2a; font-weight: bold; font-family: var(--mono);">
-        [ TOP SECRET ]
+        [ CTF Challenges ]
     </a>
 </li>
       <!-- FIN DEL MEGA MENÚ -->
@@ -152,6 +153,7 @@
     <ul class="mobile-nav-list">
         <li><a href="<?= BASE_URL ?>/index.php#projects"><?= e($t['nav']['projects']) ?></a></li>
         <li><a href="<?= BASE_URL ?>/index.php#manuals"><?= e($t['nav']['manuals']) ?></a></li>
+        <li><a href="sobre-mi.php" class="nav-link"><?= $lang === 'es' ? 'Sobre Mí' : 'About Me' ?></a></li>
         
         <li class="has-submenu">
             <input type="checkbox" id="tools-toggle" class="submenu-checkbox" hidden>
@@ -204,12 +206,6 @@
             </ul>
         </li>
 
-        <li><a href="<?= BASE_URL ?>/index.php#about"><?= e($t['nav']['about']) ?></a></li>
-        <li class="nav-osint-item">
-            <a href="<?= BASE_URL ?>/tool-osint-report.php" style="color: var(--cyan); font-weight: 600;">
-                📄 <?= $lang === 'es' ? 'Reporte OSINT' : 'Osint Report' ?>
-            </a>
-        </li>
         <li class="nav-donate-item">
             <a href="<?= BASE_URL ?>/index.php#donate" class="nav-support-btn">
                 ♥ <?= $lang === 'es' ? 'Apóyame' : 'Support' ?> 

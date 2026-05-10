@@ -257,23 +257,10 @@ require __DIR__ . '/templates/header.php';
 <section id="about" class="section">
   <div class="section-inner">
     <div class="section-header">
-      <span class="section-label"><?= e($t['about']['sectionLabel']) ?></span>
-      <h2><?= e($t['about']['title']) ?></h2>
+      <span class="section-label"><?= $lang === 'es' ? '// DONACIÓN' : '// DONATION' ?></span>
     </div>
 
     <div class="about-wrap">
-
-      <div class="profile-card">
-        <div class="profile-header">
-          <div class="profile-avatar"><?= icon('logo') ?></div>
-          <div>
-            <p class="profile-name"><?= e($t['about']['name']) ?></p>
-            <p class="profile-role"><?= e($t['about']['role']) ?></p>
-          </div>
-        </div>
-        <p class="profile-bio"><?= e($t['about']['bio']) ?></p>
-        <p class="profile-bio"><?= e($t['about']['bio2']) ?></p>
-      </div>
 
       <div class="contact-card">
         <div class="contact-icon"><?= icon('email') ?></div>
@@ -352,4 +339,3 @@ require __DIR__ . '/templates/header.php';
     </div>
 </div>
 <?php require __DIR__ . '/templates/footer.php'; ?>
-<!-- Secret: FLAG{h1dd3n_1n_pl41n_s1ght} -->

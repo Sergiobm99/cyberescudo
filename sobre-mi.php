@@ -42,7 +42,7 @@ require __DIR__ . '/templates/header.php';
     <div class="about-container">
         
         <section class="hero-profile">
-            <img src="assets/img/tu-foto.jpg" alt="Sergio Belmonte" class="profile-photo">
+            <img src="assets/img/mifoto.jpg" alt="Sergio Belmonte" class="profile-photo">
             <div class="hero-text">
                 <h1>Sergio Belmonte Morales</h1>
                 <div style="margin-bottom: 1rem;">
@@ -51,7 +51,7 @@ require __DIR__ . '/templates/header.php';
                     <span class="badge">Pentester (eCPPT)</span>
                 </div>
                 <p style="color: #aaa; line-height: 1.6; max-width: 600px;">
-                    <?= $lang === 'es' ? 'Analista de Ciberseguridad con sólida experiencia en la gestión de operaciones de seguridad (SOC) y hardening de infraestructuras. Especializado en el ecosistema de Microsoft 365 y Azure Sentinel, con un enfoque ofensivo respaldado por la certificación eCPPT. Experto en detección de amenazas mediante KQL y respuesta ante incidentes.' : 'Cybersecurity Analyst with solid experience in Security Operations Center (SOC) management and infrastructure hardening. Specialized in the Microsoft 365 and Azure Sentinel ecosystem, with an offensive security mindset backed by the eCPPT certification. Expert in threat detection using KQL and incident response.' ?>
+                    <?= $lang === 'es' ? 'Analista de Ciberseguridad con sólida experiencia en SOC y hardening de infraestructuras. Especializado en Microsoft 365 y Azure Sentinel, con un enfoque ofensivo respaldado por la certificación eCPPT. Experto en KQL y respuesta ante incidentes.' : 'Cybersecurity Analyst with solid experience in SOC management and infrastructure hardening. Specialized in Microsoft 365 and Azure Sentinel, with an offensive security mindset backed by the eCPPT certification. Expert in KQL and incident response.' ?>
                 </p>
                 
                 <div class="action-group">
@@ -60,9 +60,6 @@ require __DIR__ . '/templates/header.php';
                     </a>
                     <a href="https://www.linkedin.com/in/sergio-belmonte-morales99" target="_blank" class="btn-deploy" style="border-color: #0077b5; color: #0077b5;">
                         LINKEDIN
-                    </a>
-                    <a href="mailto:sergiobelmor99@gmail.com" class="btn-deploy" style="border-color: #aaa; color: #aaa;">
-                        <?= $lang === 'es' ? 'CONTACTO' : 'CONTACT' ?>
                     </a>
                 </div>
             </div>
@@ -104,18 +101,32 @@ require __DIR__ . '/templates/header.php';
                 <div class="timeline-title"><?= $lang === 'es' ? 'Analista de Ciberseguridad' : 'Cybersecurity Analyst' ?></div>
                 <div class="timeline-subtitle">Midway Technologies | Sevilla, <?= $lang === 'es' ? 'España' : 'Spain' ?></div>
                 <div class="timeline-desc">
-                    <?= $lang === 'es' ? 'Detección y Respuesta (SOC) administrando Azure Sentinel mediante KQL. Hardening de endpoints con Microsoft Defender e Intune. Ejecución de campañas de Cyber Phishing y gestión de vulnerabilidades (OpenVAS/Nessus).' : 'Detection & Response (SOC) administering Azure Sentinel using KQL. Endpoint hardening with Microsoft Defender and Intune. Execution of Cyber Phishing campaigns and vulnerability management (OpenVAS/Nessus).' ?>
+                    <?= $lang === 'es' ? 'Gestión de SOC con Azure Sentinel y KQL. Hardening de endpoints con Microsoft Defender e Intune. Seguridad ofensiva con Gophish y OpenVAS/Nessus.' : 'SOC management with Azure Sentinel and KQL. Endpoint hardening with Microsoft Defender and Intune. Offensive security with Gophish and OpenVAS/Nessus.' ?>
                 </div>
             </div>
             <div class="timeline-item">
-                <div class="timeline-date">11/2021 - 05/2022</div>
+                <div class="timeline-date"><?= $lang === 'es' ? 'Anteriormente' : 'Previously' ?></div>
+                <div class="timeline-title"><?= $lang === 'es' ? 'Técnico de Campo' : 'Field Technician' ?></div>
+                <div class="timeline-subtitle">Magtel Operaciones S.L.U. | Córdoba, <?= $lang === 'es' ? 'España' : 'Spain' ?></div>
+            </div>
+        </div>
+
+        <h2 class="section-title"><?= $lang === 'es' ? 'Instrucción y Formación' : 'Education & Training' ?></h2>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-date">2021 - 2022</div>
                 <div class="timeline-title"><?= $lang === 'es' ? 'Especialización en Ciberseguridad' : 'Cybersecurity Specialization' ?></div>
-                <div class="timeline-subtitle">IES Punta del verde | Sevilla, <?= $lang === 'es' ? 'España' : 'Spain' ?></div>
+                <div class="timeline-subtitle">IES Punta del verde | Sevilla</div>
             </div>
             <div class="timeline-item">
                 <div class="timeline-date">2019 - 2021</div>
                 <div class="timeline-title"><?= $lang === 'es' ? 'Grado Superior ASIR' : 'Associate Degree in Network Administration (ASIR)' ?></div>
-                <div class="timeline-subtitle">IES Triana | Sevilla, <?= $lang === 'es' ? 'España' : 'Spain' ?></div>
+                <div class="timeline-subtitle">IES Triana | Sevilla</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-date">2016 - 2018</div>
+                <div class="timeline-title"><?= $lang === 'es' ? 'Grado Medio SMR' : 'Vocational Degree in Microcomputer Systems and Networks' ?></div>
+                <div class="timeline-subtitle">IES Fidiana | Córdoba</div>
             </div>
         </div>
 
