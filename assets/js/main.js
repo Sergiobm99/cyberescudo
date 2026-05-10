@@ -571,4 +571,36 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
 });
+// ==========================================
+// SISTEMA DE PROGRESO DE MISIONES (CTF)
+// ==========================================
+document.addEventListener('DOMContentLoaded', () => {
+    // Leemos las misiones guardadas en la memoria del navegador
+    let completedMissions = JSON.parse(localStorage.getItem('cyber_missions')) || [];
+    
+    // Solo actualizamos la barra de misiones si estamos en la página correcta
+    let missionsCountDisplay = document.getElementById('missions-count');
+    if (missionsCountDisplay) {
+        missionsCountDisplay.innerText = `${completedMissions.length} / 17 MISSIONS COMPLETED`;
+    }
+    
+    completedMissions.forEach(missionId => {
+        let card = document.getElementById('card-' + missionId);
+        
+        if (card) {
+            // Añadimos la clase CSS que oscurece y activa el "CLEARED"
+            card.classList.add('mission-completed');
+            
+            // Cambiamos el botón para que diga "REVISAR"
+            let btn = card.querySelector('.btn-deploy');
+            if (btn) {
+                // Detectamos el idioma actual mirando si la URL o el HTML tiene el tag 'es'
+                let isSpanish = document.documentElement.lang === 'es' || document.body.classList.contains('es');
+                btn.innerText = isSpanish ? 'REVISAR' : 'REVIEW';
+                btn.style.color = 'var(--terminal-green)';
+                btn.style.borderColor = 'var(--terminal-green)';
+            }
+        }
+    });
+});
 })();

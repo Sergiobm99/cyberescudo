@@ -10,14 +10,14 @@ require __DIR__ . '/../templates/header.php';
         --cyan: #00ffff;
         --terminal-green: #00ff41;
     }
-body {
+    body {
         background-color: #050505 !important;
         background-image: 
             linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px),
             linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px),
             radial-gradient(circle at center, #0a1a1a 0%, #050505 100%) !important;
         background-size: 40px 40px, 40px 40px, 100% 100% !important;
-        background-attachment: fixed !important; /* Esto hace que el fondo no se corte al hacer scroll hacia abajo */
+        background-attachment: fixed !important;
     }
     .mission-grid {
         display: grid;
@@ -43,6 +43,21 @@ body {
         border-color: var(--danger);
         box-shadow: 0 0 20px rgba(255, 42, 42, 0.2);
         transform: scale(1.02);
+    }
+
+    /* EFECTO MISION COMPLETADA (NUEVO) */
+    .mission-completed {
+        opacity: 0.55 !important;
+        filter: grayscale(100%);
+        border-color: var(--terminal-green) !important;
+        border-bottom-color: var(--terminal-green) !important;
+    }
+
+    .mission-completed:hover {
+        opacity: 0.95 !important;
+        filter: grayscale(20%);
+        border-color: var(--terminal-green);
+        box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
     }
 
     /* Efecto de línea de escaneo */
@@ -103,7 +118,7 @@ body {
         font-size: 0.75rem;
         transition: 0.3s;
         text-transform: uppercase;
-        text-decoration: none; /* Para que el enlace no tenga subrayado */
+        text-decoration: none;
         display: inline-block;
         text-align: center;
     }
@@ -114,7 +129,7 @@ body {
         box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
     }
 
-    /* Insignia dinámica de completado (oculta por defecto, gestionada por JS) */
+    /* Insignia dinámica de completado (gestionada ahora por la clase padre) */
     .badge-completed {
         position: absolute;
         top: -15px;
@@ -127,32 +142,36 @@ body {
         padding: 20px 30px 5px 30px;
         transform: rotate(45deg);
         z-index: 10;
-        display: none; /* Se activa mediante JavaScript */
+        display: none; 
         box-shadow: 0 0 10px var(--terminal-green);
     }
-    /* Hacer el navbar y el footer sólidos para ocultar la rejilla de fondo */
+
+    /* Al añadir mission-completed, mostramos la insignia */
+    .mission-completed .badge-completed {
+        display: block;
+    }
+
     #navbar, .navbar, footer {
         background-color: #050505 !important;
         background-image: none !important;
         position: relative;
-        z-index: 100; /* Asegura que estén siempre por encima del fondo */
+        z-index: 100;
     }
-    /* 1. ANIMACIÓN DE FONDO: Reducimos la opacidad para que sea muy sutil */
+
     body::before {
         content: "";
         position: fixed;
         top: 0; left: 0; width: 100%; height: 100%;
-        /* Creamos una línea horizontal de luz cian */
         background: linear-gradient(0deg, 
             transparent 0%, 
             rgba(0, 255, 255, 0.02) 45%, 
             rgba(0, 255, 255, 0.08) 50%, 
             rgba(0, 255, 255, 0.02) 55%, 
             transparent 100%);
-        background-size: 100% 200px; /* Tamaño de la onda */
-        z-index: -1; /* Detrás de todo */
-        animation: scanline 10s linear infinite; /* 10 segundos por vuelta */
-        opacity: 0.6; /* Un extra de sutilidad */
+        background-size: 100% 200px;
+        z-index: -1;
+        animation: scanline 10s linear infinite;
+        opacity: 0.6;
     }
 
     @keyframes scanline {
@@ -160,7 +179,6 @@ body {
         100% { background-position: 0 100vh; }
     }
 
-    /* 2. EFECTO GLITCH PARA EL TÍTULO (Solo al cargar) */
     .glitch-title {
         position: relative;
         animation: glitch-reveal 0.5s ease-out forwards;
@@ -190,32 +208,32 @@ body {
                 
                 <div style="display: flex; gap: 1.5rem; align-items: center; margin-bottom: 3rem; flex-wrap: wrap;">
 
-    <div style="background: #0a0a0a; border: 1px solid #222; padding: 1.5rem; border-radius: 0.5rem; min-width: 350px;">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; font-family: var(--mono);">
-            <div style="color: var(--cyan); font-size: 0.9rem;">USER_XP: <span id="user-xp">0</span></div>
-            <div style="color: #666; font-size: 0.9rem;">RANK: <span id="user-rank" style="color: var(--cyan);">RECRUIT</span></div>
-        </div>
-        <div style="background: #222; height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 0.5rem;">
-            <div id="xp-bar" style="width: 0%; height: 100%; background: var(--cyan); transition: width 0.5s ease-out;"></div>
-        </div>
-        <div id="missions-count" style="font-family: var(--mono); font-size: 0.75rem; color: #666; text-align: right;">
-            0 / 17 MISSIONS COMPLETED
-        </div>
-    </div>
-    <a href="writeups.php" class="btn-deploy" style="border-color: #666; color: #666; font-size: 0.8rem; padding: 0.75rem 1.5rem; height: fit-content; display: flex; align-items: center;">
-        📁 <?= $lang === 'es' ? 'WRITE-UPS' : 'WRITE-UPS' ?>
-    </a>
+                    <div style="background: #0a0a0a; border: 1px solid #222; padding: 1.5rem; border-radius: 0.5rem; min-width: 350px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; font-family: var(--mono);">
+                            <div style="color: var(--cyan); font-size: 0.9rem;">USER_XP: <span id="user-xp">0</span></div>
+                            <div style="color: #666; font-size: 0.9rem;">RANK: <span id="user-rank" style="color: var(--cyan);">RECRUIT</span></div>
+                        </div>
+                        <div style="background: #222; height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 0.5rem;">
+                            <div id="xp-bar" style="width: 0%; height: 100%; background: var(--cyan); transition: width 0.5s ease-out;"></div>
+                        </div>
+                        <div id="missions-count" style="font-family: var(--mono); font-size: 0.75rem; color: #666; text-align: right;">
+                            0 / 17 MISSIONS COMPLETED
+                        </div>
+                    </div>
+                    <a href="writeups.php" class="btn-deploy" style="border-color: #666; color: #666; font-size: 0.8rem; padding: 0.75rem 1.5rem; height: fit-content; display: flex; align-items: center;">
+                        📁 <?= $lang === 'es' ? 'WRITE-UPS' : 'WRITE-UPS' ?>
+                    </a>
 
-</div>
-            
+                </div>
+            </div>
         </header>
 
         <div class="mission-grid">
-             <div class="mission-card" id="card-OP-FOOTPRINT" style="border-bottom: 3px solid #ffcc00;">
+            
+            <div class="mission-card" id="card-OP-FOOTPRINT" style="border-bottom: 3px solid #ffcc00;">
                 <div class="badge-completed">CLEARED</div>
                 <div>
                     <span class="status-badge" style="color: #00ff41; border: 1px solid #00ff41; background: rgba(0, 255, 65, 0.1);">Beginner</span>
-                    
                     <div style="color: #ffcc00; font-family: var(--mono); font-size: 0.8rem;">OP: FOOTPRINT</div>
                     <h3 class="mission-title"><?= $lang === 'es' ? 'Análisis de Logs' : 'Log Analysis' ?></h3>
                     <p style="color: #888; font-size: 0.9rem;">
@@ -227,6 +245,7 @@ body {
                     <a href="footprint.php" class="btn-deploy" style="border-color: #ffcc00; color: #ffcc00;"><?= $lang === 'es' ? 'INICIAR' : 'START' ?></a>
                 </div>
             </div>
+
             <div class="mission-card" id="card-OP-GHOST-TRAFFIC">
                 <div class="badge-completed">CLEARED</div>
                 <div>
@@ -274,7 +293,8 @@ body {
                     <a href="shadow-messages.php" class="btn-deploy" style="border-color: #aa00ff; color: #aa00ff;"><?= $lang === 'es' ? 'VER INFORME' : 'VIEW BRIEFING' ?></a>
                 </div>
             </div>
-           <div class="mission-card" id="card-OP-ROBOTS" style="border-bottom: 3px solid var(--cyan);">
+
+            <div class="mission-card" id="card-OP-ROBOTS" style="border-bottom: 3px solid var(--cyan);">
                 <div class="badge-completed">CLEARED</div>
                 <div>
                     <span class="status-badge" style="color: #00ff41; border: 1px solid #00ff41; background: rgba(0, 255, 65, 0.1);">Beginner</span>
@@ -305,11 +325,11 @@ body {
                     <a href="cookie-monster.php" class="btn-deploy" style="border-color: #aa00ff; color: #aa00ff;"><?= $lang === 'es' ? 'INICIAR' : 'START' ?></a>
                 </div>
             </div>
+
             <div class="mission-card" id="card-OP-SOURCE" style="border-bottom: 3px solid var(--cyan);">
                 <div class="badge-completed">CLEARED</div>
                 <div>
                     <span class="status-badge" style="color: #00ff41; border: 1px solid #00ff41; background: rgba(0, 255, 65, 0.1);">Beginner</span>
-                    
                     <div style="color: var(--cyan); font-family: var(--mono); font-size: 0.8rem;">OP: SOURCE</div>
                     <h3 class="mission-title"><?= $lang === 'es' ? '¿Ves lo que no se ve?' : 'Can you see what is hidden?' ?></h3>
                     <p style="color: #888; font-size: 0.9rem;">
@@ -326,7 +346,6 @@ body {
                 <div class="badge-completed">CLEARED</div>
                 <div>
                     <span class="status-badge" style="color: #00ff41; border: 1px solid #00ff41; background: rgba(0, 255, 65, 0.1);">Beginner</span>
-                    
                     <div style="color: var(--cyan); font-family: var(--mono); font-size: 0.8rem;">OP: B64-DECODE</div>
                     <h3 class="mission-title"><?= $lang === 'es' ? 'Decodifica esto' : 'Decode this' ?></h3>
                     <p style="color: #888; font-size: 0.9rem;">
@@ -338,7 +357,8 @@ body {
                     <a href="b64-decode.php" class="btn-deploy" style="border-color: var(--cyan); color: var(--cyan);"><?= $lang === 'es' ? 'INICIAR' : 'START' ?></a>
                 </div>
             </div>
-           <div class="mission-card" id="card-OP-DOUBLE-CIPHER" style="border-bottom: 3px solid var(--cyan);">
+
+            <div class="mission-card" id="card-OP-DOUBLE-CIPHER" style="border-bottom: 3px solid var(--cyan);">
                 <div class="badge-completed">CLEARED</div>
                 <div>
                     <span class="status-badge" style="color: #00ff41; border: 1px solid #00ff41; background: rgba(0, 255, 65, 0.1);">Beginner</span>
@@ -385,6 +405,7 @@ body {
                     <a href="broken-hash.php" class="btn-deploy" style="border-color: var(--cyan); color: var(--cyan);"><?= $lang === 'es' ? 'INICIAR' : 'START' ?></a>
                 </div>
             </div>
+
             <div class="mission-card" id="card-OP-DIGITAL-TRAIL" style="border-bottom: 3px solid #00ff41;">
                 <div class="badge-completed">CLEARED</div>
                 <div>
@@ -448,45 +469,27 @@ body {
                     <a href="xor-crypto.php" class="btn-deploy" style="border-color: #ff2a2a; color: #ff2a2a;"><?= $lang === 'es' ? 'INICIAR' : 'START' ?></a>
                 </div>
             </div>
+
             <div class="mission-card" id="card-OP-SHADOW-PATH" style="border-bottom: 3px solid #aa00ff;">
-    <div class="badge-completed">CLEARED</div>
-    <div>
-        <span class="status-badge" style="color: #aa00ff; border: 1px solid #aa00ff; background: rgba(170, 0, 255, 0.1);">Intermediate</span>
-        <div style="color: #aa00ff; font-family: var(--mono); font-size: 0.8rem;">OP: SHADOW_PATH</div>
-        <h3 class="mission-title"><?= $lang === 'es' ? 'Operación Shadow Path' : 'Shadow Path Operation' ?></h3>
-        <p style="color: #888; font-size: 0.9rem;">
-            <?= $lang === 'es' 
-                ? 'Explota una vulnerabilidad de Directory Traversal en un servidor de reportes enemigo para extraer credenciales de una bóveda oculta.' 
-                : 'Exploit a Directory Traversal vulnerability on an enemy reporting server to extract credentials from a hidden vault.' ?>
-        </p>
-    </div>
-    <div class="mission-footer">
-        <span><?= $lang === 'es' ? 'TIPO: Web / LFI' : 'TYPE: Web / LFI' ?></span>
-        <a href="labs/shadow_path/index.php" class="btn-deploy" style="border-color: #aa00ff; color: #aa00ff;"><?= $lang === 'es' ? 'INICIAR' : 'START' ?></a>
-    </div>
-</div>
+                <div class="badge-completed">CLEARED</div>
+                <div>
+                    <span class="status-badge" style="color: #aa00ff; border: 1px solid #aa00ff; background: rgba(170, 0, 255, 0.1);">Intermediate</span>
+                    <div style="color: #aa00ff; font-family: var(--mono); font-size: 0.8rem;">OP: SHADOW_PATH</div>
+                    <h3 class="mission-title"><?= $lang === 'es' ? 'Operación Shadow Path' : 'Shadow Path Operation' ?></h3>
+                    <p style="color: #888; font-size: 0.9rem;">
+                        <?= $lang === 'es' 
+                            ? 'Explota una vulnerabilidad de Directory Traversal en un servidor de reportes enemigo para extraer credenciales de una bóveda oculta.' 
+                            : 'Exploit a Directory Traversal vulnerability on an enemy reporting server to extract credentials from a hidden vault.' ?>
+                    </p>
+                </div>
+                <div class="mission-footer">
+                    <span><?= $lang === 'es' ? 'TIPO: Web / LFI' : 'TYPE: Web / LFI' ?></span>
+                    <a href="labs/shadow_path/index.php" class="btn-deploy" style="border-color: #aa00ff; color: #aa00ff;"><?= $lang === 'es' ? 'INICIAR' : 'START' ?></a>
+                </div>
+            </div>
         </div>
     </div>
 </main>
 
-<script>
-    // Pequeño script exclusivo para esta página que comprueba qué misiones
-    // están completadas y muestra la insignia "CLEARED" en la esquina de la tarjeta.
-    document.addEventListener('DOMContentLoaded', () => {
-        let completedMissions = JSON.parse(localStorage.getItem('cyber_missions')) || [];
-        completedMissions.forEach(missionId => {
-            let card = document.getElementById('card-' + missionId);
-            if (card) {
-                // Hacer visible la etiqueta "CLEARED"
-                let badge = card.querySelector('.badge-completed');
-                if (badge) badge.style.display = 'block';
-                
-                // Efecto visual: oscurecer ligeramente la misión completada
-                card.style.opacity = '0.7';
-                card.style.borderColor = 'var(--terminal-green)';
-            }
-        });
-    });
-</script>
 
 <?php require __DIR__ . '/../templates/footer.php'; ?>

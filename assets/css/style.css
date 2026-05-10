@@ -2220,3 +2220,35 @@ nav ul li a, .submenu-toggle {
             background: var(--cyan);
         }
     }
+    /* ==========================================
+   ESTILOS PARA MISIONES COMPLETADAS
+   ========================================== */
+.mission-completed {
+    opacity: 0.6; /* Lo hace un poco transparente */
+    filter: grayscale(80%); /* Le quita casi todo el color */
+    border-color: #00ff41 !important; /* Borde verde hacker */
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+/* Efecto al pasar el ratón: vuelve un poco el color */
+.mission-completed:hover {
+    opacity: 0.9;
+    filter: grayscale(20%);
+}
+
+/* Insignia de "COMPLETADO" */
+.badge-done {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 255, 65, 0.2);
+    color: #00ff41;
+    padding: 4px 10px;
+    border: 1px solid #00ff41;
+    border-radius: 4px;
+    font-family: var(--mono, monospace);
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
