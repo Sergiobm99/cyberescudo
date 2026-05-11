@@ -337,5 +337,10 @@ require __DIR__ . '/templates/header.php';
         }
         ?>
     </div>
+    <div style="text-align: center; margin-top: 2.5rem;">
+    <a href="/threat-intel.php" class="tool-btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem;">
+        🌍 <?= $lang === 'es' ? 'VER CENTRO DE INTELIGENCIA COMPLETO' : 'ACCESS FULL INTELLIGENCE CENTER' ?> <span style="font-size: 1.2rem;">→</span>
+    </a>
+</div>
 </div>
 <?php require __DIR__ . '/templates/footer.php'; ?>

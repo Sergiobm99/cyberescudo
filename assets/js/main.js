@@ -811,5 +811,71 @@ document.addEventListener('DOMContentLoaded', () => {
 
         setTimeout(generateLog, 1000);
     }
+// ==========================================
+    // 6. FULL THREAT INTEL PAGE (threat-intel.php)
+    // ==========================================
+    const fullCveFeed = document.getElementById('full-cve-feed');
+    const fullNewsFeed = document.getElementById('full-news-feed');
 
+    if (fullCveFeed && fullNewsFeed) {
+        const cveUrl = 'https://api.rss2json.com/v1/api.json?rss_url=https://cvefeed.io/rssfeed/latest.xml';
+        const newsUrl = 'https://api.rss2json.com/v1/api.json?rss_url=https://feeds.feedburner.com/TheHackersNews';
+        const isSpanish = document.documentElement.lang === 'es' || document.body.classList.contains('es');
+
+        // Función para calcular "Hace X horas/días"
+        function timeAgo(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const seconds = Math.round((now - date) / 1000);
+            const minutes = Math.round(seconds / 60);
+            const hours = Math.round(minutes / 60);
+            const days = Math.round(hours / 24);
+
+            if (isSpanish) {
+                if (seconds < 60) return "Hace un momento";
+                if (minutes < 60) return `Hace ${minutes} minutos`;
+                if (hours < 24) return `Hace ${hours} horas`;
+                return `Hace ${days} días`;
+            } else {
+                if (seconds < 60) return "Just now";
+                if (minutes < 60) return `${minutes} minutes ago`;
+                if (hours < 24) return `${hours} hours ago`;
+                return `${days} days ago`;
+            }
+        }
+
+        // Cargar 15 CVEs
+        fetch(cveUrl)
+            .then(res => res.json())
+            .then(data => {
+                fullCveFeed.innerHTML = ''; 
+                const items = data.items.slice(0, 15); // Mostramos los 15 últimos
+                items.forEach(item => {
+                    fullCveFeed.innerHTML += `
+                        <li class="feed-item cve-item">
+                            <span class="feed-date">${timeAgo(item.pubDate)}</span>
+                            <a href="${item.link}" target="_blank" class="feed-title">${item.title}</a>
+                            <span class="feed-badge badge-cve">NVD DISCLOSURE</span>
+                        </li>`;
+                });
+            })
+            .catch(() => fullCveFeed.innerHTML = `<li class="feed-item" style="color:#ff2a2a;">Error de conexión.</li>`);
+
+        // Cargar 15 Noticias
+        fetch(newsUrl)
+            .then(res => res.json())
+            .then(data => {
+                fullNewsFeed.innerHTML = ''; 
+                const items = data.items.slice(0, 15);
+                items.forEach(item => {
+                    fullNewsFeed.innerHTML += `
+                        <li class="feed-item">
+                            <span class="feed-date">${timeAgo(item.pubDate)}</span>
+                            <a href="${item.link}" target="_blank" class="feed-title">${item.title}</a>
+                            <span class="feed-badge badge-news">INTEL REPORT</span>
+                        </li>`;
+                });
+            })
+            .catch(() => fullNewsFeed.innerHTML = `<li class="feed-item" style="color:#ff2a2a;">Error de conexión.</li>`);
+    }
 })();
