@@ -487,6 +487,21 @@ require __DIR__ . '/../templates/header.php';
                     <a href="labs/shadow_path/index.php" class="btn-deploy" style="border-color: #aa00ff; color: #aa00ff;"><?= $lang === 'es' ? 'INICIAR' : 'START' ?></a>
                 </div>
             </div>
+            <div class="mission-card" id="card-OP-SOC-SIM" style="border-bottom: 3px solid #aa00ff;">
+                <div class="badge-completed">CLEARED</div>
+                <div>
+                    <span class="status-badge" style="background: rgba(170, 0, 255, 0.2); color: #aa00ff; border: 1px solid #aa00ff;">Advanced</span>
+                    <div style="color: #aa00ff; font-family: var(--mono); font-size: 0.8rem;">OP: SOC_SIMULATOR</div>
+                    <h3 class="mission-title"><?= $lang === 'es' ? 'Simulador SOC: Defensa Viva' : 'SOC Simulator: Live Defense' ?></h3>
+                    <p style="color: #888; font-size: 0.9rem;">
+                        <?= $lang === 'es' ? 'Monitoriza tráfico de red en tiempo real. Detecta y bloquea ataques de inyección antes de que comprometan el sistema.' : 'Monitor network traffic in real-time. Detect and block injection attacks before they compromise the system.' ?>
+                    </p>
+                </div>
+                <div class="mission-footer">
+                    <span><?= $lang === 'es' ? 'TIPO: Blue Team' : 'TYPE: Blue Team' ?></span>
+                    <a href="/soc-simulator.php" class="btn-deploy" style="border-color: #aa00ff; color: #aa00ff;"><?= $lang === 'es' ? 'INICIAR' : 'START' ?></a>
+                </div>
+            </div>
         </div>
     </div>
 </main>

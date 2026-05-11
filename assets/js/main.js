@@ -661,5 +661,155 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+// ==========================================
+    // 3. SOC SIMULATOR (BLUE TEAM)
+    // ==========================================
+    const logWindow = document.getElementById('log-window');
+    
+    // Solo se ejecuta si estamos en la página del simulador
+    if (logWindow) {
+        const btnBlock = document.getElementById('btn-block');
+        const selectedInfo = document.getElementById('selected-info');
+        const scoreDisplay = document.getElementById('score-display');
+        const alertBox = document.getElementById('alert-box');
+        const victoryBox = document.getElementById('victory-box');
+
+        let score = 0;
+        const WIN_SCORE = 5;
+        let selectedLogData = null;
+        let isGameOver = false;
+        let isHovering = false; // Detiene el auto-scroll al apuntar
+
+        // Control de Scroll de forma segura (CSP compliant)
+        logWindow.addEventListener('mouseenter', () => isHovering = true);
+        logWindow.addEventListener('mouseleave', () => isHovering = false);
+
+        const normalTraffic = [
+            "GET /index.php HTTP/1.1",
+            "GET /assets/style.css HTTP/1.1",
+            "GET /images/logo.png HTTP/1.1",
+            "GET /robots.txt HTTP/1.1",
+            "POST /api/v1/heartbeat HTTP/1.1",
+            "GET /dashboard/user_profile HTTP/1.1",
+            "GET /favicon.ico HTTP/1.1",
+            "POST /login.php HTTP/1.1"
+        ];
+
+        const attackTraffic = [
+            "GET /index.php?id=1' OR '1'='1 HTTP/1.1",
+            "POST /login.php?user=admin'-- HTTP/1.1",
+            "GET /search?q=<script>alert(1)</script> HTTP/1.1",
+            "GET /download.php?file=../../../../etc/passwd HTTP/1.1",
+            "GET /.git/config HTTP/1.1",
+            "POST /api/upload (filename=shell.php) HTTP/1.1",
+            "GET /wp-admin/admin-ajax.php?action=revslider_show_image&img=../wp-config.php HTTP/1.1"
+        ];
+
+        function getRandomIP() {
+            return `${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`;
+        }
+        
+        function getCurrentTime() {
+            const now = new Date();
+            return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+        }
+
+        function showAlert(msg, isSuccess) {
+            alertBox.innerText = msg;
+            alertBox.style.display = 'block';
+            alertBox.style.background = isSuccess ? 'rgba(0,255,65,0.1)' : 'rgba(255,42,42,0.1)';
+            alertBox.style.color = isSuccess ? '#00ff41' : '#ff2a2a';
+            alertBox.style.border = `1px solid ${isSuccess ? '#00ff41' : '#ff2a2a'}`;
+            setTimeout(() => { alertBox.style.display = 'none'; }, 2500);
+        }
+
+        function generateLog() {
+            if (isGameOver) return;
+
+            const isAttack = Math.random() < 0.20; 
+            const reqList = isAttack ? attackTraffic : normalTraffic;
+            const request = reqList[Math.floor(Math.random() * reqList.length)];
+            const ip = getRandomIP();
+            const time = getCurrentTime();
+            const status = isAttack ? (Math.random() > 0.5 ? '200' : '403') : '200';
+
+            const logDiv = document.createElement('div');
+            logDiv.className = 'log-line';
+            logDiv.innerHTML = `
+                <span class="l-time">[${time}]</span>
+                <span class="l-ip">${ip}</span>
+                <span class="l-req">"${request}"</span>
+                <span class="l-status">${status}</span>
+            `;
+
+            logDiv.dataset.ip = ip;
+            logDiv.dataset.req = request;
+            logDiv.dataset.isAttack = isAttack;
+
+            logDiv.addEventListener('click', () => {
+                if (isGameOver) return;
+                document.querySelectorAll('.log-line').forEach(el => el.classList.remove('selected'));
+                logDiv.classList.add('selected');
+                selectedLogData = { ip: ip, req: request, isAttack: isAttack, element: logDiv };
+                
+                let isEs = document.documentElement.lang === 'es' || document.body.classList.contains('es');
+                selectedInfo.innerHTML = `
+                    <div style="color:#888; margin-bottom:5px;">[ TARGET LOCKED ]</div>
+                    <div style="color:#fff;">IP: <span style="color:#ff2a2a">${ip}</span></div>
+                    <div style="color:#aaa; margin-top:5px; font-size: 0.75rem;">PAYLOAD: ${request}</div>
+                `;
+                btnBlock.disabled = false;
+            });
+
+            logWindow.appendChild(logDiv);
+
+            if (logWindow.children.length > 50) logWindow.removeChild(logWindow.firstChild);
+            if (!isHovering) logWindow.scrollTop = logWindow.scrollHeight;
+
+            setTimeout(generateLog, Math.random() * 1000 + 400);
+        }
+
+        btnBlock.addEventListener('click', () => {
+            if (!selectedLogData || isGameOver) return;
+            let isEs = document.documentElement.lang === 'es' || document.body.classList.contains('es');
+
+            if (selectedLogData.isAttack === 'true' || selectedLogData.isAttack === true) {
+                score++;
+                showAlert(isEs ? '[+] AMENAZA NEUTRALIZADA' : '[+] THREAT NEUTRALIZED', true);
+                selectedLogData.element.style.color = '#ff2a2a';
+                selectedLogData.element.style.textDecoration = 'line-through';
+            } else {
+                score = Math.max(0, score - 1);
+                showAlert(isEs ? '[-] FALSO POSITIVO. Tráfico legítimo bloqueado.' : '[-] FALSE POSITIVE. Legitimate traffic blocked.', false);
+            }
+
+            scoreDisplay.innerText = score;
+
+            if (score >= WIN_SCORE) {
+                isGameOver = true;
+                let statusLive = document.querySelector('.status-live');
+                if(statusLive) {
+                    statusLive.innerText = '● SECURED';
+                    statusLive.style.color = '#aa00ff';
+                    statusLive.style.animation = 'none';
+                }
+                btnBlock.disabled = true;
+                victoryBox.style.display = 'block';
+                
+                let completedMissions = JSON.parse(localStorage.getItem('cyber_missions')) || [];
+                if (!completedMissions.includes('OP-SOC-SIM')) {
+                    completedMissions.push('OP-SOC-SIM');
+                    localStorage.setItem('cyber_missions', JSON.stringify(completedMissions));
+                }
+            }
+            
+            selectedLogData = null;
+            btnBlock.disabled = true;
+            selectedInfo.innerHTML = isEs ? '[ ANALIZANDO TRÁFICO... ]' : '[ ANALYZING TRAFFIC... ]';
+            document.querySelectorAll('.log-line').forEach(el => el.classList.remove('selected'));
+        });
+
+        setTimeout(generateLog, 1000);
+    }
 
 })();
