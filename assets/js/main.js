@@ -603,4 +603,63 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+ 
+document.addEventListener('DOMContentLoaded', () => {
+    // ==========================================
+    // 2. ANIMACIÓN DEL ESCÁNER PERIMETRAL (AJAX)
+    // ==========================================
+    let scannerForm = document.getElementById('scanner-form');
+    
+    if (scannerForm) {
+        scannerForm.addEventListener('submit', function(e) {
+            e.preventDefault(); // 🔥 Esto evita que la página se recargue de golpe
+
+            let btnScan = document.getElementById('btn-scan');
+            let loadingZone = document.getElementById('loading-zone');
+            
+            // Ocultar botón y caja de resultados vieja (si la hay), mostrar animación
+            btnScan.style.display = 'none';
+            let oldResults = document.getElementById('results-box');
+            if (oldResults) oldResults.remove();
+            
+            loadingZone.style.display = 'block';
+
+            // Recoger la URL escrita por el usuario
+            let formData = new FormData(scannerForm);
+
+            // Enviar petición oculta al servidor (sin recargar)
+            fetch(window.location.href, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(html => {
+                // ⏱️ Forzamos 1.5 segundos de animación para crear suspense
+                setTimeout(() => {
+                    // Ocultar radar y volver a mostrar el botón
+                    loadingZone.style.display = 'none';
+                    btnScan.style.display = 'block';
+
+                    // Extraer los resultados del código que nos devuelve PHP
+                    let parser = new DOMParser();
+                    let doc = parser.parseFromString(html, 'text/html');
+                    let newResults = doc.getElementById('results-box');
+                    
+                    if (newResults) {
+                        // Inyectar la caja de resultados mágicamente bajo el radar
+                        loadingZone.insertAdjacentElement('afterend', newResults);
+                    } else {
+                        alert("Error: No se pudo generar el reporte del objetivo.");
+                    }
+                }, 1500); 
+            })
+            .catch(error => {
+                loadingZone.style.display = 'none';
+                btnScan.style.display = 'block';
+                alert("Fallo de conexión con el servidor.");
+            });
+        });
+    }
+});
+
 })();

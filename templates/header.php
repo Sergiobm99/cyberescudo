@@ -129,6 +129,11 @@
         </ul>
       </li>
       <li>
+    <a href="/tool-scanner.php" class="dropdown-item <?= ($current_page === 'tool-scanner.php') ? 'active' : '' ?>">
+        🎯 <?= $lang==='es' ? 'Escáner Perimetral' : 'Perimeter Scanner' ?>
+    </a>
+</li>
+      <li>
     <a href="<?= e(BASE_URL . '/missions/') ?>" style="color: #ff2a2a; font-weight: bold; font-family: var(--mono);">
         [ CTF Challenges ]
     </a>
