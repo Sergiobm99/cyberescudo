@@ -54,7 +54,7 @@
     <ul class="nav-links">
       <li><a href="<?= BASE_URL ?>/index.php#projects"><?= e($t['nav']['projects']) ?></a></li>
       <li><a href="<?= BASE_URL ?>/index.php#manuals"><?= e($t['nav']['manuals']) ?></a></li>
-      <li><a href="sobre-mi.php" class="nav-link"><?= $lang === 'es' ? 'Sobre Mí' : 'About Me' ?></a></li>
+      <li><a href="<?= BASE_URL ?>/sobre-mi.php" class="nav-link"><?= $lang === 'es' ? 'Sobre Mí' : 'About Me' ?></a></li>
       
       <!-- INICIO DEL MEGA MENÚ -->
       <li class="nav-dropdown">
@@ -118,6 +118,11 @@
               <li><a href="<?= BASE_URL ?>/tool-passcheck.php">🛡️ Password Strength</a></li>
               <li><a href="<?= BASE_URL ?>/tool-regex.php">🛡️ Password Regex Generator</a></li>
               <li><a href="<?= BASE_URL ?>/tool-url.php">🔗 URL Encoder</a></li>
+              <li>
+    <a href="<?= BASE_URL ?>/tool-osint-report.php" class="dropdown-item <?= ($current_page === 'tool-osint-report.php') ? 'active' : '' ?>" style="color: var(--cyan); font-weight: bold; text-shadow: 0 0 8px rgba(0,255,255,0.4);">
+        📄 <?= $lang==='es' ? 'Reporte OSINT' : 'OSINT Report' ?>
+    </a>
+</li>
             </ul>
           </li>
 
@@ -134,9 +139,7 @@
             ♥ <?= $lang === 'es' ? 'Apóyame' : 'Support' ?>
         </a></li>
         <li>
-        <a href="<?= BASE_URL ?>/tool-osint-report.php" class="nav-link <?= ($current_page === 'tool-osint-report.php') ? 'active' : '' ?>" style="color: var(--cyan); font-weight: bold; text-shadow: 0 0 8px rgba(0,255,255,0.4);">
-    📄 <?= $lang==='es' ? 'Reporte OSINT' : 'OSINT Report' ?>
-</a>
+        
       </li>
     </ul>
     <div class="lang-toggle">
@@ -203,6 +206,11 @@
                 <li><a href="<?= BASE_URL ?>/tool-passcheck.php">🛡️ Password Strength</a></li>
                 <li><a href="<?= BASE_URL ?>/tool-regex.php">🛡️ Password Regex Generator</a></li>
                 <li><a href="<?= BASE_URL ?>/tool-url.php">🔗 URL Encoder</a></li>
+                <li>
+    <a href="tool-osint-report.php" class="dropdown-item <?= ($current_page === 'tool-osint-report.php') ? 'active' : '' ?>" style="color: var(--cyan); font-weight: bold; text-shadow: 0 0 8px rgba(0,255,255,0.4);">
+        📄 <?= $lang==='es' ? 'Reporte OSINT' : 'OSINT Report' ?>
+    </a>
+</li>
             </ul>
         </li>
 
