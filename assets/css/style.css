@@ -254,14 +254,57 @@ a { text-decoration: none; color: inherit; }
 /* Manuals grid */
 .manuals-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 1rem;
+  /* Usamos auto-fit y ampliamos el tamaño mínimo para que se vean imponentes */
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2.5rem; /* Damos más espacio para que las sombras respiren */
+  max-width: 1100px; /* Limitamos el ancho para que no se separen infinitamente */
+  margin: 0 auto; /* 🚨 Esto centra todo el bloque de manuales perfectamente en la pantalla */
 }
+
 .manual-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1.5rem;
+  /* Fondo oscuro estilo cristal (Glasmorfismo) */
+  background: rgba(5, 10, 15, 0.65); 
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  
+  /* Borde cyan muy sutil apagado */
+  border: 1px solid rgba(0, 255, 255, 0.15); 
+  border-radius: 12px;
+  padding: 2rem 1.5rem;
+  
+  /* Sombras combinadas: Oscuridad exterior + Brillo interior */
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(0, 255, 255, 0.02);
+  
+  /* Preparar animaciones y posición para pseudo-elementos */
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 🚨 Detalle Cyberpunk: Línea de luz láser en la parte superior de cada tarjeta */
+.manual-card::before {
+  content: '';
+  position: absolute;
+  top: 0; 
+  left: 0; 
+  width: 100%; 
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  opacity: 0.2;
+  transition: opacity 0.4s ease;
+}
+
+/* 🚨 Hover: Efecto al pasar el ratón (Levitación y Encendido) */
+.manual-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(0, 255, 255, 0.4);
+  /* Sombra principal más fuerte y brillo cyan exterior activado */
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(0, 255, 255, 0.1), inset 0 0 20px rgba(0, 255, 255, 0.05);
+}
+
+/* Encender la luz láser superior al pasar el ratón */
+.manual-card:hover::before {
+  opacity: 1;
 }
 .manual-cat-header {
   display: flex; align-items: center; gap: .75rem; margin-bottom: 1.25rem;

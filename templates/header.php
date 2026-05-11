@@ -77,6 +77,7 @@
               <li><a href="<?= BASE_URL ?>/tool-headers.php">📋 HTTP Header Analyzer</a></li>
               <li><a href="<?= BASE_URL ?>/tool-ssh.php">🔑 SSH Analyzer</a></li>
               <li><a href="<?= BASE_URL ?>/tool-ports.php">📋 Port Reference</a></li>
+               <li><a href="<?= BASE_URL ?>/tool-dns.php">🔍 DNS Lookup</a></li>
             </ul>
           </li>
 
@@ -184,6 +185,7 @@
                 <li><a href="<?= BASE_URL ?>/tool-headers.php">📋 HTTP Header Analyzer</a></li>
                 <li><a href="<?= BASE_URL ?>/tool-ssh.php">🔑 SSH Analyzer</a></li>
                 <li><a href="<?= BASE_URL ?>/tool-ports.php">📋 Port Reference</a></li>
+                 <li><a href="<?= BASE_URL ?>/tool-dns.php">🔍 DNS Lookup</a></li>
 
                 <li class="mobile-menu-title"><?= $lang==='es'?'🏴‍☠️ Pentesting & Explotación':'🏴‍☠️ Pentesting & Exploits' ?></li>
                 <li><a href="<?= BASE_URL ?>/tool-revshell.php">🐚 Reverse Shell Generator</a></li>
