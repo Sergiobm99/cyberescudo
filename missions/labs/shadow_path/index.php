@@ -40,10 +40,10 @@ if (!isset($lang)) { $lang = 'es'; } // Fallback por defecto
     
     <h3><?php echo $lang === 'es' ? 'ARCHIVOS DISPONIBLES:' : 'AVAILABLE FILES:'; ?></h3>
     <ul>
-        <li>informe_2026.txt [<?php echo $lang === 'es' ? 'TAMAÑO' : 'SIZE'; ?>: 128 B]</li>
+        <li>report_2026.txt [<?php echo $lang === 'es' ? 'TAMAÑO' : 'SIZE'; ?>: 128 B]</li>
     </ul>
 
-    <a href="download.php?file=informe_2026.txt" class="btn-download" target="_blank">
+    <a href="download.php?file=report_2026.txt" class="btn-download" target="_blank">
         [ <?php echo $lang === 'es' ? 'INICIAR DESCARGA' : 'INITIATE DOWNLOAD'; ?> ]
     </a>
 </div>
