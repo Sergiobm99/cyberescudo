@@ -878,4 +878,613 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .catch(() => fullNewsFeed.innerHTML = `<li class="feed-item" style="color:#ff2a2a;">Error de conexión.</li>`);
     }
+    // ==========================================
+    // 7. SOC ARSENAL (soc-arsenal.php)
+    // ==========================================
+    const arsenalListContainer = document.getElementById('scriptList');
+    const arsenalViewer = document.getElementById('viewer');
+    const arsenalSearch = document.getElementById('searchInput');
+
+    if (arsenalListContainer && arsenalViewer) {
+        // Detectar el idioma actual de la web
+        const isSpanish = document.documentElement.lang === 'es' || document.body.classList.contains('es');
+
+        // Base de datos Bilingüe del Arsenal SOC
+        // Base de datos Bilingüe del Arsenal SOC (Comentarios de código incluidos)
+        const arsenalData = [
+            {
+                id: 1,
+                title: isSpanish ? "Ataque de Fuerza Bruta Exitoso (Azure AD)" : "Successful Brute Force Attack (Azure AD)",
+                desc: isSpanish 
+                    ? "Detecta cuando un atacante ha fallado múltiples intentos de inicio de sesión en un corto periodo de tiempo y finalmente consigue acceder con éxito a la cuenta." 
+                    : "Detects when an attacker has failed multiple login attempts in a short period of time and finally successfully accesses the account.",
+                lang: "KQL",
+                tags: ["KQL", "Azure Sentinel"],
+                tagClasses: ["tag-kql", "tag-kql"],
+                code: `SigninLogs\n| where TimeGenerated > ago(1d)\n| where ResultType != 0\n| summarize FailedCount = count() by UserPrincipalName, IPAddress\n| where FailedCount > 5\n| join kind=inner (\n    SigninLogs\n    | where TimeGenerated > ago(1d)\n    | where ResultType == 0\n) on UserPrincipalName, IPAddress\n| project TimeGenerated, UserPrincipalName, IPAddress, FailedCount, AppDisplayName\n| sort by TimeGenerated desc`
+            },
+            {
+                id: 2,
+                title: isSpanish ? "Exfiltración Masiva de Archivos (SharePoint)" : "Massive File Exfiltration (SharePoint)",
+                desc: isSpanish 
+                    ? "Monitoriza eventos de Office 365 para identificar usuarios descargando una cantidad inusualmente alta de archivos (posible robo de datos)." 
+                    : "Monitors Office 365 events to identify users downloading an unusually high amount of files (possible data theft).",
+                lang: "KQL",
+                tags: ["KQL", "M365 Defender"],
+                tagClasses: ["tag-kql", "tag-mde"],
+                code: `OfficeActivity\n| where TimeGenerated > ago(1h)\n| where OfficeWorkload == "SharePoint"\n| where Operation in ("FileDownloaded", "FileSyncDownloadedFull")\n| summarize DownloadCount = count() by UserId, ClientIP\n| where DownloadCount > 50\n| project UserId, ClientIP, DownloadCount\n| order by DownloadCount desc`
+            },
+            {
+                id: 3,
+                title: isSpanish ? "Ejecución de PowerShell Codificado (Base64)" : "Encoded PowerShell Execution (Base64)",
+                desc: isSpanish 
+                    ? "Busca ejecuciones de procesos (Living off the Land) donde se utilice PowerShell con parámetros para ofuscar comandos." 
+                    : "Looks for process executions (Living off the Land) where PowerShell is used with parameters to obfuscate commands.",
+                lang: "KQL",
+                tags: ["KQL", "M365 Defender"],
+                tagClasses: ["tag-kql", "tag-mde"],
+                code: `DeviceProcessEvents\n| where TimeGenerated > ago(7d)\n| where FileName =~ "powershell.exe" or FileName =~ "pwsh.exe"\n| where ProcessCommandLine has_any ("-e", "-en", "-enc", "-encodedcommand")\n| parse ProcessCommandLine with * "-e " EncodedPayload\n| project TimeGenerated, DeviceName, AccountName, ProcessCommandLine, InitiatingProcessFileName\n| order by TimeGenerated desc`
+            },
+            {
+                id: 4,
+                title: isSpanish ? "Aislamiento Automático de Endpoint (API MDE)" : "Automatic Endpoint Isolation (MDE API)",
+                desc: isSpanish 
+                    ? "Script en PowerShell que interactúa con la API de Microsoft Defender for Endpoint para aislar una máquina comprometida." 
+                    : "PowerShell script that interacts with the Microsoft Defender for Endpoint API to isolate a compromised machine.",
+                lang: "PowerShell",
+                tags: ["PowerShell", isSpanish ? "Automatización" : "Automation"],
+                tagClasses: ["tag-ps", "tag-ps"],
+                code: `$MachineId = "${isSpanish ? 'INGRESA_AQUI_EL_MACHINE_ID' : 'ENTER_MACHINE_ID_HERE'}"\n$IsolationType = "Full" # ${isSpanish ? 'o' : 'or'} "Selective"\n$Comment = "${isSpanish ? 'Aislamiento preventivo ejecutado por Agente SOC' : 'Preventive isolation executed by SOC Agent'}"\n\n$Uri = "https://api.securitycenter.microsoft.com/api/machines/$MachineId/isolate"\n$Body = @{\n    Comment = $Comment\n    IsolationType = $IsolationType\n} | ConvertTo-Json\n\nInvoke-RestMethod -Method Post -Uri $Uri -Headers $Headers -Body $Body`
+            },
+            {
+                id: 5,
+                title: isSpanish ? "Abuso de OAuth (Illicit Consent Grant)" : "OAuth Abuse (Illicit Consent Grant)",
+                desc: isSpanish 
+                    ? "Detecta cuando un usuario concede permisos a una aplicación OAuth de terceros maliciosa o sospechosa para leer sus correos o archivos de M365." 
+                    : "Detects when a user grants permissions to a malicious or suspicious third-party OAuth application to read their M365 emails or files.",
+                lang: "KQL",
+                tags: ["KQL", "Cloud Security"],
+                tagClasses: ["tag-kql", "tag-ps"],
+                code: `AuditLogs\n| where TimeGenerated > ago(14d)\n| where OperationName == "Consent to application"\n| extend AppDisplayName = tostring(TargetResources[0].displayName)\n| extend AppId = tostring(TargetResources[0].id)\n| extend UserPrincipalName = tostring(InitiatedBy.user.userPrincipalName)\n| extend PermissionsGranted = tostring(TargetResources[0].modifiedProperties[0].newValue)\n// ${isSpanish ? 'Buscamos permisos críticos que los atacantes suelen solicitar' : 'Look for critical permissions commonly requested by attackers'}\n| where PermissionsGranted has_any ("Mail.Read", "Files.ReadWrite.All", "Contacts.Read")\n| project TimeGenerated, UserPrincipalName, AppDisplayName, AppId, PermissionsGranted\n| sort by TimeGenerated desc`
+            },
+            {
+                id: 6,
+                title: isSpanish ? "Regla de Reenvío Oculta (BEC / Persistencia)" : "Hidden Forwarding Rule (BEC / Persistence)",
+                desc: isSpanish 
+                    ? "Busca atacantes que, tras comprometer una cuenta, crean reglas de bandeja de entrada en Exchange para reenviar correos a dominios externos." 
+                    : "Looks for attackers who, after compromising an account, create Exchange inbox rules to forward emails to external domains.",
+                lang: "KQL",
+                tags: ["KQL", "M365 Defender"],
+                tagClasses: ["tag-kql", "tag-mde"],
+                code: `OfficeActivity\n| where TimeGenerated > ago(7d)\n| where OfficeWorkload == "Exchange"\n| where Operation in ("New-InboxRule", "Set-InboxRule")\n| extend RuleName = tostring(parse_json(Parameters)[1].Value)\n| extend ForwardTo = tostring(parse_json(Parameters)[2].Value)\n// ${isSpanish ? 'Extraemos cuentas de correo usando regex' : 'Extract email accounts using regex'}\n| where ForwardTo matches regex @"(?i)[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}"\n// ${isSpanish ? 'EXCLUIR TU DOMINIO CORPORATIVO AQUÍ:' : 'EXCLUDE YOUR CORPORATE DOMAIN HERE:'}\n| where ForwardTo !endswith "@tu-empresa.com"\n| project TimeGenerated, UserId, ClientIP, Operation, RuleName, ForwardTo\n| sort by TimeGenerated desc`
+            },
+            {
+                id: 7,
+                title: isSpanish ? "Heurística de Ransomware (Mass File Modification)" : "Ransomware Heuristics (Mass File Mod)",
+                desc: isSpanish 
+                    ? "Detecta picos anómalos de modificaciones masivas por un solo proceso en una ventana de 5 minutos, indicador clave de cifrado por ransomware." 
+                    : "Detects anomalous spikes in massive file modifications by a single process within a 5-minute window, a key indicator of ransomware.",
+                lang: "KQL",
+                tags: ["KQL", "Endpoint"],
+                tagClasses: ["tag-kql", "tag-mde"],
+                code: `DeviceFileEvents\n| where TimeGenerated > ago(1d)\n| where ActionType in ("FileRenamed", "FileModified")\n// ${isSpanish ? 'Agrupamos en bloques de 5 minutos para buscar picos agresivos' : 'Group in 5-minute bins to look for aggressive spikes'}\n| summarize FileCount = count() by bin(TimeGenerated, 5m), DeviceName, InitiatingProcessFileName, InitiatingProcessCommandLine\n// ${isSpanish ? 'Umbral de alerta: más de 100 archivos en 5 mins' : 'Alert threshold: more than 100 files in 5 mins'}\n| where FileCount > 100\n// ${isSpanish ? 'Filtramos falsos positivos conocidos (indexadores, antivirus)' : 'Filter known false positives (indexers, antivirus)'}\n| where InitiatingProcessFileName !in~ ("ntoskrnl.exe", "msmpeng.exe", "searchindexer.exe")\n| order by FileCount desc\n| project TimeGenerated, DeviceName, InitiatingProcessFileName, FileCount, InitiatingProcessCommandLine`
+            },
+            {
+                id: 8,
+                title: isSpanish ? "Fatiga de MFA (MFA Spamming / Fatigue)" : "MFA Fatigue Attack (Spamming)",
+                desc: isSpanish 
+                    ? "Detecta múltiples solicitudes de MFA denegadas por el usuario en poco tiempo, seguidas de un acceso exitoso." 
+                    : "Detects multiple MFA requests denied by the user in a short time, followed by a successful login.",
+                lang: "KQL",
+                tags: ["KQL", "Azure AD", "Identity"],
+                tagClasses: ["tag-kql", "tag-kql", "tag-ps"],
+                code: `SigninLogs\n| where TimeGenerated > ago(1d)\n| where ResultType == "500121" // ${isSpanish ? 'MFA Denegado' : 'MFA Denied'}\n| summarize DeniedCount = count() by UserPrincipalName, bin(TimeGenerated, 10m)\n| where DeniedCount >= 3\n| join kind=inner (\n    SigninLogs\n    | where TimeGenerated > ago(1d)\n    | where ResultType == 0 // ${isSpanish ? 'Éxito' : 'Success'}\n) on UserPrincipalName\n| project TimeGenerated, UserPrincipalName, DeniedCount, IPAddress, AppDisplayName\n| sort by TimeGenerated desc`
+            },
+            {
+                id: 9,
+                title: isSpanish ? "Backdoor en Service Principal (Azure AD)" : "Service Principal Backdoor (Azure AD)",
+                desc: isSpanish 
+                    ? "Detecta cuando un atacante añade una nueva credencial (secreto o certificado) a una aplicación de Azure AD existente para mantener persistencia." 
+                    : "Detects when an attacker adds a new credential (secret or certificate) to an existing Azure AD application to maintain persistence.",
+                lang: "KQL",
+                tags: ["KQL", "Cloud Security"],
+                tagClasses: ["tag-kql", "tag-ps"],
+                code: `AuditLogs\n| where TimeGenerated > ago(7d)\n| where OperationName in ("Update application - Certificates and secrets management", "Add service principal credentials")\n| extend Actor = tostring(InitiatedBy.user.userPrincipalName)\n| extend TargetApp = tostring(TargetResources[0].displayName)\n| project TimeGenerated, OperationName, Actor, TargetApp, Result\n| sort by TimeGenerated desc`
+            },
+            {
+                id: 10,
+                title: isSpanish ? "Volcado de Memoria LSASS (Credential Access)" : "LSASS Memory Dump (Credential Access)",
+                desc: isSpanish 
+                    ? "Identifica procesos sospechosos intentando acceder y volcar la memoria del proceso LSASS.exe para robar contraseñas." 
+                    : "Identifies suspicious processes attempting to access and dump the memory of the LSASS.exe process to steal passwords.",
+                lang: "KQL",
+                tags: ["KQL", "M365 Defender", "Endpoint"],
+                tagClasses: ["tag-kql", "tag-mde", "tag-mde"],
+                code: `DeviceEvents\n| where TimeGenerated > ago(1d)\n| where ActionType == "ProcessAccessed"\n| extend TargetProcess = tostring(parse_json(AdditionalFields).TargetProcessName)\n| where TargetProcess =~ "lsass.exe"\n// ${isSpanish ? 'Filtramos falsos positivos normales del sistema' : 'Filter normal system false positives'}\n| where InitiatingProcessFileName !in~ ("svchost.exe", "csrss.exe", "wininit.exe", "msmpeng.exe")\n| project TimeGenerated, DeviceName, InitiatingProcessFileName, InitiatingProcessCommandLine, TargetProcess\n| sort by TimeGenerated desc`
+            },
+            {
+                id: 11,
+                title: isSpanish ? "Eliminación de Shadow Copies (Ransomware)" : "Shadow Copy Deletion (Ransomware)",
+                desc: isSpanish 
+                    ? "Busca comandos nativos de Windows (vssadmin, wmic, bcdedit) utilizados por ransomware para borrar copias de seguridad locales antes de cifrar." 
+                    : "Looks for native Windows commands (vssadmin, wmic, bcdedit) used by ransomware to delete local backups before encrypting.",
+                lang: "KQL",
+                tags: ["KQL", "Endpoint", "Ransomware"],
+                tagClasses: ["tag-kql", "tag-mde", "tag-ps"],
+                code: `DeviceProcessEvents\n| where TimeGenerated > ago(7d)\n| where FileName in~ ("vssadmin.exe", "wmic.exe", "bcdedit.exe", "wbadmin.exe", "powershell.exe")\n| where ProcessCommandLine has_any ("delete shadows", "shadowcopy delete", "recoveryenabled no", "delete catalog -quiet")\n| project TimeGenerated, DeviceName, AccountName, FileName, ProcessCommandLine, InitiatingProcessFileName\n| sort by TimeGenerated desc`
+            },
+            {
+                id: 12,
+                title: isSpanish ? "Ofimática Generando Procesos Sospechosos" : "Office Apps Spawning Suspicious Processes",
+                desc: isSpanish 
+                    ? "Identifica macros maliciosas detectando aplicaciones de Office (Word, Excel) lanzando consolas de comandos o ejecutables inusuales." 
+                    : "Identifies malicious macros by detecting Office applications (Word, Excel) launching command consoles or unusual executables.",
+                lang: "KQL",
+                tags: ["KQL", "M365 Defender", "Phishing"],
+                tagClasses: ["tag-kql", "tag-mde", "tag-ps"],
+                code: `DeviceProcessEvents\n| where TimeGenerated > ago(7d)\n| where InitiatingProcessFileName in~ ("winword.exe", "excel.exe", "powerpnt.exe", "outlook.exe")\n| where FileName in~ ("cmd.exe", "powershell.exe", "pwsh.exe", "wscript.exe", "cscript.exe", "mshta.exe", "rundll32.exe")\n| project TimeGenerated, DeviceName, AccountName, InitiatingProcessFileName, FileName, ProcessCommandLine\n| sort by TimeGenerated desc`
+            },
+            {
+                id: 13,
+                title: isSpanish ? "Borrado de Registros de Eventos (Evasión)" : "Event Log Clearing (Defense Evasion)",
+                desc: isSpanish 
+                    ? "Detecta atacantes intentando borrar las huellas de su intrusión limpiando los logs de seguridad de Windows." 
+                    : "Detects attackers attempting to cover their tracks by clearing Windows security logs.",
+                lang: "KQL",
+                tags: ["KQL", "Endpoint", "Evasión"],
+                tagClasses: ["tag-kql", "tag-mde", "tag-ps"],
+                code: `DeviceProcessEvents\n| where TimeGenerated > ago(14d)\n| where (FileName =~ "wevtutil.exe" and ProcessCommandLine has_any ("cl", "clear-log"))\n   or (FileName =~ "powershell.exe" and ProcessCommandLine has_any ("Clear-EventLog", "Remove-EventLog"))\n| project TimeGenerated, DeviceName, AccountName, FileName, ProcessCommandLine\n| sort by TimeGenerated desc`
+            },
+            {
+                id: 14,
+                title: isSpanish ? "Patrón de Beaconing a Servidor C2" : "C2 Beaconing Pattern Detection",
+                desc: isSpanish 
+                    ? "Analiza conexiones de red salientes buscando patrones repetitivos y periódicos (beaconing) típicos de malware comunicándose con su C2." 
+                    : "Analyzes outbound network connections looking for repetitive and periodic patterns (beaconing) typical of malware communicating with C2.",
+                lang: "KQL",
+                tags: ["KQL", "Network", "C2"],
+                tagClasses: ["tag-kql", "tag-ps", "tag-mde"],
+                code: `DeviceNetworkEvents\n| where TimeGenerated > ago(1d)\n| where ActionType == "ConnectionSuccess"\n| where RemoteIPType == "Public"\n// ${isSpanish ? 'Filtramos IPs comunes (Microsoft, Google) para reducir ruido' : 'Filter common IPs (Microsoft, Google) to reduce noise'}\n| summarize ConnectionCount = count(), StartTime = min(TimeGenerated), EndTime = max(TimeGenerated) by DeviceName, RemoteIP, RemoteUrl\n| extend Duration = EndTime - StartTime\n| where ConnectionCount > 50 and Duration > 1h\n| extend ConnectionsPerHour = ConnectionCount / (Duration / 1h)\n| where ConnectionsPerHour > 10\n| sort by ConnectionsPerHour desc`
+            },
+            {
+                id: 15,
+                title: isSpanish ? "Descarga de Archivos via LOLBins (Certutil)" : "File Download via LOLBins (Certutil)",
+                desc: isSpanish 
+                    ? "Detecta el uso de binarios nativos del sistema operativo (Living off the Land) como certutil.exe para descargar malware evadiendo detecciones." 
+                    : "Detects the use of native OS binaries (Living off the Land) like certutil.exe to download malware, evading detections.",
+                lang: "KQL",
+                tags: ["KQL", "Endpoint", "LOLBins"],
+                tagClasses: ["tag-kql", "tag-mde", "tag-ps"],
+                code: `DeviceProcessEvents\n| where TimeGenerated > ago(7d)\n| where FileName =~ "certutil.exe"\n| where ProcessCommandLine has_any ("-urlcache", "-split", "-f")\n| project TimeGenerated, DeviceName, AccountName, ProcessCommandLine, InitiatingProcessFileName\n| sort by TimeGenerated desc`
+            },
+            {
+                id: 16,
+                title: isSpanish ? "Creación de Cuenta Administrador Local" : "Local Admin Account Creation",
+                desc: isSpanish 
+                    ? "Busca actividad de comandos (net user, net localgroup) utilizados para crear cuentas locales y añadirlas a Administradores para persistencia." 
+                    : "Looks for command activity (net user, net localgroup) used to create local accounts and add them to Administrators for persistence.",
+                lang: "KQL",
+                tags: ["KQL", "Endpoint", "PrivEsc"],
+                tagClasses: ["tag-kql", "tag-mde", "tag-ps"],
+                code: `DeviceProcessEvents\n| where TimeGenerated > ago(7d)\n| where FileName =~ "net.exe" or FileName =~ "net1.exe"\n| where ProcessCommandLine has "localgroup administrators" and ProcessCommandLine has "/add"\n| project TimeGenerated, DeviceName, AccountName, ProcessCommandLine, InitiatingProcessFileName\n| sort by TimeGenerated desc`
+            },
+            {
+                id: 17,
+                title: isSpanish ? "Escalada de Privilegios en Azure AD" : "Azure AD Privilege Escalation",
+                desc: isSpanish 
+                    ? "Alerta cuando a un usuario estándar se le asigna un rol altamente privilegiado en Azure AD (como Global Administrator)." 
+                    : "Alerts when a highly privileged role (like Global Administrator) is assigned to a standard user in Azure AD.",
+                lang: "KQL",
+                tags: ["KQL", "Azure AD", "Identity"],
+                tagClasses: ["tag-kql", "tag-kql", "tag-ps"],
+                code: `AuditLogs\n| where TimeGenerated > ago(7d)\n| where OperationName == "Add member to role"\n| extend RoleName = tostring(parse_json(tostring(ModifiedProperties[1].newValue)))\n| where RoleName has_any ("Global Administrator", "Privileged Role Administrator", "Security Administrator")\n| extend TargetUser = tostring(TargetResources[0].userPrincipalName)\n| extend InitiatedBy = tostring(InitiatedBy.user.userPrincipalName)\n| project TimeGenerated, InitiatedBy, TargetUser, RoleName\n| sort by TimeGenerated desc`
+            },
+            {
+                id: 18,
+                title: isSpanish ? "Detección de Web Shell (IIS/Apache)" : "Web Shell Detection (IIS/Apache)",
+                desc: isSpanish 
+                    ? "Detecta posible ejecución de Web Shell monitoreando procesos de servidores web (w3wp.exe, httpd.exe) lanzando consolas de comandos interactivas." 
+                    : "Detects possible Web Shell execution by monitoring web server processes (w3wp.exe, httpd.exe) spawning interactive command consoles.",
+                lang: "KQL",
+                tags: ["KQL", "Web", isSpanish ? "Persistencia" : "Persistence"],
+                tagClasses: ["tag-kql", "tag-ps", "tag-mde"],
+                code: `DeviceProcessEvents\n| where TimeGenerated > ago(7d)\n| where InitiatingProcessFileName in~ ("w3wp.exe", "httpd.exe", "nginx.exe", "tomcat.exe", "php-cgi.exe")\n| where FileName in~ ("cmd.exe", "powershell.exe", "bash", "sh", "whoami.exe")\n| project TimeGenerated, DeviceName, InitiatingProcessFileName, FileName, ProcessCommandLine\n| sort by TimeGenerated desc`
+            },
+            {
+                id: 19,
+                title: isSpanish ? "Ataque Pass-the-Hash (NTLM Anomaly)" : "Pass-the-Hash Attack (NTLM Anomaly)",
+                desc: isSpanish 
+                    ? "Identifica patrones de movimiento lateral rastreando inicios de sesión NTLM explícitos (Event ID 4624 Logon Type 9)." 
+                    : "Identifies lateral movement patterns by tracking explicit NTLM logins (Event ID 4624 Logon Type 9).",
+                lang: "KQL",
+                tags: ["KQL", "Identity", "Lateral Mvt"],
+                tagClasses: ["tag-kql", "tag-ps", "tag-mde"],
+                code: `SecurityEvent\n| where TimeGenerated > ago(1d)\n| where EventID == 4624\n| where LogonType == 9 // ${isSpanish ? 'NewCredentials (típico de RunAs /netonly o Mimikatz)' : 'NewCredentials (typical of RunAs /netonly or Mimikatz)'}\n| where AuthenticationPackageName =~ "Negotiate"\n| project TimeGenerated, Computer, Account, IpAddress, ProcessName, LogonProcessName\n| sort by TimeGenerated desc`
+            },
+            {
+                id: 20,
+                title: isSpanish ? "Persistencia en Claves Run del Registro" : "Registry Run Key Persistence",
+                desc: isSpanish 
+                    ? "Busca modificaciones sospechosas en las claves de registro Run/RunOnce de Windows, un método clásico para ejecutar malware al inicio." 
+                    : "Looks for suspicious modifications in Windows Run/RunOnce registry keys, a classic method for executing malware on startup.",
+                lang: "KQL",
+                tags: ["KQL", "Endpoint", isSpanish ? "Persistencia" : "Persistence"],
+                tagClasses: ["tag-kql", "tag-mde", "tag-ps"],
+                code: `DeviceRegistryEvents\n| where TimeGenerated > ago(7d)\n| where ActionType in ("RegistryValueSet", "RegistryKeyCreated")\n| where RegistryKey contains @"\\Software\\Microsoft\\Windows\\CurrentVersion\\Run"\n   or RegistryKey contains @"\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce"\n// ${isSpanish ? 'Filtramos binarios limpios firmados' : 'Filter clean signed binaries'}\n| where InitiatingProcessFileName !endswith "explorer.exe"\n| project TimeGenerated, DeviceName, InitiatingProcessFileName, RegistryKey, RegistryValueName, RegistryValueData\n| sort by TimeGenerated desc`
+            },
+            {
+                id: 21,
+                title: isSpanish ? "Posible Kerberoasting (Ticket Granting Service)" : "Possible Kerberoasting (TGS Request)",
+                desc: isSpanish 
+                    ? "Detecta solicitudes excesivas de tickets TGS de Kerberos con cifrado RC4 (Event ID 4769), indicando intentos de crackear contraseñas offline." 
+                    : "Detects excessive Kerberos TGS ticket requests using RC4 encryption (Event ID 4769), indicating attempts to crack passwords offline.",
+                lang: "KQL",
+                tags: ["KQL", "Identity", "AD"],
+                tagClasses: ["tag-kql", "tag-ps", "tag-kql"],
+                code: `SecurityEvent\n| where TimeGenerated > ago(1d)\n| where EventID == 4769\n| where TicketEncryptionType == "0x17" // RC4-HMAC\n| summarize TgsCount = count() by TargetUserName, IpAddress, bin(TimeGenerated, 10m)\n| where TgsCount > 15 // ${isSpanish ? 'Umbral de múltiples cuentas solicitadas rápidamente' : 'Threshold for multiple accounts requested rapidly'}\n| project TimeGenerated, TargetUserName, IpAddress, TgsCount\n| sort by TgsCount desc`
+            },
+            {
+                id: 22,
+                title: isSpanish ? "Abuso de Tareas Programadas (SchTasks)" : "Scheduled Task Abuse (SchTasks)",
+                desc: isSpanish 
+                    ? "Detecta la creación de tareas programadas mediante línea de comandos para ejecutar scripts de PowerShell o binarios ocultos." 
+                    : "Detects the creation of scheduled tasks via command line to execute PowerShell scripts or hidden binaries.",
+                lang: "KQL",
+                tags: ["KQL", "Endpoint", isSpanish ? "Persistencia" : "Persistence"],
+                tagClasses: ["tag-kql", "tag-mde", "tag-ps"],
+                code: `DeviceProcessEvents\n| where TimeGenerated > ago(7d)\n| where FileName =~ "schtasks.exe"\n| where ProcessCommandLine has_any ("/create", "/change")\n| where ProcessCommandLine has_any ("powershell", "cmd", "rundll32", "regsvr32", "wscript", "cscript")\n| project TimeGenerated, DeviceName, AccountName, ProcessCommandLine, InitiatingProcessFileName\n| sort by TimeGenerated desc`
+            },
+            {
+                id: 23,
+                title: isSpanish ? "Intento de Explotación de Log4j (WAF)" : "Log4j Exploitation Attempt (WAF)",
+                desc: isSpanish 
+                    ? "Busca cadenas específicas (jndi:ldap, jndi:rmi) en los registros de WAF que indican intentos de explotación de la vulnerabilidad Log4Shell." 
+                    : "Looks for specific strings (jndi:ldap) in WAF logs indicating Log4Shell vulnerability exploitation attempts.",
+                lang: "KQL",
+                tags: ["KQL", "Network", "WAF"],
+                tagClasses: ["tag-kql", "tag-ps", "tag-kql"],
+                code: `AzureDiagnostics\n| where TimeGenerated > ago(7d)\n| where Category == "ApplicationGatewayFirewallLog" or Category == "FrontdoorWebApplicationFirewallLog"\n| where requestUri_s has_any ("jndi:ldap", "jndi:rmi", "jndi:dns") \n   or userAgent_s has_any ("jndi:ldap", "jndi:rmi", "jndi:dns")\n| project TimeGenerated, clientIP_s, requestUri_s, userAgent_s, action_s, Message\n| sort by TimeGenerated desc`
+            },
+            {
+                id: 24,
+                title: isSpanish ? "Descarga Oculta con BITSAdmin" : "Hidden Download via BITSAdmin",
+                desc: isSpanish 
+                    ? "Identifica el uso del servicio BITS para transferir archivos maliciosos de forma asíncrona y evadir cortafuegos." 
+                    : "Identifies the use of the BITS service to transfer malicious files asynchronously and evade firewalls.",
+                lang: "KQL",
+                tags: ["KQL", "Endpoint", "LOLBins"],
+                tagClasses: ["tag-kql", "tag-mde", "tag-ps"],
+                code: `DeviceProcessEvents\n| where TimeGenerated > ago(7d)\n| where FileName =~ "bitsadmin.exe"\n| where ProcessCommandLine has_any ("/transfer", "/create", "/addfile", "/setnotifyflags", "/resume")\n| project TimeGenerated, DeviceName, AccountName, ProcessCommandLine, InitiatingProcessFileName\n| sort by TimeGenerated desc`
+            },
+            {
+                id: 25,
+                title: isSpanish ? "Inicio de Sesión desde Nodos Tor (Anonymity)" : "Login from Tor Nodes (Anonymity)",
+                desc: isSpanish 
+                    ? "Cruza los registros de inicio de sesión con Threat Intelligence para detectar usuarios autenticándose desde redes Tor." 
+                    : "Cross-references sign-in logs with Threat Intelligence to detect users authenticating from Tor networks.",
+                lang: "KQL",
+                tags: ["KQL", "Azure AD", "Threat Intel"],
+                tagClasses: ["tag-kql", "tag-kql", "tag-mde"],
+                code: `SigninLogs\n| where TimeGenerated > ago(1d)\n| where ResultType == 0\n// ${isSpanish ? 'Comprobamos la etiqueta de RiskEvent para IPs anónimas' : 'Check the RiskEvent tag for anonymous IPs'}\n| where RiskEventTypes_V2 has "anonymousIP" or NetworkLocationDetails has "Tor"\n| project TimeGenerated, UserPrincipalName, IPAddress, Location, AppDisplayName, RiskEventTypes_V2\n| sort by TimeGenerated desc`
+            },
+            {
+                id: 26,
+                title: isSpanish ? "Sabotaje en la Nube (Destrucción Masiva)" : "Cloud Sabotage (Massive Destruction)",
+                desc: isSpanish 
+                    ? "Detecta a un administrador (o atacante) intentando eliminar múltiples recursos críticos o máquinas virtuales en Azure en poco tiempo." 
+                    : "Detects an admin (or attacker) attempting to delete multiple critical resources or VMs in Azure in a short time.",
+                lang: "KQL",
+                tags: ["KQL", "Cloud Security", "Sabotage"],
+                tagClasses: ["tag-kql", "tag-ps", "tag-kql"],
+                code: `AzureActivity\n| where TimeGenerated > ago(1d)\n| where OperationNameValue endswith "/delete"\n| summarize DeleteCount = count(), ResourcesDeleted = make_set(Resource) by Caller, bin(TimeGenerated, 15m)\n| where DeleteCount >= 5 // ${isSpanish ? 'Umbral de múltiples borrados rápidos' : 'Threshold for multiple rapid deletions'}\n| project TimeGenerated, Caller, DeleteCount, ResourcesDeleted\n| sort by DeleteCount desc`
+            },
+            {
+                id: 27,
+                title: isSpanish ? "Ejecución de Código en Memoria (Reflective DLL)" : "In-Memory Code Execution (Reflective DLL)",
+                desc: isSpanish 
+                    ? "Apunta a inyecciones de código en memoria rastreando procesos usando métodos para saltarse el análisis AMSI." 
+                    : "Targets in-memory code injections by tracking processes using methods to bypass AMSI scanning.",
+                lang: "KQL",
+                tags: ["KQL", "M365 Defender", isSpanish ? "Evasión" : "Evasion"],
+                tagClasses: ["tag-kql", "tag-mde", "tag-ps"],
+                code: `DeviceEvents\n| where TimeGenerated > ago(7d)\n| where ActionType == "AmsiBypass" or ActionType == "SuspiciousMemoryAllocation"\n| project TimeGenerated, DeviceName, InitiatingProcessFileName, ActionType, AdditionalFields\n| sort by TimeGenerated desc`
+            },
+            {
+                id: 28,
+                title: isSpanish ? "ALERTA: Infección MDE + Movimiento Lateral" : "ALERT: MDE Infection + Lateral Movement",
+                desc: isSpanish 
+                    ? "[REGLA ANALÍTICA] Cruza alertas de Defender for Endpoint (MDE) con conexiones de red (RDP/SMB) hacia otros equipos en los siguientes 30 minutos." 
+                    : "[ANALYTICS RULE] Correlates MDE alerts with network connections (RDP/SMB) to other hosts within 30 minutes.",
+                lang: "Sentinel Rule",
+                tags: ["Alert Rule", "MDE", "Correlación"],
+                tagClasses: ["tag-alert", "tag-mde", "tag-kql"],
+                code: `// ==========================================\n// ${isSpanish ? 'CONFIGURACIÓN DE LA REGLA EN AZURE SENTINEL' : 'AZURE SENTINEL RULE CONFIGURATION'}\n// ==========================================\n// ${isSpanish ? 'Frecuencia: Cada 1 hora' : 'Frequency: Every 1 hour'}\n// ${isSpanish ? 'Búsqueda de datos: Última 1 hora' : 'Data lookup: Last 1 hour'}\n// ${isSpanish ? 'Tácticas MITRE: Lateral Movement (TA0008)' : 'MITRE Tactics: Lateral Movement (TA0008)'}\n// ${isSpanish ? 'Mapeo de Entidades:' : 'Entity Mapping:'} \n//   - Account -> CompromisedUser\n//   - Host -> TargetDevice\n//   - IP -> TargetIP\n// ==========================================\n\nlet TimeFrame = 1h;\nSecurityAlert\n| where TimeGenerated > ago(TimeFrame)\n| where ProviderName == "MDATP"\n| where AlertName has_any ("Malware", "Ransomware", "Backdoor", "Cobalt Strike")\n| extend CompromisedHost = tostring(parse_json(ExtendedProperties).MachineName)\n| extend CompromisedUser = tostring(parse_json(ExtendedProperties).UserName)\n| join kind=inner (\n    DeviceNetworkEvents\n    | where TimeGenerated > ago(TimeFrame)\n    | where ActionType == "ConnectionSuccess"\n    | where RemotePort in (3389, 445)\n    | project NetworkTime=TimeGenerated, CompromisedHost=DeviceName, TargetIP=RemoteIP, TargetDevice=RemoteUrl, AccountName=InitiatingProcessAccountName\n) on CompromisedHost\n| where NetworkTime > TimeGenerated // ${isSpanish ? 'El movimiento fue DESPUÉS de la alerta de MDE' : 'Movement was AFTER the MDE alert'}\n| project TimeGenerated, AlertName, CompromisedHost, CompromisedUser, TargetIP, TargetDevice, NetworkTime\n| sort by NetworkTime desc`
+            },
+            {
+                id: 29,
+                title: isSpanish ? "ALERTA: Viaje Imposible + Descarga Masiva" : "ALERT: Impossible Travel + Mass Download",
+                desc: isSpanish 
+                    ? "[REGLA ANALÍTICA] Correlación multi-nube. Detecta un inicio de sesión desde un país inusual seguido inmediatamente por descargas masivas en SharePoint/OneDrive." 
+                    : "[ANALYTICS RULE] Multi-cloud correlation. Detects a login from an unusual country immediately followed by mass downloads in SharePoint/OneDrive.",
+                lang: "Sentinel Rule",
+                tags: ["Alert Rule", "Azure AD", "Exfiltration"],
+                tagClasses: ["tag-alert", "tag-kql", "tag-ps"],
+                code: `// ==========================================\n// ${isSpanish ? 'CONFIGURACIÓN DE LA REGLA' : 'RULE CONFIGURATION'}\n// ==========================================\n// ${isSpanish ? 'Frecuencia: Cada 30 minutos' : 'Frequency: Every 30 minutes'}\n// ${isSpanish ? 'Mapeo de Entidades:' : 'Entity Mapping:'} \n//   - Account -> UserPrincipalName\n//   - IP -> SuspiciousIP\n// ==========================================\n\nlet ImpossibleTravel = SigninLogs\n| where TimeGenerated > ago(1h)\n| where ResultType == 0\n| where RiskEventTypes_V2 has "impossibleTravel" or RiskLevelDuringSignIn in ("High", "Medium")\n| project SignInTime=TimeGenerated, UserPrincipalName, SuspiciousIP=IPAddress, Location;\nImpossibleTravel\n| join kind=inner (\n    OfficeActivity\n    | where TimeGenerated > ago(1h)\n    | where RecordType == "SharePointFileOperation"\n    | where Operation in ("FileDownloaded", "FileSyncDownloadedFull")\n    | summarize DownloadCount = count() by UserId, ClientIP\n    | where DownloadCount > 20 // ${isSpanish ? 'Umbral de descarga' : 'Download threshold'}\n) on $left.UserPrincipalName == $right.UserId\n| project SignInTime, UserPrincipalName, SuspiciousIP, Location, DownloadCount\n| sort by DownloadCount desc`
+            },
+            {
+                id: 30,
+                title: isSpanish ? "ALERTA: Tampering de Defender (Apagado)" : "ALERT: Defender Tampering (Shutdown)",
+                desc: isSpanish 
+                    ? "[REGLA ANALÍTICA] Monitoriza los endpoints a través de MDE para detectar intentos de apagar servicios críticos de seguridad (Tampering)." 
+                    : "[ANALYTICS RULE] Monitors endpoints via MDE to detect attempts to shut down critical security services (Tampering).",
+                lang: "Sentinel Rule",
+                tags: ["Alert Rule", "MDE", "Evasión"],
+                tagClasses: ["tag-alert", "tag-mde", "tag-ps"],
+                code: `// ==========================================\n// ${isSpanish ? 'CONFIGURACIÓN DE LA REGLA' : 'RULE CONFIGURATION'}\n// ==========================================\n// ${isSpanish ? 'Frecuencia: Cada 15 minutos' : 'Frequency: Every 15 minutes'}\n// ${isSpanish ? 'Severidad: ALTA (Creación Auto de Incidente)' : 'Severity: HIGH (Auto Incident Creation)'}\n// ==========================================\n\nDeviceProcessEvents\n| where TimeGenerated > ago(15m)\n| where (\n    (FileName =~ "net.exe" and ProcessCommandLine has_any ("stop WinDefend", "stop mpssvc", "stop wscsvc"))\n    or\n    (FileName =~ "sc.exe" and ProcessCommandLine has_any ("stop WinDefend", "config WinDefend start= disabled"))\n    or\n    (FileName =~ "powershell.exe" and ProcessCommandLine has "Set-MpPreference -DisableRealtimeMonitoring $true")\n)\n| project TimeGenerated, DeviceName, InitiatingProcessAccountName, FileName, ProcessCommandLine\n| sort by TimeGenerated desc`
+            },
+            {
+                id: 31,
+                title: isSpanish ? "ALERTA: Escalada Rápida a Global Admin" : "ALERT: Rapid Escalation to Global Admin",
+                desc: isSpanish 
+                    ? "[REGLA ANALÍTICA] Alerta crítica si una cuenta recién creada en Azure AD recibe permisos de Global Admin en menos de 4 horas." 
+                    : "[ANALYTICS RULE] Critical alert if a newly created Azure AD account receives Global Admin permissions in less than 4 hours.",
+                lang: "Sentinel Rule",
+                tags: ["Alert Rule", "Azure AD", "PrivEsc"],
+                tagClasses: ["tag-alert", "tag-kql", "tag-kql"],
+                code: `// ==========================================\n// ${isSpanish ? 'CONFIGURACIÓN DE LA REGLA' : 'RULE CONFIGURATION'}\n// ==========================================\n// ${isSpanish ? 'Mapeo de Entidades:' : 'Entity Mapping:'} \n//   - Account -> TargetUser\n//   - Account (Atacante) -> InitiatedBy\n// ==========================================\n\nlet NewUsers = AuditLogs\n| where TimeGenerated > ago(24h)\n| where OperationName == "Add user"\n| extend TargetUser = tostring(TargetResources[0].userPrincipalName)\n| extend CreationTime = TimeGenerated\n| project TargetUser, CreationTime;\nAuditLogs\n| where TimeGenerated > ago(24h)\n| where OperationName == "Add member to role"\n| extend RoleName = tostring(parse_json(tostring(ModifiedProperties[1].newValue)))\n| where RoleName == "Global Administrator"\n| extend TargetUser = tostring(TargetResources[0].userPrincipalName)\n| extend InitiatedBy = tostring(InitiatedBy.user.userPrincipalName)\n| extend RoleAssignTime = TimeGenerated\n| join kind=inner NewUsers on TargetUser\n| extend TimeDifference = RoleAssignTime - CreationTime\n| where TimeDifference < 4h // ${isSpanish ? 'Escalada en menos de 4h desde creación' : 'Escalation in less than 4h since creation'}\n| project RoleAssignTime, InitiatedBy, TargetUser, RoleName, TimeDifference\n| sort by TimeDifference asc`
+            },
+            {
+                id: 32,
+                title: isSpanish ? "ALERTA: Password Spraying Masivo (Azure AD)" : "ALERT: Massive Password Spraying (Azure AD)",
+                desc: isSpanish 
+                    ? "[REGLA ANALÍTICA] Detecta una única IP intentando iniciar sesión en más de 20 cuentas distintas de la organización con fallos consecutivos." 
+                    : "[ANALYTICS RULE] Detects a single IP attempting to log into more than 20 different organizational accounts with consecutive failures.",
+                lang: "Sentinel Rule",
+                tags: ["Alert Rule", "Azure AD", "Credential Access"],
+                tagClasses: ["tag-alert", "tag-kql", "tag-kql"],
+                code: `// ==========================================\n// ${isSpanish ? 'Mapeo: IP -> SuspiciousIP' : 'Mapping: IP -> SuspiciousIP'}\n// ==========================================\nSigninLogs\n| where TimeGenerated > ago(1h)\n| where ResultType != 0 // ${isSpanish ? 'Inicios fallidos' : 'Failed logins'}\n| summarize AccountsTargeted = dcount(UserPrincipalName), FailedAttempts = count() by IPAddress, bin(TimeGenerated, 15m)\n| where AccountsTargeted >= 20\n| project TimeGenerated, IPAddress, AccountsTargeted, FailedAttempts\n| sort by AccountsTargeted desc`
+            },
+            {
+                id: 33,
+                title: isSpanish ? "ALERTA: RDP Brute Force + Éxito (MDE)" : "ALERT: RDP Brute Force + Success (MDE)",
+                desc: isSpanish 
+                    ? "[REGLA ANALÍTICA] Detecta múltiples conexiones de red fallidas por RDP seguidas de un inicio de sesión interactivo exitoso en el mismo servidor." 
+                    : "[ANALYTICS RULE] Detects multiple failed RDP network connections followed by a successful interactive login on the same server.",
+                lang: "Sentinel Rule",
+                tags: ["Alert Rule", "MDE", "Lateral Mvt"],
+                tagClasses: ["tag-alert", "tag-mde", "tag-kql"],
+                code: `// ==========================================\n// ${isSpanish ? 'Mapeo: Host -> TargetDevice, IP -> AttackerIP' : 'Mapping: Host -> TargetDevice, IP -> AttackerIP'}\n// ==========================================\nlet FailedRDP = DeviceNetworkEvents\n| where TimeGenerated > ago(1h)\n| where ActionType == "InboundConnectionAccepted"\n| where LocalPort == 3389\n| summarize ConnectionCount = count() by DeviceName, RemoteIP\n| where ConnectionCount > 50;\nFailedRDP\n| join kind=inner (\n    DeviceLogonEvents\n    | where TimeGenerated > ago(1h)\n    | where ActionType == "LogonSuccess"\n    | where LogonType == "RemoteInteractive"\n    | project DeviceName, RemoteIP, AccountName, LogonTime=TimeGenerated\n) on DeviceName, RemoteIP\n| project LogonTime, DeviceName, RemoteIP, AccountName, ConnectionCount\n| sort by LogonTime desc`
+            },
+            {
+                id: 34,
+                title: isSpanish ? "ALERTA: Regla de Bandeja Financiera (M365)" : "ALERT: Financial Inbox Rule Creation (M365)",
+                desc: isSpanish 
+                    ? "[REGLA ANALÍTICA] Detecta la creación de reglas de Outlook que mueven correos con palabras como 'factura', 'pago' o 'banco' a carpetas ocultas." 
+                    : "[ANALYTICS RULE] Detects the creation of Outlook rules that move emails with words like 'invoice', 'payment', or 'bank' to hidden folders.",
+                lang: "Sentinel Rule",
+                tags: ["Alert Rule", "M365", "BEC"],
+                tagClasses: ["tag-alert", "tag-mde", "tag-kql"],
+                code: `// ==========================================\n// ${isSpanish ? 'Tácticas MITRE: Collection (TA0009)' : 'MITRE Tactics: Collection (TA0009)'}\n// ==========================================\nOfficeActivity\n| where TimeGenerated > ago(1h)\n| where OfficeWorkload == "Exchange"\n| where Operation in ("New-InboxRule", "Set-InboxRule")\n| extend RuleParameters = tostring(parse_json(Parameters))\n| where RuleParameters matches regex @"(?i)(invoice|factura|payment|pago|bank|banco|transfer|iban)"\n| where RuleParameters has_any ("MoveToFolder", "DeleteMessage", "MarkAsRead")\n| project TimeGenerated, UserId, ClientIP, Operation, RuleParameters\n| sort by TimeGenerated desc`
+            },
+            {
+                id: 35,
+                title: isSpanish ? "ALERTA: Borrado Masivo de Usuarios (Azure AD)" : "ALERT: Mass User Deletion (Azure AD)",
+                desc: isSpanish 
+                    ? "[REGLA ANALÍTICA] Alerta crítica si un administrador comprometido intenta sabotear el tenant eliminando más de 10 usuarios en menos de 10 minutos." 
+                    : "[ANALYTICS RULE] Critical alert if a compromised admin attempts to sabotage the tenant by deleting more than 10 users in under 10 minutes.",
+                lang: "Sentinel Rule",
+                tags: ["Alert Rule", "Azure AD", "Impact"],
+                tagClasses: ["tag-alert", "tag-kql", "tag-ps"],
+                code: `// ==========================================\n// ${isSpanish ? 'Severidad: CRÍTICA' : 'Severity: CRITICAL'}\n// ==========================================\nAuditLogs\n| where TimeGenerated > ago(1h)\n| where OperationName == "Delete user"\n| extend Actor = tostring(InitiatedBy.user.userPrincipalName)\n| summarize DeletedUsers = make_set(TargetResources[0].userPrincipalName), DeleteCount = count() by Actor, bin(TimeGenerated, 10m)\n| where DeleteCount >= 10\n| project TimeGenerated, Actor, DeleteCount, DeletedUsers\n| sort by DeleteCount desc`
+            },
+            {
+                id: 36,
+                title: isSpanish ? "ALERTA: Ejecución de Archivo Descargado (MDE)" : "ALERT: Execution of Downloaded File (MDE)",
+                desc: isSpanish 
+                    ? "[REGLA ANALÍTICA] Detecta cuando un navegador descarga un archivo ejecutable (.exe, .scr, .vbs) y este es ejecutado inmediatamente por el usuario." 
+                    : "[ANALYTICS RULE] Detects when a browser downloads an executable file (.exe, .scr, .vbs) and it is immediately executed by the user.",
+                lang: "Sentinel Rule",
+                tags: ["Alert Rule", "MDE", "Execution"],
+                tagClasses: ["tag-alert", "tag-mde", "tag-kql"],
+                code: `// ==========================================\n// ${isSpanish ? 'Mapeo: Host -> DeviceName, FileHash -> SHA1' : 'Mapping: Host -> DeviceName, FileHash -> SHA1'}\n// ==========================================\nlet BrowserDownloads = DeviceFileEvents\n| where TimeGenerated > ago(1h)\n| where ActionType == "FileCreated"\n| where InitiatingProcessFileName in~ ("chrome.exe", "msedge.exe", "firefox.exe")\n| where FileName endswith ".exe" or FileName endswith ".vbs" or FileName endswith ".ps1" or FileName endswith ".scr"\n| project DownloadTime=TimeGenerated, DeviceName, FileName, SHA1, InitiatingProcessFileName;\nBrowserDownloads\n| join kind=inner (\n    DeviceProcessEvents\n    | where TimeGenerated > ago(1h)\n    | project ExecutionTime=TimeGenerated, DeviceName, FileName, SHA1, ProcessCommandLine, AccountName\n) on DeviceName, SHA1\n| where ExecutionTime > DownloadTime // ${isSpanish ? 'Ejecutado después de descargar' : 'Executed after download'}\n| project DownloadTime, ExecutionTime, DeviceName, AccountName, FileName, ProcessCommandLine, Browser=InitiatingProcessFileName\n| sort by ExecutionTime desc`
+            },
+            {
+                id: 37,
+                title: isSpanish ? "ALERTA: Cradle de Descarga PowerShell (MDE)" : "ALERT: PowerShell Download Cradle (MDE)",
+                desc: isSpanish 
+                    ? "[REGLA ANALÍTICA] Detecta comandos de PowerShell usando Net.WebClient o Invoke-WebRequest para descargar código directamente a memoria (Fileless)." 
+                    : "[ANALYTICS RULE] Detects PowerShell commands using Net.WebClient or Invoke-WebRequest to download code directly into memory (Fileless).",
+                lang: "Sentinel Rule",
+                tags: ["Alert Rule", "MDE", "Command & Control"],
+                tagClasses: ["tag-alert", "tag-mde", "tag-ps"],
+                code: `// ==========================================\n// ${isSpanish ? 'Tácticas: Command and Control' : 'Tactics: Command and Control'}\n// ==========================================\nDeviceProcessEvents\n| where TimeGenerated > ago(1h)\n| where FileName in~ ("powershell.exe", "pwsh.exe")\n| where ProcessCommandLine has_any ("Net.WebClient", "DownloadString", "Invoke-WebRequest", "iwr", "wget")\n| where ProcessCommandLine has_any ("http://", "https://")\n| where ProcessCommandLine has_any ("iex", "Invoke-Expression")\n| project TimeGenerated, DeviceName, AccountName, ProcessCommandLine, InitiatingProcessFileName\n| sort by TimeGenerated desc`
+            },
+            {
+                id: 38,
+                title: isSpanish ? "ALERTA: VM de Azure Creada y Borrada Rápido" : "ALERT: Azure VM Created & Deleted Rapidly",
+                desc: isSpanish 
+                    ? "[REGLA ANALÍTICA] Patrón clásico de criptominado. Un atacante compromete la nube, crea VMs gigantes para minar y las borra para evadir facturación/detección." 
+                    : "[ANALYTICS RULE] Classic cryptomining pattern. An attacker compromises the cloud, creates giant VMs to mine, and deletes them to evade billing/detection.",
+                lang: "Sentinel Rule",
+                tags: ["Alert Rule", "Azure", "Impact"],
+                tagClasses: ["tag-alert", "tag-ps", "tag-kql"],
+                code: `// ==========================================\n// ${isSpanish ? 'Mapeo: Account -> Caller, Resource -> VMName' : 'Mapping: Account -> Caller, Resource -> VMName'}\n// ==========================================\nlet VMCreations = AzureActivity\n| where TimeGenerated > ago(24h)\n| where OperationNameValue == "MICROSOFT.COMPUTE/VIRTUALMACHINES/WRITE"\n| where ActivityStatusValue == "Success"\n| project CreateTime=TimeGenerated, Caller, VMName=Resource, ResourceGroup;\nVMCreations\n| join kind=inner (\n    AzureActivity\n    | where TimeGenerated > ago(24h)\n    | where OperationNameValue == "MICROSOFT.COMPUTE/VIRTUALMACHINES/DELETE"\n    | where ActivityStatusValue == "Success"\n    | project DeleteTime=TimeGenerated, Caller, VMName=Resource\n) on VMName\n| extend Lifespan = DeleteTime - CreateTime\n| where Lifespan < 12h // ${isSpanish ? 'VM vivió menos de 12 horas' : 'VM lived less than 12 hours'}\n| project CreateTime, DeleteTime, Lifespan, Caller, VMName, ResourceGroup\n| sort by Lifespan asc`
+            },
+            {
+                id: 39,
+                title: isSpanish ? "ALERTA: Modificación de Conditional Access" : "ALERT: Conditional Access Policy Mod",
+                desc: isSpanish 
+                    ? "[REGLA ANALÍTICA] Alerta altamente crítica. Un atacante o Insider Threat ha modificado las reglas de acceso condicional para debilitar la seguridad (ej. desactivar MFA)." 
+                    : "[ANALYTICS RULE] Highly critical alert. An attacker or Insider Threat modified conditional access rules to weaken security (e.g. disabling MFA).",
+                lang: "Sentinel Rule",
+                tags: ["Alert Rule", "Azure AD", "Defense Evasion"],
+                tagClasses: ["tag-alert", "tag-kql", "tag-ps"],
+                code: `// ==========================================\n// ${isSpanish ? 'Severidad: CRÍTICA' : 'Severity: CRITICAL'}\n// ==========================================\nAuditLogs\n| where TimeGenerated > ago(1h)\n| where Category == "Policy"\n| where OperationName in ("Update policy", "Delete policy", "Add policy")\n| extend PolicyName = tostring(TargetResources[0].displayName)\n| extend Actor = tostring(InitiatedBy.user.userPrincipalName)\n// ${isSpanish ? 'Extraer el cambio exacto (valor antiguo vs nuevo)' : 'Extract exact change (old vs new value)'}\n| extend ModifiedProperties = tostring(TargetResources[0].modifiedProperties)\n| project TimeGenerated, OperationName, PolicyName, Actor, ModifiedProperties\n| sort by TimeGenerated desc`
+            },
+            {
+                id: 40,
+                title: isSpanish ? "ALERTA: Acceso Sospechoso a Key Vault" : "ALERT: Suspicious Key Vault Access",
+                desc: isSpanish 
+                    ? "[REGLA ANALÍTICA] Detecta accesos exitosos a Azure Key Vault (donde se guardan contraseñas/certificados) desde IPs que no pertenecen a la red corporativa." 
+                    : "[ANALYTICS RULE] Detects successful accesses to Azure Key Vault (where passwords/certificates are stored) from IPs outside the corporate network.",
+                lang: "Sentinel Rule",
+                tags: ["Alert Rule", "Azure", "Credential Access"],
+                tagClasses: ["tag-alert", "tag-ps", "tag-kql"],
+                code: `// ==========================================\n// ${isSpanish ? 'Requiere habilitar logs de Diagnóstico en Key Vault' : 'Requires enabling Diagnostics logs on Key Vault'}\n// ==========================================\nAzureDiagnostics\n| where TimeGenerated > ago(1h)\n| where ResourceProvider == "MICROSOFT.KEYVAULT"\n| where OperationName in ("SecretGet", "KeyGet", "VaultGet")\n| extend ClientIP = CallerIPAddress\n// ${isSpanish ? 'Excluir subredes corporativas (EJEMPLO)' : 'Exclude corporate subnets (EXAMPLE)'}\n| where ClientIP !startswith "192.168." and ClientIP !startswith "10."\n// ${isSpanish ? 'Excluir servicios internos de Azure' : 'Exclude internal Azure services'}\n| where identity_claim_appid_g != ""\n| project TimeGenerated, Resource, OperationName, ClientIP, identity_claim_upn_s\n| sort by TimeGenerated desc`
+            },
+            {
+                id: 41,
+                title: isSpanish ? "ALERTA: Vaciado de Papelera en O365" : "ALERT: O365 Mailbox Purge (Destruction)",
+                desc: isSpanish 
+                    ? "[REGLA ANALÍTICA] Detecta cuando un usuario purga permanentemente (HardDelete) correos. Común cuando un atacante borra correos de phishing para ocultar el rastro." 
+                    : "[ANALYTICS RULE] Detects when a user permanently purges (HardDelete) emails. Common when an attacker deletes phishing emails to hide their tracks.",
+                lang: "Sentinel Rule",
+                tags: ["Alert Rule", "M365", "Defense Evasion"],
+                tagClasses: ["tag-alert", "tag-mde", "tag-ps"],
+                code: `// ==========================================\n// ${isSpanish ? 'Mapeo: Account -> UserId' : 'Mapping: Account -> UserId'}\n// ==========================================\nOfficeActivity\n| where TimeGenerated > ago(1h)\n| where OfficeWorkload == "Exchange"\n| where Operation in ("HardDelete", "Purge")\n| summarize PurgeCount = count() by UserId, ClientIP, bin(TimeGenerated, 15m)\n| where PurgeCount > 10 // ${isSpanish ? 'Purgar 10 correos seguidos es sospechoso' : 'Purging 10 emails in a row is suspicious'}\n| project TimeGenerated, UserId, ClientIP, PurgeCount\n| sort by PurgeCount desc`
+            },
+            {
+                id: 42,
+                title: isSpanish ? "ALERTA: Explotación PrintNightmare (MDE)" : "ALERT: PrintNightmare Exploitation (MDE)",
+                desc: isSpanish 
+                    ? "[REGLA ANALÍTICA] Detecta la explotación de la vulnerabilidad PrintNightmare (CVE-2021-1675) buscando el servicio Spooler cargando DLLs sospechosas." 
+                    : "[ANALYTICS RULE] Detects exploitation of the PrintNightmare vulnerability (CVE-2021-1675) by looking for the Spooler service loading suspicious DLLs.",
+                lang: "Sentinel Rule",
+                tags: ["Alert Rule", "MDE", "PrivEsc"],
+                tagClasses: ["tag-alert", "tag-mde", "tag-kql"],
+                code: `// ==========================================\n// ${isSpanish ? 'Tácticas MITRE: Privilege Escalation' : 'MITRE Tactics: Privilege Escalation'}\n// ==========================================\nDeviceImageLoadEvents\n| where TimeGenerated > ago(1h)\n| where InitiatingProcessFileName =~ "spoolsv.exe"\n| where FolderPath has @"\\Windows\\System32\\spool\\drivers\\x64\\3"\n| where FileName endswith ".dll"\n// ${isSpanish ? 'Filtramos drivers legítimos firmados por Microsoft' : 'Filter legitimate Microsoft-signed drivers'}\n| where SignatureStatus != "Valid" or IsSigned == 0\n| project TimeGenerated, DeviceName, InitiatingProcessFileName, FileName, FolderPath, SHA1\n| sort by TimeGenerated desc`
+            }
+        ];
+
+        // Función para renderizar la lista
+        function renderArsenalList(items) {
+            arsenalListContainer.innerHTML = '';
+            items.forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'arsenal-item';
+                
+                li.addEventListener('click', () => showArsenalScript(item, li));
+                
+                let tagsHtml = '';
+                item.tags.forEach((tag, index) => {
+                    tagsHtml += `<span class="tag ${item.tagClasses[index]}">${tag}</span>`;
+                });
+
+                li.innerHTML = `
+                    <div class="item-title">${item.title}</div>
+                    <div class="item-tags">${tagsHtml}</div>
+                `;
+                arsenalListContainer.appendChild(li);
+            });
+        }
+
+        // Mostrar el script en el panel derecho
+        function showArsenalScript(item, element) {
+            document.querySelectorAll('.arsenal-item').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+
+            let tagsHtml = '';
+            item.tags.forEach((tag, index) => {
+                tagsHtml += `<span class="tag ${item.tagClasses[index]}">${tag}</span>`;
+            });
+
+            const copyText = isSpanish ? 'COPIAR' : 'COPY';
+
+            // Inyectar HTML
+            arsenalViewer.innerHTML = `
+                <div style="display:flex; gap: 0.5rem; margin-bottom: 0.5rem;">${tagsHtml}</div>
+                <h2 class="viewer-title">${item.title}</h2>
+                <p class="viewer-desc">${item.desc}</p>
+                
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-lang">${item.lang} SCRIPT</span>
+                        <button class="btn-copy" id="copyArsenalBtn">${copyText}</button>
+                    </div>
+                    <pre class="code-content" id="codeBlock">${item.code}</pre>
+                </div>
+            `;
+
+            // Bilingüe para la alerta de Copiado
+            const copiedSuccessText = isSpanish ? '¡COPIADO!' : 'COPIED!';
+
+            document.getElementById('copyArsenalBtn').addEventListener('click', function() {
+                const codeText = document.getElementById('codeBlock').innerText;
+                navigator.clipboard.writeText(codeText).then(() => {
+                    this.innerText = copiedSuccessText;
+                    this.style.background = 'var(--cyan)';
+                    this.style.color = '#000';
+                    setTimeout(() => {
+                        this.innerText = copyText;
+                        this.style.background = 'transparent';
+                        this.style.color = 'var(--cyan)';
+                    }, 2000);
+                });
+            });
+        }
+
+        // ==========================================
+        // FILTROS AVANZADOS Y BÚSQUEDA
+        // ==========================================
+        
+        // 1. Inyectar los botones de filtro en el HTML dinámicamente
+        const filterHTML = `
+            <div class="arsenal-filters" style="display:flex; flex-wrap:wrap; gap:0.5rem; padding: 0.5rem 1.2rem 1.2rem; border-bottom: 1px solid var(--border);">
+                <button class="filter-btn active" data-type="all">${isSpanish ? 'Todo' : 'All'}</button>
+                <button class="filter-btn" data-type="hunting">${isSpanish ? '🔎 Consultas' : '🔎 Hunting'}</button>
+                <button class="filter-btn" data-type="alert">${isSpanish ? '🚨 Alertas' : '🚨 Alerts'}</button>
+            </div>
+        `;
+        arsenalSearch.insertAdjacentHTML('afterend', filterHTML);
+
+        let currentType = 'all';
+        let currentSearchTerm = '';
+
+        // Función centralizada para filtrar la base de datos
+        function applyFilters() {
+            let filtered = arsenalData;
+
+            // 1. Filtrar por Tipo (Hunting vs Alertas)
+            if (currentType === 'hunting') {
+                filtered = filtered.filter(item => !item.tags.includes('Alert Rule'));
+            } else if (currentType === 'alert') {
+                filtered = filtered.filter(item => item.tags.includes('Alert Rule'));
+            }
+
+            // 2. Filtrar por texto de búsqueda
+            if (currentSearchTerm !== '') {
+                filtered = filtered.filter(item => 
+                    item.title.toLowerCase().includes(currentSearchTerm) || 
+                    item.desc.toLowerCase().includes(currentSearchTerm) ||
+                    item.tags.some(tag => tag.toLowerCase().includes(currentSearchTerm))
+                );
+            }
+
+            renderArsenalList(filtered);
+        }
+
+        // Evento: Buscador de texto
+        arsenalSearch.addEventListener('keyup', (e) => {
+            currentSearchTerm = e.target.value.toLowerCase();
+            applyFilters();
+        });
+
+        // Evento: Botones de filtro de categoría
+        const filterButtons = document.querySelectorAll('.arsenal-filters .filter-btn');
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                // Quitar clase activa de todos
+                filterButtons.forEach(b => b.classList.remove('active'));
+                // Añadir activa al clicado
+                e.target.classList.add('active');
+                
+                // Actualizar filtro y aplicar
+                currentType = e.target.getAttribute('data-type');
+                applyFilters();
+            });
+        });
+
+        // Iniciar la herramienta por primera vez
+        renderArsenalList(arsenalData);
+    }
 })();

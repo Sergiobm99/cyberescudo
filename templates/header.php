@@ -120,6 +120,11 @@
               <li><a href="<?= BASE_URL ?>/tool-regex.php">🛡️ Password Regex Generator</a></li>
               <li><a href="<?= BASE_URL ?>/tool-url.php">🔗 URL Encoder</a></li>
               <li>
+    <a href="/soc-arsenal.php" class="dropdown-item <?= ($current_page === 'soc-arsenal.php') ? 'active' : '' ?>">
+        🛡️ <?= $lang==='es' ? 'Arsenal SOC (KQL)' : 'SOC Arsenal (KQL)' ?>
+    </a>
+</li>
+              <li>
     <a href="<?= BASE_URL ?>/tool-osint-report.php" class="dropdown-item <?= ($current_page === 'tool-osint-report.php') ? 'active' : '' ?>" style="color: var(--cyan); font-weight: bold; text-shadow: 0 0 8px rgba(0,255,255,0.4);">
         📄 <?= $lang==='es' ? 'Reporte OSINT' : 'OSINT Report' ?>
     </a>
@@ -214,6 +219,11 @@
                 <li><a href="<?= BASE_URL ?>/tool-regex.php">🛡️ Password Regex Generator</a></li>
                 <li><a href="<?= BASE_URL ?>/tool-url.php">🔗 URL Encoder</a></li>
                 <li>
+                  <li>
+    <a href="/soc-arsenal.php" class="dropdown-item <?= ($current_page === 'soc-arsenal.php') ? 'active' : '' ?>">
+        🛡️ <?= $lang==='es' ? 'Arsenal SOC (KQL)' : 'SOC Arsenal (KQL)' ?>
+    </a>
+</li>
     <a href="tool-osint-report.php" class="dropdown-item <?= ($current_page === 'tool-osint-report.php') ? 'active' : '' ?>" style="color: var(--cyan); font-weight: bold; text-shadow: 0 0 8px rgba(0,255,255,0.4);">
         📄 <?= $lang==='es' ? 'Reporte OSINT' : 'OSINT Report' ?>
     </a>

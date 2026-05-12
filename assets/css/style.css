@@ -2356,3 +2356,79 @@ nav ul li a, .submenu-toggle {
     /* Evita que los banners se peguen a los bordes de la pantalla */
     .md-container { padding-left: 1rem; padding-right: 1rem; }
 }
+.arsenal-container { max-width: 1200px; margin: 3rem auto; padding: 0 1.5rem; }
+    .arsenal-header { text-align: center; margin-bottom: 3rem; }
+    .arsenal-title { font-family: var(--mono); color: var(--cyan); font-size: 2.5rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 0.5rem; }
+    
+    .arsenal-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+    @media (min-width: 992px) { .arsenal-grid { grid-template-columns: 350px 1fr; } }
+
+    /* Barra lateral (Lista de Scripts) */
+    .arsenal-sidebar {
+        background: rgba(0, 0, 0, 0.4); border: 1px solid var(--border);
+        border-radius: 8px; overflow: hidden; display: flex; flex-direction: column;
+        height: 600px;
+    }
+    .arsenal-search {
+    background: rgba(255,255,255,0.02); 
+    border: none; /* Quitamos la línea de abajo para que se fusione con los filtros */
+    padding: 1.2rem 1.2rem 0.5rem 1.2rem; 
+    color: var(--white); 
+    font-family: var(--mono); 
+    font-size: 0.9rem;
+    width: 100%; 
+    outline: none;
+}
+    .arsenal-search:focus { border-bottom-color: var(--cyan); }
+    
+    .arsenal-list { flex: 1; overflow-y: auto; list-style: none; padding: 0; margin: 0; }
+    .arsenal-list::-webkit-scrollbar { width: 6px; }
+    .arsenal-list::-webkit-scrollbar-thumb { background: rgba(0,255,255,0.2); border-radius: 3px; }
+
+    .arsenal-item {
+        padding: 1rem 1.2rem; border-bottom: 1px solid rgba(255,255,255,0.05);
+        cursor: pointer; transition: all 0.2s; border-left: 3px solid transparent;
+    }
+    .arsenal-item:hover { background: rgba(0,255,255,0.05); }
+    .arsenal-item.active { background: rgba(0,255,255,0.1); border-left-color: var(--cyan); }
+    
+    .item-title { color: #fff; font-weight: 600; font-size: 0.95rem; margin-bottom: 0.3rem; font-family: var(--font); }
+    .item-tags { display: flex; gap: 0.5rem; }
+    .tag { font-family: var(--mono); font-size: 0.65rem; padding: 2px 6px; border-radius: 3px; font-weight: bold; }
+    .tag-kql { background: rgba(0, 120, 212, 0.2); color: #50b0ff; border: 1px solid rgba(0, 120, 212, 0.5); }
+    .tag-ps { background: rgba(1, 36, 86, 0.4); color: #fff; border: 1px solid #012456; }
+    .tag-mde { background: rgba(0, 212, 90, 0.1); color: #00d45a; border: 1px solid rgba(0, 212, 90, 0.3); }
+
+    /* Visor principal (Código) */
+    .arsenal-viewer {
+        background: rgba(5, 10, 15, 0.6); border: 1px solid var(--cyan);
+        border-radius: 8px; padding: 2rem; box-shadow: 0 0 30px rgba(0, 255, 255, 0.05);
+        display: flex; flex-direction: column; min-height: 600px;
+    }
+    .viewer-title { font-size: 1.5rem; color: #fff; margin-bottom: 1rem; }
+    .viewer-desc { color: #aaa; font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.6; }
+    
+    .code-container { position: relative; flex: 1; background: #050505; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); overflow: hidden;}
+    .code-header {
+        background: rgba(255,255,255,0.05); padding: 0.5rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.1);
+        display: flex; justify-content: space-between; align-items: center;
+    }
+    .code-lang { font-family: var(--mono); color: var(--cyan); font-size: 0.8rem; }
+    
+    .btn-copy {
+        background: transparent; border: 1px solid var(--cyan); color: var(--cyan);
+        padding: 4px 12px; border-radius: 4px; font-family: var(--mono); font-size: 0.75rem;
+        cursor: pointer; transition: all 0.2s;
+    }
+    .btn-copy:hover { background: var(--cyan); color: #000; }
+    
+    .code-content {
+        margin: 0; padding: 1.5rem; font-family: var(--mono); font-size: 0.85rem;
+        color: #d4d4d4; white-space: pre-wrap; overflow-y: auto; max-height: 400px;
+    }
+    .tag-alert { 
+    background: rgba(255, 42, 42, 0.15); 
+    color: #ff2a2a; 
+    border: 1px solid rgba(255, 42, 42, 0.4); 
+    box-shadow: 0 0 8px rgba(255, 42, 42, 0.2);
+}
