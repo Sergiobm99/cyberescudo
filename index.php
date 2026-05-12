@@ -83,41 +83,36 @@ require __DIR__ . '/templates/header.php';
 </div>
 </section>
  <div class="md-container" style="max-width: 900px; margin: 0 auto 6rem auto;">
-    <a href="<?= e(BASE_URL . '/projects/skill-tree.php') ?>" style="display: flex; align-items: center; justify-content: space-between; background: linear-gradient(90deg, #050505 0%, #0a1515 100%); border: 1px solid var(--cyan); border-radius: 8px; padding: 2.5rem; text-decoration: none; transition: all 0.3s; position: relative; overflow: hidden;" onmouseover="this.style.boxShadow='0 0 30px rgba(0, 255, 255, 0.2)'; this.style.transform='scale(1.02)';" onmouseout="this.style.boxShadow='none'; this.style.transform='scale(1)';">
-        
-        <div style="position: absolute; right: -50px; top: -50px; opacity: 0.05; font-size: 15rem; font-family: monospace; transform: rotate(15deg); pointer-events: none;">
-            { }
-        </div>
-
-        <div style="position: relative; z-index: 1;">
+    <a href="<?= e(BASE_URL . '/projects/skill-tree.php') ?>" class="banner-skill-tree">
+        <div class="bg-code">{ }</div>
+        <div class="banner-skill-tree-content">
             <span style="color: var(--cyan); font-family: var(--mono); font-size: 0.9rem; letter-spacing: 2px;">// <?= $lang === 'es' ? 'DESCUBRE TU CAMINO' : 'DISCOVER YOUR PATH' ?></span>
-            <h3 style="color: #fff; font-size: 2rem; margin: 0.5rem 0;"><?= $lang === 'es' ? 'Explora el Árbol de Habilidades' : 'Explore the Skill Tree' ?></h3>
-            <p style="color: #aaa; margin: 0; font-size: 1.1rem;">
+            <h3><?= $lang === 'es' ? 'Explora el Árbol de Habilidades' : 'Explore the Skill Tree' ?></h3>
+            <p>
                 <?= $lang === 'es' ? 'Accede al roadmap interactivo y domina la ciberseguridad nivel a nivel.' : 'Access the interactive roadmap and master cybersecurity tier by tier.' ?>
             </p>
         </div>
-        
-        <div style="background: var(--cyan); color: #000; padding: 15px 30px; border-radius: 50px; font-weight: bold; font-family: var(--mono); display: flex; align-items: center; gap: 10px; position: relative; z-index: 1;">
+        <div class="btn-road">
             <?= $lang === 'es' ? 'VER ROADMAP' : 'VIEW ROADMAP' ?> <span>→</span>
         </div>
     </a>
 </div>
-<!-- ─── BLUE TEAM SANDBOX (BLOQUE DESTACADO) ─── -->
+
 <div id="interactive-simulator" class="md-container" style="max-width: 900px; margin-left: auto; margin-right: auto; padding-top: 2rem; padding-bottom: 2rem;">
     <span class="section-label" style="color: #ff2a2a;">// <?= $lang === 'es' ? 'SIMULADOR INTERACTIVO' : 'INTERACTIVE SIMULATOR' ?></span>
     <h2 style="margin-top: 0.5rem; margin-bottom: 1.5rem;">
         <?= $lang === 'es' ? 'Simulador SOC: Análisis de Phishing' : 'SOC Simulator: Phishing Analysis' ?>
     </h2>
 
-    <a href="<?= e(BASE_URL . '/projects/phishing-sandbox.php') ?>" style="display: block; background: #0a0a0a; border: 1px solid #ff2a2a; border-radius: 8px; padding: 2rem; text-decoration: none; transition: all 0.3s; box-shadow: 0 0 15px rgba(255, 42, 42, 0.1);" onmouseover="this.style.boxShadow='0 0 25px rgba(255, 42, 42, 0.3)'; this.style.borderColor='#ff5555'; this.style.transform='translateY(-2px)';" onmouseout="this.style.boxShadow='0 0 15px rgba(255, 42, 42, 0.1)'; this.style.borderColor='#ff2a2a'; this.style.transform='translateY(0)';">
+    <a href="<?= e(BASE_URL . '/projects/phishing-sandbox.php') ?>" class="banner-phishing">
         <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 1rem;">
-            <span style="font-size: 2.5rem;">🎣</span>
-            <h3 style="margin: 0; color: #fff;"><?= $lang === 'es' ? 'Entrenamiento de Triaje (Nivel 1)' : 'Triage Training (Tier 1)' ?></h3>
+            <span style="font-size: 2rem;">🎣</span>
+            <h3><?= $lang === 'es' ? 'Entrenamiento de Triaje (Nivel 1)' : 'Triage Training (Tier 1)' ?></h3>
         </div>
-        <p style="color: #aaa; line-height: 1.6; margin-bottom: 1.5rem; font-size: 1.05rem;">
+        <p>
             <?= $lang === 'es' ? 'Ponte en la piel de un analista de SOC. Analiza un correo electrónico malicioso interactivo y localiza visualmente las 3 banderas rojas (Red Flags) para neutralizar la amenaza.' : 'Step into the shoes of a SOC analyst. Analyze an interactive malicious email and visually locate the 3 red flags to neutralize the threat.' ?>
         </p>
-        <span style="background: rgba(255, 42, 42, 0.15); color: #ff2a2a; padding: 8px 16px; border-radius: 4px; font-family: var(--mono); font-weight: bold; font-size: 0.85rem; display: inline-block;">
+        <span class="phishing-btn">
             &gt;_ <?= $lang === 'es' ? 'INICIAR SIMULACIÓN' : 'START SIMULATION' ?>
         </span>
     </a>

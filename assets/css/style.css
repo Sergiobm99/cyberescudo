@@ -2295,3 +2295,64 @@ nav ul li a, .submenu-toggle {
     font-weight: bold;
     text-transform: uppercase;
 }
+/* ─── BANNERS DESTACADOS (ÁRBOL Y PHISHING) ─── */
+.banner-skill-tree {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(90deg, #050505 0%, #0a1515 100%);
+    border: 1px solid var(--cyan);
+    border-radius: 8px;
+    padding: 2.5rem;
+    text-decoration: none;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+.banner-skill-tree:hover {
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.2);
+    transform: scale(1.02);
+}
+.banner-skill-tree .bg-code {
+    position: absolute; right: -50px; top: -50px; opacity: 0.05; font-size: 15rem; font-family: monospace; transform: rotate(15deg); pointer-events: none;
+}
+.banner-skill-tree-content { position: relative; z-index: 1; }
+.banner-skill-tree-content h3 { color: #fff; font-size: 2rem; margin: 0.5rem 0; }
+.banner-skill-tree-content p { color: #aaa; margin: 0; font-size: 1.1rem; max-width: 500px; }
+.banner-skill-tree .btn-road {
+    background: var(--cyan); color: #000; padding: 15px 30px; border-radius: 50px; font-weight: bold; font-family: var(--mono); display: flex; align-items: center; gap: 10px; position: relative; z-index: 1; flex-shrink: 0;
+}
+
+.banner-phishing {
+    display: block; background: #0a0a0a; border: 1px solid #ff2a2a; border-radius: 8px; padding: 2rem; text-decoration: none; transition: all 0.3s; box-shadow: 0 0 15px rgba(255, 42, 42, 0.1);
+}
+.banner-phishing:hover {
+    box-shadow: 0 0 25px rgba(255, 42, 42, 0.3); border-color: #ff5555; transform: translateY(-2px);
+}
+.banner-phishing h3 { margin: 0; color: #fff; font-size: 1.5rem; }
+.banner-phishing p { color: #aaa; line-height: 1.6; margin-bottom: 1.5rem; font-size: 1.05rem; }
+.banner-phishing .phishing-btn {
+    background: rgba(255, 42, 42, 0.15); color: #ff2a2a; padding: 8px 16px; border-radius: 4px; font-family: var(--mono); font-weight: bold; font-size: 0.85rem; display: inline-block;
+}
+
+/* 🚨 REGLAS PARA TELÉFONOS MÓVILES 🚨 */
+@media (max-width: 768px) {
+    .banner-skill-tree {
+        flex-direction: column; /* Apila el botón debajo del texto */
+        align-items: flex-start;
+        padding: 1.5rem; /* Menos relleno */
+        gap: 1.5rem;
+    }
+    .banner-skill-tree-content h3 { font-size: 1.5rem; }
+    .banner-skill-tree-content p { font-size: 0.95rem; }
+    .banner-skill-tree .btn-road { padding: 12px 20px; width: 100%; justify-content: center; font-size: 0.9rem; }
+    .banner-skill-tree .bg-code { font-size: 10rem; right: -30px; top: -30px; }
+
+    .banner-phishing { padding: 1.5rem; }
+    .banner-phishing h3 { font-size: 1.25rem; }
+    .banner-phishing p { font-size: 0.95rem; margin-bottom: 1.2rem; }
+    .banner-phishing .phishing-btn { width: 100%; text-align: center; box-sizing: border-box; }
+    
+    /* Evita que los banners se peguen a los bordes de la pantalla */
+    .md-container { padding-left: 1rem; padding-right: 1rem; }
+}
