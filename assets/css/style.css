@@ -2637,3 +2637,16 @@ body {
     /* Opcional: una línea sutil abajo para separar la barra del resto */
     border-bottom: 1px solid rgba(0, 255, 255, 0.1);
 }
+/* ─── ELIMINAR LÍNEAS SUBRAYADAS DEL MENÚ PRINCIPAL ─── */
+.nav-links a, 
+.nav-dropdown > a {
+    text-decoration: none !important;
+    border-bottom: none !important;
+    box-shadow: none !important;
+}
+
+/* Si la línea venía de un efecto hover antiguo (pseudo-elemento), lo desactivamos */
+.nav-links a::after, 
+.nav-dropdown > a::after {
+    display: none !important;
+}
