@@ -106,7 +106,7 @@ a { text-decoration: none; color: inherit; }
   display: flex; 
   align-items: center;
   list-style: none; 
-  gap: 2rem; 
+  gap: 1.5rem; 
   margin-left: auto; /* 👈 Se asegura de quedarse pegado a la derecha */
 }
 .nav-links a {
@@ -749,12 +749,12 @@ footer {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    padding: 0.4rem 1rem;
+    padding: 0.3rem 0.8rem;
     border: 1px solid var(--cyan);
-    border-radius: 2rem; /* Forma de píldora redondeada */
+    border-radius: 4px; /* Forma de píldora redondeada */
     color: var(--cyan) !important; /* Forzamos el color para sobrescribir el de los enlaces normales */
     font-family: var(--mono, monospace);
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     font-weight: 600;
     text-decoration: none;
     transition: all 0.3s ease;
@@ -2431,4 +2431,195 @@ nav ul li a, .submenu-toggle {
     color: #ff2a2a; 
     border: 1px solid rgba(255, 42, 42, 0.4); 
     box-shadow: 0 0 8px rgba(255, 42, 42, 0.2);
+}
+/* ─── HUB DE ENTRENAMIENTO (INDEX) ─── */
+.training-hub-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+    margin-bottom: 4rem;
+    position: relative;
+    padding: 2rem;
+    border-radius: 16px;
+    /* Si subes la imagen que te he generado, quita los comentarios de la línea de abajo: */
+    /* background: url('/assets/img/tech-bg.jpg') center/cover no-repeat; */
+}
+
+.training-card {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 3rem 2rem;
+    text-align: center;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    z-index: 1;
+}
+
+/* Efecto Neón Cian (Árbol de Habilidades) */
+.training-card.skill-tree-card {
+    background: radial-gradient(circle at 50% 0%, rgba(0, 255, 255, 0.08) 0%, rgba(10, 15, 20, 0.85) 80%);
+    border-color: rgba(0, 255, 255, 0.3);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.05), inset 0 0 20px rgba(0, 255, 255, 0.02);
+}
+
+.training-card.skill-tree-card:hover {
+    border-color: rgba(0, 255, 255, 0.8);
+    box-shadow: 0 0 40px rgba(0, 255, 255, 0.2), inset 0 0 30px rgba(0, 255, 255, 0.1);
+    transform: translateY(-5px) scale(1.02);
+}
+
+/* Efecto Neón Rojo (Simulador SOC) */
+.training-card.simulator-card {
+    background: radial-gradient(circle at 50% 0%, rgba(255, 42, 42, 0.08) 0%, rgba(10, 15, 20, 0.85) 80%);
+    border-color: rgba(255, 42, 42, 0.3);
+    box-shadow: 0 0 20px rgba(255, 42, 42, 0.05), inset 0 0 20px rgba(255, 42, 42, 0.02);
+}
+
+.training-card.simulator-card:hover {
+    border-color: rgba(255, 42, 42, 0.8);
+    box-shadow: 0 0 40px rgba(255, 42, 42, 0.2), inset 0 0 30px rgba(255, 42, 42, 0.1);
+    transform: translateY(-5px) scale(1.02);
+}
+
+.training-card .icon {
+    font-size: 3.5rem;
+    margin-bottom: 1.5rem;
+    filter: drop-shadow(0 0 15px rgba(255,255,255,0.2));
+}
+
+.training-card h3 {
+    font-size: 1.6rem;
+    margin-bottom: 1rem;
+    color: var(--white);
+    letter-spacing: 1px;
+}
+
+.training-card p {
+    font-size: 1rem;
+    color: #aaa;
+    line-height: 1.5;
+}
+/* ─── SISTEMA DE DROPDOWNS (MEGAMENU) ─── */
+.nav-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: rgba(10, 14, 20, 0.95);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    width: 280px; /* Ajuste para dropdowns normales */
+    display: none; /* Se activa por JS o hover */
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 255, 255, 0.05);
+    z-index: 1000;
+}
+
+/* Mostrar al pasar el ratón */
+.nav-dropdown:hover .dropdown-menu {
+    display: grid;
+    animation: fadeInSlide 0.3s ease forwards;
+}
+
+@keyframes fadeInSlide {
+    from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.7rem 1rem;
+    font-size: 0.85rem;
+    color: var(--gray) !important;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.dropdown-item:hover {
+    background: var(--cyan-faint);
+    color: var(--white) !important;
+    transform: translateX(5px);
+}
+
+/* Versión "Mega" para el Arsenal SOC */
+.dropdown-menu.mega {
+    width: 500px;
+    grid-template-columns: 1fr 1fr;
+}
+/* ─── CYBER-CHEVRONS ANIMADOS (MENÚS) ─── */
+.chevron {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid var(--cyan);
+    border-bottom: 2px solid var(--cyan);
+    transform: translateY(-3px) rotate(45deg);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+
+/* Animación en PC (Hover) */
+.nav-dropdown:hover .chevron {
+    transform: translateY(1px) rotate(225deg);
+    border-color: var(--white);
+    filter: drop-shadow(0 0 5px var(--cyan));
+}
+
+/* Animación en Móvil (Click) */
+.submenu-checkbox:checked ~ .submenu-toggle .chevron {
+    transform: translateY(1px) rotate(225deg);
+    border-color: var(--white);
+    filter: drop-shadow(0 0 5px var(--cyan));
+}
+/* Efecto Neón Verde (Arsenal SOC) */
+.training-card.arsenal-card {
+    background: radial-gradient(circle at 50% 0%, rgba(0, 212, 90, 0.08) 0%, rgba(10, 15, 20, 0.85) 80%);
+    border-color: rgba(0, 212, 90, 0.3);
+    box-shadow: 0 0 20px rgba(0, 212, 90, 0.05), inset 0 0 20px rgba(0, 212, 90, 0.02);
+}
+
+.training-card.arsenal-card:hover {
+    border-color: rgba(0, 212, 90, 0.8);
+    box-shadow: 0 0 40px rgba(0, 212, 90, 0.2), inset 0 0 30px rgba(0, 212, 90, 0.1);
+    transform: translateY(-5px) scale(1.02);
+}
+
+/* Efecto Neón Morado (Escáner Perimetral) */
+.training-card.scanner-card {
+    background: radial-gradient(circle at 50% 0%, rgba(180, 0, 255, 0.08) 0%, rgba(10, 15, 20, 0.85) 80%);
+    border-color: rgba(180, 0, 255, 0.3);
+    box-shadow: 0 0 20px rgba(180, 0, 255, 0.05), inset 0 0 20px rgba(180, 0, 255, 0.02);
+}
+
+.training-card.scanner-card:hover {
+    border-color: rgba(180, 0, 255, 0.8);
+    box-shadow: 0 0 40px rgba(180, 0, 255, 0.2), inset 0 0 30px rgba(180, 0, 255, 0.1);
+    transform: translateY(-5px) scale(1.02);
+}
+html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
 }

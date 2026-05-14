@@ -4,18 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <!-- SEO Básico -->
   <title><?= e($pageTitle ?? 'CyberEscudo — Herramientas de Ciberseguridad y Pentesting') ?></title>
   <meta name="description" content="<?= e($pageDescription ?? ($lang === 'es' ? 'Plataforma gratuita de herramientas para pentesting y OSINT. Genera reverse shells, analiza claves SSH, descubre vulnerabilidades y aprende hacking ético.' : 'Free platform for pentesting and OSINT tools. Generate reverse shells, analyze SSH keys, discover vulnerabilities and learn ethical hacking.')) ?>">
 
-  <!-- Open Graph / Facebook / WhatsApp / LinkedIn -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="<?= e('https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']) ?>">
   <meta property="og:title" content="<?= e($pageTitle ?? 'CyberEscudo — Herramientas de Ciberseguridad') ?>">
   <meta property="og:description" content="<?= e($pageDescription ?? ($lang === 'es' ? 'Plataforma gratuita de herramientas para pentesting y OSINT.' : 'Free platform for pentesting and OSINT tools.')) ?>">
   <meta property="og:image" content="<?= BASE_URL ?>/assets/img/logo-cyberescudo.jpg">
 
-  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="<?= e($pageTitle ?? 'CyberEscudo') ?>">
   <meta name="twitter:description" content="<?= e($pageDescription ?? ($lang === 'es' ? 'Herramientas de ciberseguridad gratuitas.' : 'Free cybersecurity tools.')) ?>">
@@ -25,19 +22,15 @@
 
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/style.css?v=<?= time() ?>">
 
-  <!-- Favicon principal para Google Search (Recomendado 192x192) -->
-<link rel="icon" href="<?= BASE_URL ?>/assets/img/logo-cyberescudo.png" sizes="192x192" type="image/png">
+  <link rel="icon" href="<?= BASE_URL ?>/assets/img/logo-cyberescudo.png" sizes="192x192" type="image/png">
 
-<!-- Favicon para dispositivos Apple (Recomendado 180x180) -->
-<link rel="apple-touch-icon" href="<?= BASE_URL ?>/assets/img/logo-cyberescudo.png">
+  <link rel="apple-touch-icon" href="<?= BASE_URL ?>/assets/img/logo-cyberescudo.png">
   
-  <!-- Google tag (gtag.js) -->
   <script nonce="<?= e($cspNonce) ?>" async src="https://www.googletagmanager.com/gtag/js?id=G-T1D83JWZV1"></script>
   <script nonce="<?= e($cspNonce) ?>">
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-
     gtag('config', 'G-T1D83JWZV1');
   </script>
 </head>
@@ -52,21 +45,24 @@
     </a>
 
     <ul class="nav-links">
-      <li><a href="<?= BASE_URL ?>/index.php#projects"><?= e($t['nav']['projects']) ?></a></li>
-      <li><a href="<?= BASE_URL ?>/index.php#manuals"><?= e($t['nav']['manuals']) ?></a></li>
-      <li><a href="<?= BASE_URL ?>/sobre-mi.php" class="nav-link"><?= $lang === 'es' ? 'Sobre Mí' : 'About Me' ?></a></li>
       
-      <!-- INICIO DEL MEGA MENÚ -->
       <li class="nav-dropdown">
-        <a href="<?= BASE_URL ?>/tools.php"><?= e($t['nav']['tools']) ?> ▾</a>
-        <ul class="dropdown-menu">
+        <a href="#"><?= $lang === 'es' ? 'Explorar' : 'Explore' ?> <span class="chevron"></span></a>
+        <div class="dropdown-menu">
+            <a href="<?= BASE_URL ?>/index.php#projects" class="dropdown-item">📁 <?= e($t['nav']['projects']) ?></a>
+            <a href="<?= BASE_URL ?>/index.php#manuals" class="dropdown-item">📖 <?= e($t['nav']['manuals']) ?></a>
+            <a href="<?= BASE_URL ?>/projects/skill-tree.php" class="dropdown-item">🌳 <?= $lang === 'es' ? 'Árbol de Habilidades' : 'Skill Tree' ?></a>
+        </div>
+      </li>
+      
+      <li class="nav-dropdown">
+        <a href="<?= BASE_URL ?>/tools.php"><?= e($t['nav']['tools']) ?> <span class="chevron"></span></a>
+        <ul class="dropdown-menu mega">
             
-          <!-- Buscador de Escritorio -->
           <div class="megamenu-search-wrap">
             <input type="text" id="megamenu-search" class="cyber-input" placeholder="<?= $lang==='es' ? '🔍 Busca tu herramienta más rápido...' : '🔍 Search your tool faster...' ?>">
           </div>
 
-          <!-- COLUMNA 1: Auditoría y Reconocimiento -->
           <li class="megamenu-col">
             <span class="megamenu-title"><?= $lang==='es'?'🔍 Auditoría & OSINT':'🔍 Audit & OSINT' ?></span>
             <ul class="megamenu-sublist">
@@ -77,82 +73,59 @@
               <li><a href="<?= BASE_URL ?>/tool-headers.php">📋 HTTP Header Analyzer</a></li>
               <li><a href="<?= BASE_URL ?>/tool-ssh.php">🔑 SSH Analyzer</a></li>
               <li><a href="<?= BASE_URL ?>/tool-ports.php">📋 Port Reference</a></li>
-               <li><a href="<?= BASE_URL ?>/tool-dns.php">🔍 DNS Lookup</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-dns.php">🔍 DNS Lookup</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-osint-report.php" style="color: var(--cyan); font-weight: bold; text-shadow: 0 0 8px rgba(0,255,255,0.4);">📄 <?= $lang==='es' ? 'Reporte OSINT' : 'OSINT Report' ?></a></li>
             </ul>
           </li>
 
-          <!-- COLUMNA 2: Explotación y Redes -->
           <li class="megamenu-col">
-            <span class="megamenu-title"><?= $lang==='es'?'🏴‍☠️ Pentesting & Explotación':'🏴‍☠️ Pentesting & Exploits' ?></span>
+            <span class="megamenu-title"><?= $lang==='es'?'🏴‍☠️ Pentesting & Defensa':'🏴‍☠️ Pentesting & Defense' ?></span>
             <ul class="megamenu-sublist">
+              <li><a href="/soc-arsenal.php" style="color: #00d45a; font-weight: bold;">🛡️ <?= $lang==='es' ? 'Arsenal SOC (KQL)' : 'SOC Arsenal (KQL)' ?></a></li>
+              <li><a href="/projects/phishing-sandbox.php" style="color: #ff2a2a; font-weight: bold;">🎣 <?= $lang==='es' ? 'Simulador SOC' : 'SOC Simulator' ?></a></li>
+              <li><a href="/tool-scanner.php">🎯 <?= $lang==='es' ? 'Escáner Perimetral' : 'Perimeter Scanner' ?></a></li>
               <li><a href="<?= BASE_URL ?>/tool-revshell.php">🐚 Reverse Shell Generator</a></li>
               <li><a href="<?= BASE_URL ?>/tool-waf.php">🛡️ WAF Bypass Payloads</a></li>
               <li><a href="<?= BASE_URL ?>/tool-cve.php">🐛 CVE & Exploit Finder</a></li>
               <li><a href="<?= BASE_URL ?>/tool-wordlist.php">📝 Wordlist Generator</a></li>
               <li><a href="<?= BASE_URL ?>/tool-httpbuilder.php">📡 HTTP Builder</a></li>
             </ul>
+          </li>
 
-            <span class="megamenu-title" style="margin-top: 1.5rem;"><?= $lang==='es'?'🛡️ Redes & Sistemas':'🛡️ Network & Systems' ?></span>
+          <li class="megamenu-col">
+            <span class="megamenu-title"><?= $lang==='es'?'🔐 Cripto & Redes':'🔐 Crypto & Network' ?></span>
             <ul class="megamenu-sublist">
               <li><a href="<?= BASE_URL ?>/tool-ip.php">🌐 What is my IP?</a></li>
               <li><a href="<?= BASE_URL ?>/tool-cidr.php">🌍 CIDR Calculator</a></li>
               <li><a href="<?= BASE_URL ?>/tool-mac.php">🏷️ MAC Vendor Lookup</a></li>
-              <li><a href="<?= BASE_URL ?>/tool-chmod.php">🐧 Linux Chmod</a></li>
-              <li><a href="<?= BASE_URL ?>/tool-cron.php">⏱ Cron Parser</a></li>
-            </ul>
-          </li>
-
-          <!-- COLUMNA 3: Criptografía y Auth -->
-          <li class="megamenu-col">
-            <span class="megamenu-title"><?= $lang==='es'?'🔐 Cripto & Hashes':'🔐 Crypto & Hashes' ?></span>
-            <ul class="megamenu-sublist">
               <li><a href="<?= BASE_URL ?>/tool-hash.php">#️⃣ Hash Generator</a></li>
               <li><a href="<?= BASE_URL ?>/tool-hashcrack.php">🔓 Hash Analyzer</a></li>
               <li><a href="<?= BASE_URL ?>/tool-base64.php">🔄 Base64</a></li>
               <li><a href="<?= BASE_URL ?>/tool-multidecode.php">🔄 Multi Decoder (CTF)</a></li>
               <li><a href="<?= BASE_URL ?>/tool-jwt.php">🔓 JWT Decoder</a></li>
-            </ul>
-
-            <span class="megamenu-title" style="margin-top: 1.5rem;"><?= $lang==='es'?'⚙️ Utilidades & Auth':'⚙️ Utilities & Auth' ?></span>
-            <ul class="megamenu-sublist">
               <li><a href="<?= BASE_URL ?>/tool-passgen.php">🔑 Password Generator</a></li>
-              <li><a href="<?= BASE_URL ?>/tool-passcheck.php">🛡️ Password Strength</a></li>
-              <li><a href="<?= BASE_URL ?>/tool-regex.php">🛡️ Password Regex Generator</a></li>
-              <li><a href="<?= BASE_URL ?>/tool-url.php">🔗 URL Encoder</a></li>
-              <li>
-    <a href="/soc-arsenal.php" class="dropdown-item <?= ($current_page === 'soc-arsenal.php') ? 'active' : '' ?>">
-        🛡️ <?= $lang==='es' ? 'Arsenal SOC (KQL)' : 'SOC Arsenal (KQL)' ?>
-    </a>
-</li>
-              <li>
-    <a href="<?= BASE_URL ?>/tool-osint-report.php" class="dropdown-item <?= ($current_page === 'tool-osint-report.php') ? 'active' : '' ?>" style="color: var(--cyan); font-weight: bold; text-shadow: 0 0 8px rgba(0,255,255,0.4);">
-        📄 <?= $lang==='es' ? 'Reporte OSINT' : 'OSINT Report' ?>
-    </a>
-</li>
             </ul>
           </li>
 
         </ul>
       </li>
-      <li>
-    <a href="/tool-scanner.php" class="dropdown-item <?= ($current_page === 'tool-scanner.php') ? 'active' : '' ?>">
-        🎯 <?= $lang==='es' ? 'Escáner Perimetral' : 'Perimeter Scanner' ?>
-    </a>
-</li>
-      <li>
-    <a href="<?= e(BASE_URL . '/missions/') ?>" style="color: #ff2a2a; font-weight: bold; font-family: var(--mono);">
-        [ CTF Challenges ]
-    </a>
-</li>
-      <!-- FIN DEL MEGA MENÚ -->
 
+      <li class="nav-dropdown">
+        <a href="#"><?= $lang === 'es' ? 'Comunidad' : 'Community' ?> <span class="chevron"></span></a>
+        <div class="dropdown-menu">
+            <a href="<?= BASE_URL ?>/missions/" class="dropdown-item" style="color: #ff2a2a; font-weight: bold; font-family: var(--mono);">🎯 [ CTF Challenges ]</a>
+            <a href="<?= BASE_URL ?>/sobre-mi.php" class="dropdown-item">👤 <?= $lang === 'es' ? 'Sobre Mí' : 'About Me' ?></a>
+        </div>
+      </li>
+
+      <li class="nav-donate-item">
         <a href="<?= BASE_URL ?>/index.php#donate" class="nav-support-btn">
             ♥ <?= $lang === 'es' ? 'Apóyame' : 'Support' ?>
-        </a></li>
-        <li>
-        
+        </a>
       </li>
+
     </ul>
+    
     <div class="lang-toggle">
       <a href="<?= e(langUrl('es')) ?>" class="lang-btn <?= $lang === 'es' ? 'active' : '' ?>">ES</a>
       <a href="<?= e(langUrl('en')) ?>" class="lang-btn <?= $lang === 'en' ? 'active' : '' ?>">EN</a>
@@ -165,82 +138,75 @@
 
   <div class="mobile-menu" id="mobile-menu">
     <ul class="mobile-nav-list">
-        <li><a href="<?= BASE_URL ?>/index.php#projects"><?= e($t['nav']['projects']) ?></a></li>
-        <li><a href="<?= BASE_URL ?>/index.php#manuals"><?= e($t['nav']['manuals']) ?></a></li>
-        <li><a href="sobre-mi.php" class="nav-link"><?= $lang === 'es' ? 'Sobre Mí' : 'About Me' ?></a></li>
+      
+      <li class="has-submenu">
+          <input type="checkbox" id="explore-toggle" class="submenu-checkbox" hidden>
+          <label for="explore-toggle" class="submenu-toggle">
+              <?= $lang === 'es' ? 'Explorar' : 'Explore' ?> <span class="chevron"></span>
+          </label>
+          <ul class="mobile-submenu">
+              <li><a href="<?= BASE_URL ?>/index.php#projects">📁 <?= e($t['nav']['projects']) ?></a></li>
+              <li><a href="<?= BASE_URL ?>/index.php#manuals">📖 <?= e($t['nav']['manuals']) ?></a></li>
+              <li><a href="<?= BASE_URL ?>/projects/skill-tree.php">🌳 <?= $lang === 'es' ? 'Árbol de Habilidades' : 'Skill Tree' ?></a></li>
+          </ul>
+      </li>
         
-        <li class="has-submenu">
-            <input type="checkbox" id="tools-toggle" class="submenu-checkbox" hidden>
-            <label for="tools-toggle" class="submenu-toggle">
-                <?= $lang === 'es' ? 'Herramientas' : 'Tools' ?>
-                <span class="chevron">▼</span>
-            </label>
-            
-            <ul class="mobile-submenu">
-                <!-- Buscador Móvil -->
-                <div class="mobile-search-wrap">
-                  <input type="text" id="mobile-menu-search" class="cyber-input" placeholder="<?= $lang==='es' ? '🔍 Buscar herramienta...' : '🔍 Search tool...' ?>">
-                </div>
+      <li class="has-submenu">
+          <input type="checkbox" id="tools-toggle" class="submenu-checkbox" hidden>
+          <label for="tools-toggle" class="submenu-toggle">
+              <?= $lang === 'es' ? 'Herramientas' : 'Tools' ?> <span class="chevron"></span>
+          </label>
+          
+          <ul class="mobile-submenu">
+              <div class="mobile-search-wrap">
+                <input type="text" id="mobile-menu-search" class="cyber-input" placeholder="<?= $lang==='es' ? '🔍 Buscar herramienta...' : '🔍 Search tool...' ?>">
+              </div>
 
-                <li class="mobile-menu-title"><?= $lang==='es'?'🔍 Auditoría & OSINT':'🔍 Audit & OSINT' ?></li>
-                <li><a href="<?= BASE_URL ?>/tool-recon.php">🔍 OSINT Quick Recon</a></li>
-                <li><a href="<?= BASE_URL ?>/tool-takeover.php">🏴‍☠️ Subdomain Takeover</a></li>
-                <li><a href="<?= BASE_URL ?>/tool-cloud.php">☁️ Cloud Enum</a></li>
-                <li><a href="<?= BASE_URL ?>/tool-loganalyzer.php">📊 Log Analyzer</a></li>
-                <li><a href="<?= BASE_URL ?>/tool-headers.php">📋 HTTP Header Analyzer</a></li>
-                <li><a href="<?= BASE_URL ?>/tool-ssh.php">🔑 SSH Analyzer</a></li>
-                <li><a href="<?= BASE_URL ?>/tool-ports.php">📋 Port Reference</a></li>
-                 <li><a href="<?= BASE_URL ?>/tool-dns.php">🔍 DNS Lookup</a></li>
+              <li class="mobile-menu-title"><?= $lang==='es'?'🛡️ Defensa & SOC':'🛡️ Defense & SOC' ?></li>
+              <li><a href="/soc-arsenal.php" style="color: #00d45a;">🛡️ <?= $lang==='es' ? 'Arsenal SOC (KQL)' : 'SOC Arsenal (KQL)' ?></a></li>
+              <li><a href="/projects/phishing-sandbox.php" style="color: #ff2a2a;">🎣 <?= $lang==='es' ? 'Simulador SOC' : 'SOC Simulator' ?></a></li>
+              
+              <li class="mobile-menu-title"><?= $lang==='es'?'🔍 Auditoría & OSINT':'🔍 Audit & OSINT' ?></li>
+              <li><a href="<?= BASE_URL ?>/tool-recon.php">🔍 OSINT Quick Recon</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-takeover.php">🏴‍☠️ Subdomain Takeover</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-cloud.php">☁️ Cloud Enum</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-osint-report.php">📄 <?= $lang==='es' ? 'Reporte OSINT' : 'OSINT Report' ?></a></li>
 
-                <li class="mobile-menu-title"><?= $lang==='es'?'🏴‍☠️ Pentesting & Explotación':'🏴‍☠️ Pentesting & Exploits' ?></li>
-                <li><a href="<?= BASE_URL ?>/tool-revshell.php">🐚 Reverse Shell Generator</a></li>
-                <li><a href="<?= BASE_URL ?>/tool-waf.php">🛡️ WAF Bypass Payloads</a></li>
-                <li><a href="<?= BASE_URL ?>/tool-cve.php">🐛 CVE & Exploit Finder</a></li>
-                <li><a href="<?= BASE_URL ?>/tool-wordlist.php">📝 Wordlist Generator</a></li>
-                <li><a href="<?= BASE_URL ?>/tool-httpbuilder.php">📡 HTTP Builder</a></li>
+              <li class="mobile-menu-title"><?= $lang==='es'?'🏴‍☠️ Pentesting & Explotación':'🏴‍☠️ Pentesting & Exploits' ?></li>
+              <li><a href="/tool-scanner.php">🎯 <?= $lang==='es' ? 'Escáner Perimetral' : 'Perimeter Scanner' ?></a></li>
+              <li><a href="<?= BASE_URL ?>/tool-revshell.php">🐚 Reverse Shell Generator</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-waf.php">🛡️ WAF Bypass Payloads</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-cve.php">🐛 CVE & Exploit Finder</a></li>
 
-                <li class="mobile-menu-title"><?= $lang==='es'?'🛡️ Redes & Sistemas':'🛡️ Network & Systems' ?></li>
-                <li><a href="<?= BASE_URL ?>/tool-ip.php">🌐 What is my IP?</a></li>
-                <li><a href="<?= BASE_URL ?>/tool-cidr.php">🌍 CIDR Calculator</a></li>
-                <li><a href="<?= BASE_URL ?>/tool-mac.php">🏷️ MAC Vendor Lookup</a></li>
-                <li><a href="<?= BASE_URL ?>/tool-chmod.php">🐧 Linux Chmod</a></li>
-                <li><a href="<?= BASE_URL ?>/tool-cron.php">⏱ Cron Parser</a></li>
+              <li class="mobile-menu-title"><?= $lang==='es'?'🔐 Cripto, Redes & Auth':'🔐 Crypto, Network & Auth' ?></li>
+              <li><a href="<?= BASE_URL ?>/tool-hash.php">#️⃣ Hash Generator</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-multidecode.php">🔄 Multi Decoder (CTF)</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-jwt.php">🔓 JWT Decoder</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-ip.php">🌐 What is my IP?</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-passgen.php">🔑 Password Generator</a></li>
+          </ul>
+      </li>
 
-                <li class="mobile-menu-title"><?= $lang==='es'?'🔐 Cripto & Hashes':'🔐 Crypto & Hashes' ?></li>
-                <li><a href="<?= BASE_URL ?>/tool-hash.php">#️⃣ Hash Generator</a></li>
-                <li><a href="<?= BASE_URL ?>/tool-hashcrack.php">🔓 Hash Analyzer</a></li>
-                <li><a href="<?= BASE_URL ?>/tool-base64.php">🔄 Base64</a></li>
-                <li><a href="<?= BASE_URL ?>/tool-multidecode.php">🔄 Multi Decoder (CTF)</a></li>
-                <li><a href="<?= BASE_URL ?>/tool-jwt.php">🔓 JWT Decoder</a></li>
+      <li class="has-submenu">
+          <input type="checkbox" id="community-toggle" class="submenu-checkbox" hidden>
+          <label for="community-toggle" class="submenu-toggle">
+              <?= $lang === 'es' ? 'Comunidad' : 'Community' ?> <span class="chevron"></span>
+          </label>
+          <ul class="mobile-submenu">
+              <li><a href="<?= BASE_URL ?>/missions/" style="color: #ff2a2a;">🎯 <?= $lang === 'es' ? 'Misiones CTF' : 'CTF Missions' ?></a></li>
+              <li><a href="<?= BASE_URL ?>/sobre-mi.php">👤 <?= $lang === 'es' ? 'Sobre Mí' : 'About Me' ?></a></li>
+          </ul>
+      </li>
 
-                <li class="mobile-menu-title"><?= $lang==='es'?'⚙️ Utilidades & Auth':'⚙️ Utilities & Auth' ?></li>
-                <li><a href="<?= BASE_URL ?>/tool-passgen.php">🔑 Password Generator</a></li>
-                <li><a href="<?= BASE_URL ?>/tool-passcheck.php">🛡️ Password Strength</a></li>
-                <li><a href="<?= BASE_URL ?>/tool-regex.php">🛡️ Password Regex Generator</a></li>
-                <li><a href="<?= BASE_URL ?>/tool-url.php">🔗 URL Encoder</a></li>
-                <li>
-                  <li>
-    <a href="/soc-arsenal.php" class="dropdown-item <?= ($current_page === 'soc-arsenal.php') ? 'active' : '' ?>">
-        🛡️ <?= $lang==='es' ? 'Arsenal SOC (KQL)' : 'SOC Arsenal (KQL)' ?>
-    </a>
-</li>
-    <a href="tool-osint-report.php" class="dropdown-item <?= ($current_page === 'tool-osint-report.php') ? 'active' : '' ?>" style="color: var(--cyan); font-weight: bold; text-shadow: 0 0 8px rgba(0,255,255,0.4);">
-        📄 <?= $lang==='es' ? 'Reporte OSINT' : 'OSINT Report' ?>
-    </a>
-</li>
-            </ul>
-        </li>
-
-        <li class="nav-donate-item">
-            <a href="<?= BASE_URL ?>/index.php#donate" class="nav-support-btn">
-                ♥ <?= $lang === 'es' ? 'Apóyame' : 'Support' ?> 
-            </a>
-        </li>
+      <li class="nav-donate-item" style="margin-top: 1rem;">
+          <a href="<?= BASE_URL ?>/index.php#donate" class="nav-support-btn" style="display: block; text-align: center;">
+              ♥ <?= $lang === 'es' ? 'Apóyame' : 'Support' ?> 
+          </a>
+      </li>
     </ul>
   </div>
 </nav>
 
-<!-- Lógica del Buscador del Menú -->
 <script nonce="<?= e($cspNonce) ?>">
 document.addEventListener('DOMContentLoaded', () => {
     const setupMenuSearch = (inputId, listSelector) => {
@@ -271,4 +237,3 @@ document.addEventListener('DOMContentLoaded', () => {
     setupMenuSearch('mobile-menu-search', '.mobile-submenu li:not(.mobile-menu-title):not(.mobile-search-wrap)');
 });
 </script>
-<!-- Secret: FLAG{h1dd3n_1n_pl41n_s1ght} -->

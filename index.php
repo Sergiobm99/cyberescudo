@@ -74,49 +74,57 @@ require __DIR__ . '/templates/header.php';
       <?= e($t['hero']['cta']) ?> <span class="arrow">↓</span>
     </button>
   </div>
-  <!-- AVISO DE THREAT INTEL EN LA CABECERA -->
-<div style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;">
+  <div style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;">
     <a href="#threat-intel" style="color: var(--cyan); text-decoration: none; font-size: 0.85rem; font-family: var(--mono); border: 1px solid rgba(0,255,255,0.3); padding: 6px 16px; border-radius: 20px; background: rgba(0,255,255,0.05); transition: all 0.3s;" onmouseover="this.style.background='rgba(0,255,255,0.1)'; this.style.borderColor='var(--cyan)';" onmouseout="this.style.background='rgba(0,255,255,0.05)'; this.style.borderColor='rgba(0,255,255,0.3)';">
         <span style="display:inline-block; margin-right:5px; animation: pulse 2s infinite;">🔴</span> 
         <?= $lang === 'es' ? 'Ver Últimas Alertas y 0-Days ↓' : 'View Latest Alerts & 0-Days ↓' ?>
     </a>
 </div>
 </section>
- <div class="md-container" style="max-width: 900px; margin: 0 auto 6rem auto;">
-    <a href="<?= e(BASE_URL . '/projects/skill-tree.php') ?>" class="banner-skill-tree">
-        <div class="bg-code">{ }</div>
-        <div class="banner-skill-tree-content">
-            <span style="color: var(--cyan); font-family: var(--mono); font-size: 0.9rem; letter-spacing: 2px;">// <?= $lang === 'es' ? 'DESCUBRE TU CAMINO' : 'DISCOVER YOUR PATH' ?></span>
-            <h3><?= $lang === 'es' ? 'Explora el Árbol de Habilidades' : 'Explore the Skill Tree' ?></h3>
-            <p>
-                <?= $lang === 'es' ? 'Accede al roadmap interactivo y domina la ciberseguridad nivel a nivel.' : 'Access the interactive roadmap and master cybersecurity tier by tier.' ?>
-            </p>
-        </div>
-        <div class="btn-road">
-            <?= $lang === 'es' ? 'VER ROADMAP' : 'VIEW ROADMAP' ?> <span>→</span>
-        </div>
-    </a>
-</div>
 
-<div id="interactive-simulator" class="md-container" style="max-width: 900px; margin-left: auto; margin-right: auto; padding-top: 2rem; padding-bottom: 2rem;">
-    <span class="section-label" style="color: #ff2a2a;">// <?= $lang === 'es' ? 'SIMULADOR INTERACTIVO' : 'INTERACTIVE SIMULATOR' ?></span>
-    <h2 style="margin-top: 0.5rem; margin-bottom: 1.5rem;">
-        <?= $lang === 'es' ? 'Simulador SOC: Análisis de Phishing' : 'SOC Simulator: Phishing Analysis' ?>
-    </h2>
+<section class="training-hub md-container" style="max-width: 1100px; margin: 0 auto 5rem auto;">
+    <span class="section-label" style="display: block; text-align: center; margin-bottom: 2rem; color: var(--cyan); font-family: var(--mono); letter-spacing: 2px;">
+        // <?= $lang === 'es' ? 'ZONA DE ENTRENAMIENTO TÁCTICO' : 'TACTICAL TRAINING ZONE' ?>
+    </span>
+    
+    <div class="training-hub-grid">
+        <a href="<?= e(BASE_URL . '/projects/skill-tree.php') ?>" class="training-card skill-tree-card">
+            <div class="icon">🌳</div>
+            <h3><?= $lang === 'es' ? 'Árbol de Habilidades' : 'Skill Tree' ?></h3>
+            <p><?= $lang === 'es' 
+                ? 'Domina el roadmap de ciberseguridad nivel a nivel. Aprende desde redes hasta pentesting avanzado.' 
+                : 'Master the cybersecurity roadmap tier by tier. Learn from networking to advanced pentesting.' ?></p>
+        </a>
 
-    <a href="<?= e(BASE_URL . '/projects/phishing-sandbox.php') ?>" class="banner-phishing">
-        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 1rem;">
-            <span style="font-size: 2rem;">🎣</span>
-            <h3><?= $lang === 'es' ? 'Entrenamiento de Triaje (Nivel 1)' : 'Triage Training (Tier 1)' ?></h3>
-        </div>
-        <p>
-            <?= $lang === 'es' ? 'Ponte en la piel de un analista de SOC. Analiza un correo electrónico malicioso interactivo y localiza visualmente las 3 banderas rojas (Red Flags) para neutralizar la amenaza.' : 'Step into the shoes of a SOC analyst. Analyze an interactive malicious email and visually locate the 3 red flags to neutralize the threat.' ?>
-        </p>
-        <span class="phishing-btn">
-            &gt;_ <?= $lang === 'es' ? 'INICIAR SIMULACIÓN' : 'START SIMULATION' ?>
-        </span>
-    </a>
-</div>
+        <a href="<?= e(BASE_URL . '/projects/phishing-sandbox.php') ?>" class="training-card simulator-card">
+            <div class="icon">🎣</div>
+            <h3><?= $lang === 'es' ? 'Simulador SOC' : 'SOC Simulator' ?></h3>
+            <p><?= $lang === 'es' 
+                ? 'Entrena tu triaje inicial. Analiza amenazas y localiza red flags de phishing en tiempo real.' 
+                : 'Train your initial triage. Analyze threats and locate phishing red flags in real-time.' ?></p>
+        </a>
+    </div>
+
+   <div class="training-hub-grid" style="margin-top: 2rem;">
+        
+        <a href="<?= e(BASE_URL . '/soc-arsenal.php') ?>" class="training-card arsenal-card">
+            <div class="icon">🛡️</div>
+            <h3><?= $lang === 'es' ? 'Arsenal SOC (KQL)' : 'SOC Arsenal (KQL)' ?></h3>
+            <p><?= $lang === 'es' 
+                ? 'Directorio táctico de consultas Threat Hunting y automatización.' 
+                : 'Tactical directory of Threat Hunting queries and automation.' ?></p>
+        </a>
+
+        <a href="<?= e(BASE_URL . '/tool-scanner.php') ?>" class="training-card scanner-card">
+            <div class="icon">🎯</div>
+            <h3><?= $lang === 'es' ? 'Escáner Perimetral' : 'Perimeter Scanner' ?></h3>
+            <p><?= $lang === 'es' 
+                ? 'Audita tu infraestructura y descubre vulnerabilidades expuestas.' 
+                : 'Audit your infrastructure and discover exposed vulnerabilities.' ?></p>
+        </a>
+        
+    </div>
+</section>
 
 <section id="projects" class="section">
   <div class="section-inner">
@@ -171,16 +179,13 @@ require __DIR__ . '/templates/header.php';
          data-search="<?= e(strtolower($item['title'] . ' ' . $item['desc'])) ?>">
         <div class="card-icon"><?= icon($item['icon']) ?></div>
         
-        <!-- Contenedor flex para que las etiquetas queden alineadas -->
         <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 0.8rem;">
             
-            <!-- 1. Etiqueta de dificultad normal (Básico, Intermedio...) -->
             <?php if ($dText): ?>
                 <span class="diff-badge <?= e($meta['diff']) ?>" style="margin: 0;"><?= e($dText) ?></span>
             <?php endif; ?>
             
-          <!-- Insignia del CTF -->
-            <?php if ($item['link'] === 'projects/sql-injection-manual.php' || $item['link'] === 'projects/inyeccion-comandos-rfi-lfi.php' || $item['link'] === 'projects/xss-practica.php' || $item['link'] === 'projects/csrf-clickjacking.php' || $item['link'] === 'projects/xxe-path-traversal.php' || $item['link'] === 'projects/privilege-escalation-linux.php' || $item['link'] === 'projects/gobuster.php' || $item['link'] === 'projects/incident-response.php' || $item['link'] === 'projects/secure-dev.php' || $item['link'] === 'projects/nmap.php' || $item['link'] === 'projects/hydra-brute-force.php' || $item['link'] === 'projects/vuln-scanner.php' || $item['link'] === 'projects/firewall.php' || $item['link'] === 'projects/network-monitoring.php' || $item['link'] === 'projects/shodan.php' || $item['link'] === 'projects/docker-hardening.php' || $item['link'] === 'projects/nikto-dirb.php' || $item['link'] === 'projects/burpsuite.php' || $item['link'] === 'projects/john-hashcat.php' || $item['link'] === 'projects/wireshark.php' || $item['link'] === 'projects/metasploit.php' || $item['link'] === 'projects/sqlmap.php' || $item['link'] === 'projects/hardening-apache.php' || $item['link'] === 'projects/insecurebank-analisis.php' || $item['link'] === 'projects/diva-auditoria.php' || $item['link'] === 'projects/diva-profundizacion.php' || $item['link'] === 'projects/android-reversing.php' || $item['link'] === 'projects/phishing-sandbox.php'): ?>
+          <?php if ($item['link'] === 'projects/sql-injection-manual.php' || $item['link'] === 'projects/inyeccion-comandos-rfi-lfi.php' || $item['link'] === 'projects/xss-practica.php' || $item['link'] === 'projects/csrf-clickjacking.php' || $item['link'] === 'projects/xxe-path-traversal.php' || $item['link'] === 'projects/privilege-escalation-linux.php' || $item['link'] === 'projects/gobuster.php' || $item['link'] === 'projects/incident-response.php' || $item['link'] === 'projects/secure-dev.php' || $item['link'] === 'projects/nmap.php' || $item['link'] === 'projects/hydra-brute-force.php' || $item['link'] === 'projects/vuln-scanner.php' || $item['link'] === 'projects/firewall.php' || $item['link'] === 'projects/network-monitoring.php' || $item['link'] === 'projects/shodan.php' || $item['link'] === 'projects/docker-hardening.php' || $item['link'] === 'projects/nikto-dirb.php' || $item['link'] === 'projects/burpsuite.php' || $item['link'] === 'projects/john-hashcat.php' || $item['link'] === 'projects/wireshark.php' || $item['link'] === 'projects/metasploit.php' || $item['link'] === 'projects/sqlmap.php' || $item['link'] === 'projects/hardening-apache.php' || $item['link'] === 'projects/insecurebank-analisis.php' || $item['link'] === 'projects/diva-auditoria.php' || $item['link'] === 'projects/diva-profundizacion.php' || $item['link'] === 'projects/android-reversing.php' || $item['link'] === 'projects/phishing-sandbox.php'): ?>
                 <span style="background: rgba(0, 255, 255, 0.1); color: var(--cyan); border: 1px solid var(--cyan); padding: 2px 8px; border-radius: 4px; font-size: 0.65rem; font-family: var(--mono); font-weight: bold; letter-spacing: 1px; display: inline-flex; align-items: center; gap: 5px; animation: pulse 2s infinite;">
                     <span style="font-size: 0.8rem;">🎯</span> <?= $lang === 'es' ? 'RETO CTF INCLUIDO' : 'CTF INSIDE' ?>
                 </span>
@@ -224,31 +229,7 @@ require __DIR__ . '/templates/header.php';
     </div>
   </div>
 </section>
-<div class="md-container" style="max-width: 900px; margin: 2rem auto 4rem auto;">
-    <div style="background: linear-gradient(45deg, #050505 0%, #1a0505 100%); border: 1px solid #ff2a2a; padding: 2rem; border-radius: 8px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: space-between; gap: 20px;">
-        
-        <div style="position: absolute; right: -20px; bottom: -20px; font-size: 8rem; opacity: 0.1; pointer-events: none;">💀</div>
 
-        <div style="position: relative; z-index: 1;">
-            <span style="color: #ff2a2a; font-family: var(--mono); font-size: 0.8rem; letter-spacing: 3px; display: block; margin-bottom: 0.5rem;">[ CLASSIFIED AREA ]</span>
-            <h2 style="margin: 0; font-size: 1.8rem; color: #fff;"><?= $lang === 'es' ? 'Centro de Misiones Black Ops' : 'Black Ops Mission Center' ?></h2>
-            <p style="color: #888; margin: 0.5rem 0 1.5rem 0; font-size: 1rem; max-width: 500px;">
-                <?= $lang === 'es' ? 'Retos de alto nivel: Análisis forense, auditoría de código y criptografía avanzada. ¿Tienes lo necesario?' : 'High-level challenges: Forensics, code audit, and advanced cryptography. Do you have what it takes?' ?>
-            </p>
-            <a href="<?= e(BASE_URL . '/missions/') ?>" 
-   style="display: inline-block; background: #ff2a2a; color: #fff; padding: 10px 25px; border-radius: 4px; text-decoration: none; font-family: var(--mono); font-weight: bold; font-size: 0.9rem; transition: 0.3s;"
-   onmouseover="this.style.background='#ff5555'; this.style.boxShadow='0 0 15px rgba(255,42,42,0.4)';"
-   onmouseout="this.style.background='#ff2a2a'; this.style.boxShadow='none';">
-    &gt;_ <?= $lang === 'es' ? 'ACCEDER AL SISTEMA' : 'ACCESS SYSTEM' ?>
-</a>
-        </div>
-
-        <div class="hide-mobile" style="border: 1px solid rgba(255,42,42,0.3); border-radius: 50%; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; position: relative;">
-            <div style="width: 80%; height: 80%; border: 1px solid rgba(255,42,42,0.5); border-radius: 50%; animation: pulse 2s infinite;"></div>
-            <span style="position: absolute; color: #ff2a2a; font-size: 0.7rem; font-family: var(--mono);">SCANNING</span>
-        </div>
-    </div>
-</div>
 <section id="about" class="section">
   <div class="section-inner">
     <div class="section-header">
@@ -279,7 +260,6 @@ require __DIR__ . '/templates/header.php';
   </div>
 </section>
 
-<!-- ─── THREAT INTELLIGENCE DASHBOARD ─── -->
 <div id="threat-intel" class="md-container" style="max-width: 900px; margin-left: auto; margin-right: auto; padding-top: 2rem; margin-bottom: 6rem;">
     <div class="section-label">// THREAT INTEL FEED</div>
     <h2 style="margin-top: 0.5rem; margin-bottom: 1.5rem;">
