@@ -1487,4 +1487,310 @@ document.addEventListener('DOMContentLoaded', () => {
         // Iniciar la herramienta por primera vez
         renderArsenalList(arsenalData);
     }
+   /* ═══════════════════════════════════════════════════════
+   IR TABLETOP SIMULATOR (RANSOMWARE)
+═══════════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Escudo protector: Solo se ejecuta si estamos en la página del simulador
+    const container = document.getElementById('ir-tabletop');
+    if (!container) return; 
+
+    // 2. Variables iniciales y configuración de idioma
+    const currentLang = container.getAttribute('data-lang') || 'es';
+    const textMin = currentLang === 'es' ? 'min' : 'min';
+
+    let budget = 1000000;
+    let timeLeft = 3600; // 60 minutos
+    let timerInterval;
+    let typeWriterInterval;
+    let logGeneratorInterval;
+
+    // 3. Elementos del DOM
+    const elStartScreen = document.getElementById('start-screen');
+    const elSimInterface = document.getElementById('sim-interface');
+    const elAarScreen = document.getElementById('aar-screen');
+    const elBudget = document.getElementById('hud-budget');
+    const elTimer = document.getElementById('hud-timer');
+    const elPhase = document.getElementById('hud-phase');
+    const elStoryText = document.getElementById('story-text');
+    const elChoices = document.getElementById('choices-container');
+    const elLogStream = document.getElementById('log-stream');
+    
+    // Botones principales
+    const btnStart = document.getElementById('btn-start-sim');
+    const btnRestart = document.getElementById('btn-restart-sim');
+
+    // 4. Base de Datos de Logs Falsos (Para el panel lateral)
+    const logMessages = [
+        { type: 'info', text: '[INFO] Port scan blocked from 192.168.1.45' },
+        { type: 'warn', text: '[WARN] Multiple failed logins for AD_Admin' },
+        { type: 'crit', text: '[CRIT] High volume of file modifications in E: Drive' },
+        { type: 'info', text: '[INFO] Azure AD Sync successful' },
+        { type: 'warn', text: '[WARN] Outbound traffic to Tor node detected' },
+        { type: 'info', text: '[INFO] EDR definition update completed' },
+        { type: 'crit', text: '[CRIT] Shadow copies deletion command executed (vssadmin)' },
+        { type: 'warn', text: '[WARN] CPU usage spiked to 99% on DB-SRV-01' },
+    ];
+
+    // 5. Escenarios del Juego (Bilingüe)
+    const scenarios = {
+        start: {
+            phase: { es: "IDENTIFICACIÓN", en: "IDENTIFICATION" },
+            text: {
+                es: "🔴 [17:03 PM] ALERTA CRÍTICA: El HelpDesk está saturado. Empleados de finanzas reportan que sus archivos tienen la extensión '.locked'. \n\nEn tu pantalla del EDR ves un pico masivo de encriptación en el servidor de archivos principal. Acaban de pedir 50 BTC de rescate.",
+                en: "🔴 [17:03 PM] CRITICAL ALERT: HelpDesk is flooded. Finance employees report files with a '.locked' extension. \n\nOn your EDR screen, you see a massive encryption spike on the main file server. They just demanded a 50 BTC ransom."
+            },
+            choices: [
+                { text: { es: "Aislar inmediatamente la subred afectada desde el EDR/Firewall.", en: "Immediately isolate the affected subnet from the EDR/Firewall." }, cost: 20000, time: 5, next: "triage_good" },
+                { text: { es: "Reiniciar los servidores físicos afectados para intentar abortar el malware.", en: "Hard reset the physical servers to try and abort the malware." }, cost: 150000, time: 15, next: "triage_bad" },
+                { text: { es: "Esperar a que el equipo de soporte técnico vaya a mirar los ordenadores.", en: "Wait for the IT support team to physically check the computers." }, cost: 300000, time: 25, next: "triage_fatal" }
+            ]
+        },
+        triage_good: {
+            phase: { es: "TRIAJE / ANÁLISIS", en: "TRIAGE / ANALYSIS" },
+            text: {
+                es: "🟢 Has contenido el sangrado inicial. Ahora necesitas saber CÓMO han entrado para cerrar el agujero.\n\nTienes varias fuentes de datos. ¿Qué investigas primero para encontrar al Paciente Cero?",
+                en: "🟢 You stopped the initial bleeding. Now you need to know HOW they got in to close the gap.\n\nYou have several data sources. What do you investigate first to find Patient Zero?"
+            },
+            choices: [
+                { text: { es: "Revisar los logs del proxy/email en busca de phishing reciente o descargas anómalas.", en: "Review proxy/email logs for recent phishing or anomalous downloads." }, cost: 5000, time: 10, next: "containment_good" },
+                { text: { es: "Hacer un volcado de memoria (Memory Dump) completo de todos los servidores.", en: "Perform a full Memory Dump of all servers." }, cost: 30000, time: 35, next: "containment_slow" }
+            ]
+        },
+        triage_bad: {
+            phase: { es: "TRIAJE / ANÁLISIS", en: "TRIAGE / ANALYSIS" },
+            text: {
+                es: "❌ Al apagar los servidores a lo bruto, has destruido la memoria volátil (RAM). El equipo forense acaba de perder las claves de cifrado en memoria y los procesos inyectados.\n\nHas perdido mucho tiempo y dinero. Debes seguir adelante.",
+                en: "❌ By hard resetting the servers, you destroyed volatile memory (RAM). The forensics team just lost the encryption keys in memory and the injected processes.\n\nYou lost a lot of time and money. You must move on."
+            },
+            choices: [
+                { text: { es: "Revisar los logs del proxy/email para buscar el vector de entrada.", en: "Review proxy/email logs to find the entry vector." }, cost: 10000, time: 15, next: "containment_good" }
+            ]
+        },
+        triage_fatal: {
+            phase: { es: "TRIAJE / ANÁLISIS", en: "TRIAGE / ANALYSIS" },
+            text: {
+                es: "💀 Perder 25 minutos esperando a soporte ha permitido que el ransomware salte de la red de finanzas a la red de producción. Toda la fábrica está parada.\n\nEstás al borde del colapso.",
+                en: "💀 Wasting 25 minutes waiting for support allowed the ransomware to jump from the finance network to the production network. The entire factory is halted.\n\nYou are on the brink of collapse."
+            },
+            choices: [
+                { text: { es: "Desconectar literalmente el cable de internet principal de la compañía.", en: "Literally unplug the company's main internet cable." }, cost: 100000, time: 5, next: "containment_good" }
+            ]
+        },
+        containment_good: {
+            phase: { es: "CONTENCIÓN Y ERRADICACIÓN", en: "CONTAINMENT & ERADICATION" },
+            text: {
+                es: "🔍 Descubriste que un empleado abrió un ZIP falso (Phishing). El atacante estableció persistencia con una tarea programada y robó credenciales con Mimikatz.\n\nEs hora de erradicar la amenaza. ¿Qué haces?",
+                en: "🔍 You discovered an employee opened a fake ZIP (Phishing). The attacker established persistence with a scheduled task and stole credentials using Mimikatz.\n\nIt's time to eradicate the threat. What do you do?"
+            },
+            choices: [
+                { text: { es: "Forzar reseteo masivo de contraseñas, borrar la tarea programada y bloquear la IP del atacante (C2).", en: "Force a massive password reset, delete the scheduled task, and block the attacker's IP (C2)." }, cost: 15000, time: 15, next: "pr_event" },
+                { text: { es: "Pasar el Antivirus por los servidores, borrar el malware y volver a encenderlos rápido.", en: "Run Antivirus on the servers, delete the malware, and turn them back on quickly." }, cost: 250000, time: 20, next: "eradication_fail" }
+            ]
+        },
+        containment_slow: {
+            phase: { es: "CONTENCIÓN Y ERRADICACIÓN", en: "CONTAINMENT & ERADICATION" },
+            text: {
+                es: "⚠️ El volcado de memoria fue útil, pero analizar 64GB de RAM de cada servidor te hizo perder 35 minutos de oro.\n\nEncuentras el malware, pero la empresa está perdiendo miles de euros por inactividad.",
+                en: "⚠️ The memory dump was useful, but analyzing 64GB of RAM per server wasted 35 golden minutes.\n\nYou found the malware, but the company is losing thousands of euros in downtime."
+            },
+            choices: [
+                { text: { es: "Resetear contraseñas, borrar persistencias y aislar dominios maliciosos.", en: "Reset passwords, delete persistence, and isolate malicious domains." }, cost: 20000, time: 10, next: "pr_event" }
+            ]
+        },
+        eradication_fail: {
+            phase: { es: "ERRADICACIÓN FALLIDA", en: "ERADICATION FAILED" },
+            text: {
+                es: "❌ NUNCA confíes en un sistema comprometido. El Antivirus borró el ejecutable, pero el atacante tenía un Rootkit oculto y credenciales válidas. A la media hora, vuelven a cifrar todo.\n\nEl CEO está gritando por teléfono.",
+                en: "❌ NEVER trust a compromised system. The Antivirus deleted the executable, but the attacker had a hidden Rootkit and valid credentials. Half an hour later, they encrypt everything again.\n\nThe CEO is screaming on the phone."
+            },
+            choices: [
+                { text: { es: "Formatear a bajo nivel (Re-image) todos los equipos afectados.", en: "Low-level format (Re-image) all affected machines." }, cost: 150000, time: 25, next: "pr_event" }
+            ]
+        },
+        pr_event: {
+            phase: { es: "COMUNICACIONES / LEGAL", en: "COMMUNICATIONS / LEGAL" },
+            text: {
+                es: "🚨 EVENTO INESPERADO: Un periódico local acaba de publicar que la empresa ha sido hackeada. Los clientes están llamando asustados preguntando si sus datos han sido robados.\n\nEl departamento de Legal y PR te pide instrucciones técnicas inmediatas.",
+                en: "🚨 UNEXPECTED EVENT: A local newspaper just published that the company was hacked. Scared customers are calling to ask if their data was stolen.\n\nThe Legal and PR department asks you for immediate technical instructions."
+            },
+            choices: [
+                { text: { es: "Emitir un comunicado honesto confirmando el ataque, pero asegurando que los sistemas están contenidos y bajo investigación forense.", en: "Issue an honest statement confirming the attack, but assuring that systems are contained and under forensic investigation." }, cost: 10000, time: 10, next: "victory" },
+                { text: { es: "Negar el ataque publicamente y decir que es un 'mantenimiento técnico programado'.", en: "Publicly deny the attack and say it's a 'scheduled technical maintenance'." }, cost: 400000, time: 15, next: "pr_disaster" }
+            ]
+        },
+        pr_disaster: {
+            phase: { es: "RECUPERACIÓN", en: "RECOVERY" },
+            text: {
+                es: "💀 Mentir fue la peor idea. El grupo de Ransomware, al ver que lo negabas, acaba de publicar 10GB de correos del CEO en la Dark Web como prueba.\n\nLas multas de la GDPR/RGPD van a ser históricas, pero debes terminar de levantar los sistemas.",
+                en: "💀 Lying was the worst idea. The Ransomware group, seeing you deny it, just published 10GB of the CEO's emails on the Dark Web as proof.\n\nGDPR fines will be historic, but you must finish bringing the systems up."
+            },
+            choices: [
+                { text: { es: "Levantar servicios desde backups inmutables offline.", en: "Bring up services from offline immutable backups." }, cost: 50000, time: 10, next: "victory" }
+            ]
+        },
+        victory: { phase: { es: "", en: "" }, text: { es: "", en: "" }, choices: [] },
+        game_over: { phase: { es: "", en: "" }, text: { es: "", en: "" }, choices: [] }
+    };
+
+    // 6. Funciones de Ayuda
+    function formatMoney(amount) {
+        return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (currentLang === 'es' ? " €" : " €");
+    }
+    
+    function formatTime(seconds) {
+        const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+        const s = (seconds % 60).toString().padStart(2, '0');
+        return `${m}:${s}`;
+    }
+
+    function updateHUD() {
+        elBudget.innerText = formatMoney(budget);
+        elTimer.innerText = formatTime(timeLeft);
+        
+        elBudget.style.color = budget < 300000 ? "#ff2a2a" : "#00d45a";
+        elTimer.style.color = timeLeft < 900 ? "#ff2a2a" : "#fff";
+    }
+
+    function generateLiveLog() {
+        if(!elLogStream) return;
+        const randomLog = logMessages[Math.floor(Math.random() * logMessages.length)];
+        const time = new Date().toLocaleTimeString();
+        
+        const logDiv = document.createElement('div');
+        logDiv.className = `log-entry log-${randomLog.type}`;
+        logDiv.innerText = `${time} ${randomLog.text}`;
+        
+        elLogStream.appendChild(logDiv);
+        
+        if(elLogStream.children.length > 12) {
+            elLogStream.removeChild(elLogStream.firstChild);
+        }
+    }
+
+    function showAAR(isWin) {
+        clearInterval(timerInterval);
+        clearInterval(logGeneratorInterval);
+        
+        elSimInterface.style.display = 'none';
+        elAarScreen.style.display = 'block';
+
+        let rank = 'F';
+        let color = '#ff2a2a';
+        let desc = '';
+
+        if (!isWin || budget <= 0 || timeLeft <= 0) {
+            desc = currentLang === 'es' ? 'Incidente catastrófico. Negocio paralizado y SOC externalizado.' : 'Catastrophic incident. Business paralyzed and SOC outsourced.';
+        } else {
+            if (budget >= 800000 && timeLeft >= 1800) {
+                rank = 'S'; color = '#b400ff'; desc = currentLang === 'es' ? 'Respuesta perfecta. Daños minimizados con precisión de cirujano.' : 'Perfect response. Damage minimized with surgical precision.';
+            } else if (budget >= 500000) {
+                rank = 'A'; color = '#00d45a'; desc = currentLang === 'es' ? 'Gran respuesta. La empresa sufrió pero está a salvo.' : 'Great response. The company suffered but is safe.';
+            } else if (budget >= 200000) {
+                rank = 'B'; color = '#00ffff'; desc = currentLang === 'es' ? 'Sistemas recuperados, pero con daños económicos altos.' : 'Systems recovered, but with high economic damages.';
+            } else {
+                rank = 'C'; color = '#f0c000'; desc = currentLang === 'es' ? 'Empresa al borde de la quiebra. Has salvado los muebles por poco.' : 'Company on the verge of bankruptcy. You barely saved the furniture.';
+            }
+        }
+
+        const elRank = document.getElementById('aar-rank');
+        elRank.innerText = rank;
+        elRank.style.color = color;
+        
+        document.getElementById('aar-desc').innerText = desc;
+        document.getElementById('aar-budget').innerText = formatMoney(budget < 0 ? 0 : budget);
+        document.getElementById('aar-time').innerText = formatTime(timeLeft < 0 ? 0 : timeLeft);
+    }
+
+    function typeWriterEffect(text, element, callback) {
+        elChoices.style.display = 'none'; 
+        element.innerHTML = "";
+        let i = 0;
+        
+        clearInterval(typeWriterInterval);
+        typeWriterInterval = setInterval(() => {
+            if (i < text.length) {
+                element.innerHTML += text.charAt(i) === '\n' ? '<br>' : text.charAt(i);
+                i++;
+            } else {
+                clearInterval(typeWriterInterval);
+                elChoices.style.display = 'flex';
+                if(callback) callback();
+            }
+        }, 12); 
+    }
+
+    function loadScenario(scenarioKey) {
+        if (scenarioKey === 'victory') return showAAR(true);
+        if (scenarioKey === 'game_over') return showAAR(false);
+
+        const data = scenarios[scenarioKey];
+        elPhase.innerText = data.phase[currentLang];
+        
+        typeWriterEffect(data.text[currentLang], elStoryText, () => {
+            elChoices.innerHTML = "";
+            data.choices.forEach(choice => {
+                const btn = document.createElement('button');
+                btn.className = 'ir-choice-btn';
+                
+                const textSpan = document.createElement('span');
+                textSpan.innerText = "> " + choice.text[currentLang];
+                
+                const metaSpan = document.createElement('span');
+                metaSpan.className = 'ir-choice-meta';
+                if(choice.cost > 0 || choice.time > 0) {
+                    metaSpan.innerHTML = `⏳ -${choice.time} ${textMin}<br>💸 -${formatMoney(choice.cost)}`;
+                }
+
+                btn.appendChild(textSpan);
+                btn.appendChild(metaSpan);
+
+                btn.onclick = () => handleChoice(choice.next, choice.cost, choice.time);
+                elChoices.appendChild(btn);
+            });
+        });
+    }
+
+    function handleChoice(nextStep, cost, timePenaltyMinutes) {
+        budget -= cost;
+        timeLeft -= (timePenaltyMinutes * 60);
+        updateHUD();
+
+        if (budget <= 0 || timeLeft <= 0) {
+            showAAR(false);
+        } else {
+            loadScenario(nextStep);
+        }
+    }
+
+    // 7. Event Listeners (Botones)
+    if(btnStart) {
+        btnStart.addEventListener('click', () => {
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('sim-interface').style.display = 'block';
+            
+            // Iniciar Reloj Principal
+            timerInterval = setInterval(() => {
+                if(timeLeft > 0) {
+                    timeLeft--;
+                    updateHUD();
+                    if(timeLeft === 0) showAAR(false);
+                }
+            }, 1000); 
+
+            // Iniciar Logs Falsos
+            logGeneratorInterval = setInterval(generateLiveLog, Math.random() * 2000 + 1500);
+
+            updateHUD();
+            loadScenario('start');
+        });
+    }
+
+    // El botón que fallaba ahora recargará limpiamente la página usando JS
+    if(btnRestart) {
+        btnRestart.addEventListener('click', () => {
+            location.reload();
+        });
+    }
+});
 })();

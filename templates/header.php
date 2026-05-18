@@ -52,6 +52,7 @@
             <a href="<?= BASE_URL ?>/index.php#projects" class="dropdown-item">📁 <?= e($t['nav']['projects']) ?></a>
             <a href="<?= BASE_URL ?>/index.php#manuals" class="dropdown-item">📖 <?= e($t['nav']['manuals']) ?></a>
             <a href="<?= BASE_URL ?>/projects/skill-tree.php" class="dropdown-item">🌳 <?= $lang === 'es' ? 'Árbol de Habilidades' : 'Skill Tree' ?></a>
+            <a href="<?= BASE_URL ?>/projects/ransomware-tabletop.php" style="color: #ff2a2a; font-weight: bold;">🚨 <?= $lang === 'es' ? 'Simulador IR: Ransomware' : 'IR Simulator: Ransomware' ?></a>
         </div>
       </li>
       
@@ -148,6 +149,7 @@
               <li><a href="<?= BASE_URL ?>/index.php#projects">📁 <?= e($t['nav']['projects']) ?></a></li>
               <li><a href="<?= BASE_URL ?>/index.php#manuals">📖 <?= e($t['nav']['manuals']) ?></a></li>
               <li><a href="<?= BASE_URL ?>/projects/skill-tree.php">🌳 <?= $lang === 'es' ? 'Árbol de Habilidades' : 'Skill Tree' ?></a></li>
+              <li><a href="<?= BASE_URL ?>/projects/ransomware-tabletop.php" style="color: #ff2a2a; font-weight: bold;">🚨 <?= $lang === 'es' ? 'Simulador IR: Ransomware' : 'IR Simulator: Ransomware' ?></a></li>
           </ul>
       </li>
         
