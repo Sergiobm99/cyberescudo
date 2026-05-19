@@ -1793,4 +1793,158 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+/* ═══════════════════════════════════════════════════════
+   MITRE ATT&CK VISUAL MAPPER (LIVE SYNC VERSION)
+═══════════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+    const mitreContainer = document.getElementById('mitre-mapper');
+    if (!mitreContainer) return;
+
+    const currentLang = mitreContainer.getAttribute('data-lang') || 'es';
+    const baseUrl = mitreContainer.getAttribute('data-url') || '';
+
+    const uiTexts = {
+        descLabel: currentLang === 'es' ? 'Descripción Táctica (Original)' : 'Tactical Description',
+        platLabel: currentLang === 'es' ? 'Sistemas Afectados' : 'Affected Platforms',
+        kqlLabel: currentLang === 'es' ? 'Arsenal SOC (KQL)' : 'SOC Arsenal (KQL)',
+        kqlBtn: currentLang === 'es' ? 'BUSCAR REGLA DE DETECCIÓN' : 'SEARCH DETECTION RULE',
+        loading: currentLang === 'es' ? 'Descargando inteligencia de MITRE...' : 'Downloading MITRE intelligence...',
+        syncText: currentLang === 'es' ? 'Última Sync: ' : 'Last Sync: '
+    };
+
+    const board = document.getElementById('matrix-board');
+    const searchInput = document.getElementById('mitre-search');
+    const detailPanel = document.getElementById('detail-panel');
+    const syncStatus = document.getElementById('sync-status');
+
+    let globalTechniques = [];
+
+    board.innerHTML = `<div style="padding: 2rem; color: var(--cyan); font-family: var(--mono);"><span class="cyber-spinner"></span> ${uiTexts.loading}</div>`;
+
+    // Truco antibalas: Añadimos ?v=timestamp para que el navegador NUNCA use caché viejo
+    fetch(`${baseUrl}/assets/data/mitre-cache.json?v=${new Date().getTime()}`)
+        .then(response => {
+            if(!response.ok) throw new Error("Caché no encontrada.");
+            return response.json();
+        })
+        .then(data => {
+            globalTechniques = data.techniques || [];
+            
+            const syncDate = new Date(data.last_sync).toLocaleString();
+            if(syncStatus) syncStatus.innerText = `${uiTexts.syncText} ${syncDate}`;
+
+            board.innerHTML = ''; 
+
+            if (globalTechniques.length === 0) {
+                board.innerHTML = `<div style="color: #ff5050; padding: 2rem; font-family: var(--mono);">⚠️ ERROR: La base de datos está vacía. Ejecuta el script update-mitre.php en tu servidor.</div>`;
+                return;
+            }
+
+            (data.tactics || []).forEach(tactic => {
+                const col = document.createElement('div');
+                col.className = 'tactic-col';
+                
+                const header = document.createElement('div');
+                header.className = 'tactic-header';
+                header.innerText = tactic.name;
+                col.appendChild(header);
+
+                const techContainer = document.createElement('div');
+                techContainer.className = 'tactic-techniques';
+
+                const tTechs = globalTechniques.filter(t => t.tactic_shortname === tactic.shortname);
+                
+                // Muestra hasta 25 técnicas por columna (MITRE tiene cientos, si ponemos todas el PC explota)
+                tTechs.slice(0, 25).forEach(tech => {
+                    const card = document.createElement('div');
+                    card.className = 'tech-card';
+                    card.setAttribute('data-id', tech.id);
+                    card.innerHTML = `<div class="tech-id">${tech.id}</div><div class="tech-name">${tech.name}</div>`;
+                    card.addEventListener('click', () => showDetails(tech));
+                    techContainer.appendChild(card);
+                });
+
+                if(tTechs.length > 25) {
+                    const more = document.createElement('div');
+                    more.style = "text-align:center; font-family:var(--mono); color:var(--gray-dark); font-size: 0.7rem; padding: 0.5rem;";
+                    more.innerText = `+${tTechs.length - 25} ocultas... Usa el buscador`;
+                    techContainer.appendChild(more);
+                }
+
+                col.appendChild(techContainer);
+                board.appendChild(col);
+            });
+        })
+        .catch(error => {
+            board.innerHTML = `<div style="color: #ff5050; padding: 2rem; font-family: var(--mono);">⚠️ ERROR: ${error.message}</div>`;
+            if(syncStatus) {
+                syncStatus.innerText = "Sincronización Fallida";
+                syncStatus.parentElement.style.borderColor = "#ff5050";
+                syncStatus.parentElement.style.color = "#ff5050";
+            }
+        });
+
+    if(searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase().trim();
+            const allCards = document.querySelectorAll('.tech-card');
+
+            if (term === '') {
+                allCards.forEach(c => { c.classList.remove('dimmed'); c.classList.remove('highlight'); });
+                return;
+            }
+
+            allCards.forEach(card => {
+                const techId = card.getAttribute('data-id');
+                const tech = globalTechniques.find(t => t.id === techId);
+                if(!tech) return;
+                
+                const matchName = (tech.name || '').toLowerCase().includes(term);
+                const matchId = (tech.id || '').toLowerCase().includes(term);
+                
+                // Protegemos el buscador por si no tiene plataformas asignadas
+                const platforms = Array.isArray(tech.platforms) ? tech.platforms : [];
+                const matchPlat = platforms.some(p => (p || '').toLowerCase().includes(term));
+                
+                if (matchName || matchId || matchPlat) {
+                    card.classList.remove('dimmed');
+                    card.classList.add('highlight');
+                } else {
+                    card.classList.add('dimmed');
+                    card.classList.remove('highlight');
+                }
+            });
+        });
+    }
+
+    function showDetails(tech) {
+        const platforms = Array.isArray(tech.platforms) ? tech.platforms : ['General'];
+        const platHtml = platforms.map(p => `<span class="apt-badge" style="color:#fff; border-color:#555; background:rgba(255,255,255,0.1);">${p}</span>`).join('');
+        
+        detailPanel.innerHTML = `
+            <div class="dt-id">${tech.id}</div>
+            <div class="dt-name">${tech.name}</div>
+            
+            <div class="dt-section">
+                <div class="dt-label">${uiTexts.descLabel}</div>
+                <div class="dt-text" style="color:#a0d0c0;">${tech.desc || 'Sin descripción'}</div>
+            </div>
+
+            <div class="dt-section">
+                <div class="dt-label">${uiTexts.platLabel}</div>
+                <div>${platHtml}</div>
+            </div>
+
+            <div class="dt-section">
+                <div class="dt-label">${uiTexts.kqlLabel}</div>
+                <a href="${baseUrl}/soc-arsenal.php" class="kql-btn">
+                    <span style="font-size: 1.2rem;">🛡️</span> ${uiTexts.kqlBtn}
+                </a>
+            </div>
+        `;
+        
+        document.querySelectorAll('.tech-card').forEach(c => c.style.borderLeftColor = 'transparent');
+        document.querySelector(`.tech-card[data-id="${tech.id}"]`).style.borderLeftColor = 'var(--cyan)';
+    }
+});
 })();

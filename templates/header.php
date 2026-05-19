@@ -53,6 +53,7 @@
             <a href="<?= BASE_URL ?>/index.php#manuals" class="dropdown-item">📖 <?= e($t['nav']['manuals']) ?></a>
             <a href="<?= BASE_URL ?>/projects/skill-tree.php" class="dropdown-item">🌳 <?= $lang === 'es' ? 'Árbol de Habilidades' : 'Skill Tree' ?></a>
             <a href="<?= BASE_URL ?>/projects/ransomware-tabletop.php" style="color: #ff2a2a; font-weight: bold;">🚨 <?= $lang === 'es' ? 'Simulador IR: Ransomware' : 'IR Simulator: Ransomware' ?></a>
+            <a href="<?= BASE_URL ?>/projects/mitre-mapper.php" style="color: #b400ff; font-weight: bold; text-shadow: 0 0 8px rgba(180,0,255,0.4);">🗺️ <?= $lang==='es' ? 'MITRE ATT&CK Mapper' : 'MITRE ATT&CK Mapper' ?></a>
         </div>
       </li>
       
@@ -150,6 +151,7 @@
               <li><a href="<?= BASE_URL ?>/index.php#manuals">📖 <?= e($t['nav']['manuals']) ?></a></li>
               <li><a href="<?= BASE_URL ?>/projects/skill-tree.php">🌳 <?= $lang === 'es' ? 'Árbol de Habilidades' : 'Skill Tree' ?></a></li>
               <li><a href="<?= BASE_URL ?>/projects/ransomware-tabletop.php" style="color: #ff2a2a; font-weight: bold;">🚨 <?= $lang === 'es' ? 'Simulador IR: Ransomware' : 'IR Simulator: Ransomware' ?></a></li>
+              <li><a href="<?= BASE_URL ?>/projects/mitre-mapper.php" style="color: #b400ff; font-weight: bold; text-shadow: 0 0 8px rgba(180,0,255,0.4);">🗺️ <?= $lang==='es' ? 'MITRE ATT&CK Mapper' : 'MITRE ATT&CK Mapper' ?></a></li>
           </ul>
       </li>
         
