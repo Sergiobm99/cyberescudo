@@ -1946,5 +1946,55 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.tech-card').forEach(c => c.style.borderLeftColor = 'transparent');
         document.querySelector(`.tech-card[data-id="${tech.id}"]`).style.borderLeftColor = 'var(--cyan)';
     }
+    // =========================================================
+    // MEJORA UX: SCROLL HORIZONTAL CON CLICK & DRAG
+    // =========================================================
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+    let isDragging = false;
+
+    // Cambiar el cursor por defecto al pasar por encima del panel
+    board.style.cursor = 'grab';
+
+    board.addEventListener('mousedown', (e) => {
+        isDown = true;
+        isDragging = false; // Reiniciamos el estado de arrastre
+        board.style.cursor = 'grabbing'; // Cursor de "agarrar"
+        startX = e.pageX - board.offsetLeft;
+        scrollLeft = board.scrollLeft;
+    });
+
+    board.addEventListener('mouseleave', () => {
+        isDown = false;
+        board.style.cursor = 'grab';
+    });
+
+    board.addEventListener('mouseup', () => {
+        isDown = false;
+        board.style.cursor = 'grab';
+    });
+
+    board.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault(); // Evita que se seleccione el texto mientras arrastras
+        const x = e.pageX - board.offsetLeft;
+        const walk = (x - startX) * 1.5; // Multiplicador de velocidad de scroll
+        
+        // Si el usuario mueve el ratón más de 5 píxeles, lo consideramos un "arrastre" y no un clic normal
+        if (Math.abs(walk) > 5) {
+            isDragging = true; 
+        }
+        
+        board.scrollLeft = scrollLeft - walk;
+    });
+
+    // Escudo protector: Evita que se abra una tarjeta de técnica si el usuario la usó para arrastrar
+    board.addEventListener('click', (e) => {
+        if (isDragging) {
+            e.preventDefault();
+            e.stopPropagation(); // Detiene el clic para que no llegue a la tarjeta
+        }
+    }, true); // El "true" captura el evento antes de que baje a los elementos hijos
 });
 })();
