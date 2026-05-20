@@ -39,7 +39,7 @@
 <nav class="navbar" id="navbar">
   <div class="nav-inner">
 
-    <a href="<?= BASE_URL ?>/index.php" class="logo">
+    <a href="<?= BASE_URL ?>/index" class="logo">
       <img src="<?= BASE_URL ?>/assets/img/logo-cyberescudo.jpg" alt="CyberEscudo Logo" class="nav-logo-img">
       <span>Cyber<span class="accent">Escudo</span></span>
     </a>
@@ -49,11 +49,11 @@
       <li class="nav-dropdown">
         <a href="#"><?= $lang === 'es' ? 'Explorar' : 'Explore' ?> <span class="chevron"></span></a>
         <div class="dropdown-menu">
-            <a href="<?= BASE_URL ?>/index.php#projects" class="dropdown-item">📁 <?= e($t['nav']['projects']) ?></a>
-            <a href="<?= BASE_URL ?>/index.php#manuals" class="dropdown-item">📖 <?= e($t['nav']['manuals']) ?></a>
-            <a href="<?= BASE_URL ?>/projects/skill-tree.php" class="dropdown-item">🌳 <?= $lang === 'es' ? 'Árbol de Habilidades' : 'Skill Tree' ?></a>
-            <a href="<?= BASE_URL ?>/projects/ransomware-tabletop.php" style="color: #ff2a2a; font-weight: bold;">🚨 <?= $lang === 'es' ? 'Simulador IR: Ransomware' : 'IR Simulator: Ransomware' ?></a>
-            <a href="<?= BASE_URL ?>/projects/mitre-mapper.php" style="color: #b400ff; font-weight: bold; text-shadow: 0 0 8px rgba(180,0,255,0.4);">🗺️ <?= $lang==='es' ? 'MITRE ATT&CK Mapper' : 'MITRE ATT&CK Mapper' ?></a>
+            <a href="<?= BASE_URL ?>/index#projects" class="dropdown-item">📁 <?= e($t['nav']['projects']) ?></a>
+            <a href="<?= BASE_URL ?>/index#manuals" class="dropdown-item">📖 <?= e($t['nav']['manuals']) ?></a>
+            <a href="<?= BASE_URL ?>/projects/skill-tree" class="dropdown-item">🌳 <?= $lang === 'es' ? 'Árbol de Habilidades' : 'Skill Tree' ?></a>
+            <a href="<?= BASE_URL ?>/projects/ransomware-tabletop" style="color: #ff2a2a; font-weight: bold;">🚨 <?= $lang === 'es' ? 'Simulador IR: Ransomware' : 'IR Simulator: Ransomware' ?></a>
+            <a href="<?= BASE_URL ?>/projects/mitre-mapper" style="color: #b400ff; font-weight: bold; text-shadow: 0 0 8px rgba(180,0,255,0.4);">🗺️ <?= $lang==='es' ? 'MITRE ATT&CK Mapper' : 'MITRE ATT&CK Mapper' ?></a>
         </div>
       </li>
       
@@ -68,44 +68,44 @@
           <li class="megamenu-col">
             <span class="megamenu-title"><?= $lang==='es'?'🔍 Auditoría & OSINT':'🔍 Audit & OSINT' ?></span>
             <ul class="megamenu-sublist">
-              <li><a href="<?= BASE_URL ?>/tool-recon.php">🔍 OSINT Quick Recon</a></li>
-              <li><a href="<?= BASE_URL ?>/tool-takeover.php">🏴‍☠️ Subdomain Takeover</a></li>
-              <li><a href="<?= BASE_URL ?>/tool-cloud.php">☁️ Cloud Enum</a></li>
-              <li><a href="<?= BASE_URL ?>/tool-loganalyzer.php">📊 Log Analyzer</a></li>
-              <li><a href="<?= BASE_URL ?>/tool-headers.php">📋 HTTP Header Analyzer</a></li>
-              <li><a href="<?= BASE_URL ?>/tool-ssh.php">🔑 SSH Analyzer</a></li>
-              <li><a href="<?= BASE_URL ?>/tool-ports.php">📋 Port Reference</a></li>
-              <li><a href="<?= BASE_URL ?>/tool-dns.php">🔍 DNS Lookup</a></li>
-              <li><a href="<?= BASE_URL ?>/tool-osint-report.php" style="color: var(--cyan); font-weight: bold; text-shadow: 0 0 8px rgba(0,255,255,0.4);">📄 <?= $lang==='es' ? 'Reporte OSINT' : 'OSINT Report' ?></a></li>
+              <li><a href="<?= BASE_URL ?>/tool-recon">🔍 OSINT Quick Recon</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-takeover">🏴‍☠️ Subdomain Takeover</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-cloud">☁️ Cloud Enum</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-loganalyzer">📊 Log Analyzer</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-headers">📋 HTTP Header Analyzer</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-ssh">🔑 SSH Analyzer</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-ports">📋 Port Reference</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-dns">🔍 DNS Lookup</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-osint-report" style="color: var(--cyan); font-weight: bold; text-shadow: 0 0 8px rgba(0,255,255,0.4);">📄 <?= $lang==='es' ? 'Reporte OSINT' : 'OSINT Report' ?></a></li>
             </ul>
           </li>
 
           <li class="megamenu-col">
             <span class="megamenu-title"><?= $lang==='es'?'🏴‍☠️ Pentesting & Defensa':'🏴‍☠️ Pentesting & Defense' ?></span>
             <ul class="megamenu-sublist">
-              <li><a href="/soc-arsenal.php" style="color: #00d45a; font-weight: bold;">🛡️ <?= $lang==='es' ? 'Arsenal SOC (KQL)' : 'SOC Arsenal (KQL)' ?></a></li>
-              <li><a href="/projects/phishing-sandbox.php" style="color: #ff2a2a; font-weight: bold;">🎣 <?= $lang==='es' ? 'Simulador SOC' : 'SOC Simulator' ?></a></li>
-              <li><a href="/tool-scanner.php">🎯 <?= $lang==='es' ? 'Escáner Perimetral' : 'Perimeter Scanner' ?></a></li>
-              <li><a href="<?= BASE_URL ?>/tool-revshell.php">🐚 Reverse Shell Generator</a></li>
-              <li><a href="<?= BASE_URL ?>/tool-waf.php">🛡️ WAF Bypass Payloads</a></li>
-              <li><a href="<?= BASE_URL ?>/tool-cve.php">🐛 CVE & Exploit Finder</a></li>
-              <li><a href="<?= BASE_URL ?>/tool-wordlist.php">📝 Wordlist Generator</a></li>
-              <li><a href="<?= BASE_URL ?>/tool-httpbuilder.php">📡 HTTP Builder</a></li>
+              <li><a href="<?= BASE_URL ?>/soc-arsenal" style="color: #00d45a; font-weight: bold;">🛡️ <?= $lang==='es' ? 'Arsenal SOC (KQL)' : 'SOC Arsenal (KQL)' ?></a></li>
+              <li><a href="<?= BASE_URL ?>/projects/phishing-sandbox" style="color: #ff2a2a; font-weight: bold;">🎣 <?= $lang==='es' ? 'Simulador SOC' : 'SOC Simulator' ?></a></li>
+              <li><a href="<?= BASE_URL ?>/tool-scanner">🎯 <?= $lang==='es' ? 'Escáner Perimetral' : 'Perimeter Scanner' ?></a></li>
+              <li><a href="<?= BASE_URL ?>/tool-revshell">🐚 Reverse Shell Generator</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-waf">🛡️ WAF Bypass Payloads</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-cve">🐛 CVE & Exploit Finder</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-wordlist">📝 Wordlist Generator</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-httpbuilder">📡 HTTP Builder</a></li>
             </ul>
           </li>
 
           <li class="megamenu-col">
             <span class="megamenu-title"><?= $lang==='es'?'🔐 Cripto & Redes':'🔐 Crypto & Network' ?></span>
             <ul class="megamenu-sublist">
-              <li><a href="<?= BASE_URL ?>/tool-ip.php">🌐 What is my IP?</a></li>
-              <li><a href="<?= BASE_URL ?>/tool-cidr.php">🌍 CIDR Calculator</a></li>
-              <li><a href="<?= BASE_URL ?>/tool-mac.php">🏷️ MAC Vendor Lookup</a></li>
-              <li><a href="<?= BASE_URL ?>/tool-hash.php">#️⃣ Hash Generator</a></li>
-              <li><a href="<?= BASE_URL ?>/tool-hashcrack.php">🔓 Hash Analyzer</a></li>
-              <li><a href="<?= BASE_URL ?>/tool-base64.php">🔄 Base64</a></li>
-              <li><a href="<?= BASE_URL ?>/tool-multidecode.php">🔄 Multi Decoder (CTF)</a></li>
-              <li><a href="<?= BASE_URL ?>/tool-jwt.php">🔓 JWT Decoder</a></li>
-              <li><a href="<?= BASE_URL ?>/tool-passgen.php">🔑 Password Generator</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-ip">🌐 What is my IP?</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-cidr">🌍 CIDR Calculator</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-mac">🏷️ MAC Vendor Lookup</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-hash">#️⃣ Hash Generator</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-hashcrack">🔓 Hash Analyzer</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-base64">🔄 Base64</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-multidecode">🔄 Multi Decoder (CTF)</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-jwt">🔓 JWT Decoder</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-passgen">🔑 Password Generator</a></li>
             </ul>
           </li>
 
@@ -116,12 +116,12 @@
         <a href="#"><?= $lang === 'es' ? 'Comunidad' : 'Community' ?> <span class="chevron"></span></a>
         <div class="dropdown-menu">
             <a href="<?= BASE_URL ?>/missions/" class="dropdown-item" style="color: #ff2a2a; font-weight: bold; font-family: var(--mono);">🎯 [ CTF Challenges ]</a>
-            <a href="<?= BASE_URL ?>/sobre-mi.php" class="dropdown-item">👤 <?= $lang === 'es' ? 'Sobre Mí' : 'About Me' ?></a>
+            <a href="<?= BASE_URL ?>/sobre-mi" class="dropdown-item">👤 <?= $lang === 'es' ? 'Sobre Mí' : 'About Me' ?></a>
         </div>
       </li>
 
       <li class="nav-donate-item">
-        <a href="<?= BASE_URL ?>/index.php#donate" class="nav-support-btn">
+        <a href="<?= BASE_URL ?>/index#donate" class="nav-support-btn">
             ♥ <?= $lang === 'es' ? 'Apóyame' : 'Support' ?>
         </a>
       </li>
@@ -147,11 +147,11 @@
               <?= $lang === 'es' ? 'Explorar' : 'Explore' ?> <span class="chevron"></span>
           </label>
           <ul class="mobile-submenu">
-              <li><a href="<?= BASE_URL ?>/index.php#projects">📁 <?= e($t['nav']['projects']) ?></a></li>
-              <li><a href="<?= BASE_URL ?>/index.php#manuals">📖 <?= e($t['nav']['manuals']) ?></a></li>
-              <li><a href="<?= BASE_URL ?>/projects/skill-tree.php">🌳 <?= $lang === 'es' ? 'Árbol de Habilidades' : 'Skill Tree' ?></a></li>
-              <li><a href="<?= BASE_URL ?>/projects/ransomware-tabletop.php" style="color: #ff2a2a; font-weight: bold;">🚨 <?= $lang === 'es' ? 'Simulador IR: Ransomware' : 'IR Simulator: Ransomware' ?></a></li>
-              <li><a href="<?= BASE_URL ?>/projects/mitre-mapper.php" style="color: #b400ff; font-weight: bold; text-shadow: 0 0 8px rgba(180,0,255,0.4);">🗺️ <?= $lang==='es' ? 'MITRE ATT&CK Mapper' : 'MITRE ATT&CK Mapper' ?></a></li>
+              <li><a href="<?= BASE_URL ?>/index#projects">📁 <?= e($t['nav']['projects']) ?></a></li>
+              <li><a href="<?= BASE_URL ?>/index#manuals">📖 <?= e($t['nav']['manuals']) ?></a></li>
+              <li><a href="<?= BASE_URL ?>/projects/skill-tree">🌳 <?= $lang === 'es' ? 'Árbol de Habilidades' : 'Skill Tree' ?></a></li>
+              <li><a href="<?= BASE_URL ?>/projects/ransomware-tabletop" style="color: #ff2a2a; font-weight: bold;">🚨 <?= $lang === 'es' ? 'Simulador IR: Ransomware' : 'IR Simulator: Ransomware' ?></a></li>
+              <li><a href="<?= BASE_URL ?>/projects/mitre-mapper" style="color: #b400ff; font-weight: bold; text-shadow: 0 0 8px rgba(180,0,255,0.4);">🗺️ <?= $lang==='es' ? 'MITRE ATT&CK Mapper' : 'MITRE ATT&CK Mapper' ?></a></li>
           </ul>
       </li>
         
@@ -167,27 +167,27 @@
               </div>
 
               <li class="mobile-menu-title"><?= $lang==='es'?'🛡️ Defensa & SOC':'🛡️ Defense & SOC' ?></li>
-              <li><a href="/soc-arsenal.php" style="color: #00d45a;">🛡️ <?= $lang==='es' ? 'Arsenal SOC (KQL)' : 'SOC Arsenal (KQL)' ?></a></li>
-              <li><a href="/projects/phishing-sandbox.php" style="color: #ff2a2a;">🎣 <?= $lang==='es' ? 'Simulador SOC' : 'SOC Simulator' ?></a></li>
+              <li><a href="<?= BASE_URL ?>/soc-arsenal" style="color: #00d45a;">🛡️ <?= $lang==='es' ? 'Arsenal SOC (KQL)' : 'SOC Arsenal (KQL)' ?></a></li>
+              <li><a href="<?= BASE_URL ?>/projects/phishing-sandbox" style="color: #ff2a2a;">🎣 <?= $lang==='es' ? 'Simulador SOC' : 'SOC Simulator' ?></a></li>
               
               <li class="mobile-menu-title"><?= $lang==='es'?'🔍 Auditoría & OSINT':'🔍 Audit & OSINT' ?></li>
-              <li><a href="<?= BASE_URL ?>/tool-recon.php">🔍 OSINT Quick Recon</a></li>
-              <li><a href="<?= BASE_URL ?>/tool-takeover.php">🏴‍☠️ Subdomain Takeover</a></li>
-              <li><a href="<?= BASE_URL ?>/tool-cloud.php">☁️ Cloud Enum</a></li>
-              <li><a href="<?= BASE_URL ?>/tool-osint-report.php">📄 <?= $lang==='es' ? 'Reporte OSINT' : 'OSINT Report' ?></a></li>
+              <li><a href="<?= BASE_URL ?>/tool-recon">🔍 OSINT Quick Recon</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-takeover">🏴‍☠️ Subdomain Takeover</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-cloud">☁️ Cloud Enum</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-osint-report">📄 <?= $lang==='es' ? 'Reporte OSINT' : 'OSINT Report' ?></a></li>
 
               <li class="mobile-menu-title"><?= $lang==='es'?'🏴‍☠️ Pentesting & Explotación':'🏴‍☠️ Pentesting & Exploits' ?></li>
-              <li><a href="/tool-scanner.php">🎯 <?= $lang==='es' ? 'Escáner Perimetral' : 'Perimeter Scanner' ?></a></li>
-              <li><a href="<?= BASE_URL ?>/tool-revshell.php">🐚 Reverse Shell Generator</a></li>
-              <li><a href="<?= BASE_URL ?>/tool-waf.php">🛡️ WAF Bypass Payloads</a></li>
-              <li><a href="<?= BASE_URL ?>/tool-cve.php">🐛 CVE & Exploit Finder</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-scanner">🎯 <?= $lang==='es' ? 'Escáner Perimetral' : 'Perimeter Scanner' ?></a></li>
+              <li><a href="<?= BASE_URL ?>/tool-revshell">🐚 Reverse Shell Generator</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-waf">🛡️ WAF Bypass Payloads</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-cve">🐛 CVE & Exploit Finder</a></li>
 
               <li class="mobile-menu-title"><?= $lang==='es'?'🔐 Cripto, Redes & Auth':'🔐 Crypto, Network & Auth' ?></li>
-              <li><a href="<?= BASE_URL ?>/tool-hash.php">#️⃣ Hash Generator</a></li>
-              <li><a href="<?= BASE_URL ?>/tool-multidecode.php">🔄 Multi Decoder (CTF)</a></li>
-              <li><a href="<?= BASE_URL ?>/tool-jwt.php">🔓 JWT Decoder</a></li>
-              <li><a href="<?= BASE_URL ?>/tool-ip.php">🌐 What is my IP?</a></li>
-              <li><a href="<?= BASE_URL ?>/tool-passgen.php">🔑 Password Generator</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-hash">#️⃣ Hash Generator</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-multidecode">🔄 Multi Decoder (CTF)</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-jwt">🔓 JWT Decoder</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-ip">🌐 What is my IP?</a></li>
+              <li><a href="<?= BASE_URL ?>/tool-passgen">🔑 Password Generator</a></li>
           </ul>
       </li>
 
@@ -198,12 +198,12 @@
           </label>
           <ul class="mobile-submenu">
               <li><a href="<?= BASE_URL ?>/missions/" style="color: #ff2a2a;">🎯 <?= $lang === 'es' ? 'Misiones CTF' : 'CTF Missions' ?></a></li>
-              <li><a href="<?= BASE_URL ?>/sobre-mi.php">👤 <?= $lang === 'es' ? 'Sobre Mí' : 'About Me' ?></a></li>
+              <li><a href="<?= BASE_URL ?>/sobre-mi">👤 <?= $lang === 'es' ? 'Sobre Mí' : 'About Me' ?></a></li>
           </ul>
       </li>
 
       <li class="nav-donate-item" style="margin-top: 1rem;">
-          <a href="<?= BASE_URL ?>/index.php#donate" class="nav-support-btn" style="display: block; text-align: center;">
+          <a href="<?= BASE_URL ?>/index#donate" class="nav-support-btn" style="display: block; text-align: center;">
               ♥ <?= $lang === 'es' ? 'Apóyame' : 'Support' ?> 
           </a>
       </li>

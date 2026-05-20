@@ -3,15 +3,26 @@
 # Place this file in the root of your Plesk httpdocs directory.
 # ═══════════════════════════════════════════════════════════════════════════════
 
-# ── Disable directory listing ──────────────────────────────────────────────────
+# ── Ocultar .php y Redirecciones iniciales ─────────────────────────────────────
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
     # Redirigir forzosamente de www a SIN www mediante 301
     RewriteCond %{HTTP_HOST} ^www\.cyberescudo\.com [NC]
     RewriteRule ^(.*)$ https://cyberescudo.com/$1 [L,R=301]
+
+    # 1. Redirigir de forma visible las URLs que tengan .php a su versión limpia (SEO)
+    RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s([^.]+)\.php [NC]
+    RewriteRule ^ %1 [R=301,L]
+
+    # 2. Servir el archivo .php internamente cuando se acceda a la URL limpia
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME}.php -f
+    RewriteRule ^(.*)$ $1.php [L]
 </IfModule>
 
+# ── Disable directory listing ──────────────────────────────────────────────────
 Options -Indexes -MultiViews
 
 # ── Protect sensitive PHP files from direct browser access ────────────────────
@@ -100,6 +111,7 @@ ServerSignature Off
 ErrorDocument 403 /403.php
 ErrorDocument 404 /404.php
 ErrorDocument 500 /500.php
+
 # CyberEscudo CTF — Apache security rules for /ctf/
 
 # ── Block direct web access to sensitive files ─────────────────────────────
