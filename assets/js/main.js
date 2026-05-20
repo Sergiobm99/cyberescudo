@@ -1997,4 +1997,298 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }, true); // El "true" captura el evento antes de que baje a los elementos hijos
 });
+/* ==========================================================================
+   MÓDULO: ENTERPRISE REPORT GENERATOR V4.0 (Compliance, KPIs + AutoSave)
+   ========================================================================== */
+document.addEventListener('DOMContentLoaded', () => {
+    const reportContainer = document.getElementById('modern-report-tool');
+    if (!reportContainer) return;
+
+    const lang = reportContainer.getAttribute('data-lang') || 'es';
+    const baseUrl = reportContainer.getAttribute('data-url') || '';
+    const STORAGE_KEY = 'cyberescudo_report_draft_v4';
+
+    const i = {
+        title: document.getElementById('in-title'),
+        risk: document.getElementById('in-risk'),
+        asset: document.getElementById('in-asset'),
+        exec: document.getElementById('in-exec'),
+        impact: document.getElementById('in-impact'),
+        remed: document.getElementById('in-remed'),
+        tech: document.getElementById('in-tech'),
+        tlp: document.getElementById('in-tlp'),
+        status: document.getElementById('in-status'),
+        author: document.getElementById('in-author'),
+        mttd: document.getElementById('in-mttd'),
+        mttr: document.getElementById('in-mttr')
+    };
+    
+    const o = {
+        title: document.getElementById('out-title'),
+        risk: document.getElementById('out-risk'),
+        asset: document.getElementById('out-asset'),
+        exec: document.getElementById('out-exec'),
+        impact: document.getElementById('out-impact'),
+        remed: document.getElementById('out-remed'),
+        tech: document.getElementById('out-tech'),
+        tlp: document.getElementById('out-tlp-badge'),
+        status: document.getElementById('out-status'),
+        author: document.getElementById('out-author'),
+        mttd: document.getElementById('out-mttd'),
+        mttr: document.getElementById('out-mttr'),
+        compliance: document.getElementById('out-compliance')
+    };
+
+    const checkGdpr = document.getElementById('chk-gdpr');
+    const checkPci = document.getElementById('chk-pci');
+    const checkNis2 = document.getElementById('chk-nis2');
+
+    // 1. SISTEMA DE AUTOGUARDADO (LocalStorage)
+    const saveDraft = () => {
+        const draftData = {
+            title: i.title.value, risk: i.risk.value, asset: i.asset.value,
+            exec: i.exec.value, impact: i.impact.value, remed: i.remed.value,
+            tech: i.tech.value, tlp: i.tlp.value, status: i.status.value,
+            author: i.author.value, mttd: i.mttd.value, mttr: i.mttr.value,
+            gdpr: checkGdpr.checked, pci: checkPci.checked, nis2: checkNis2.checked
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(draftData));
+    };
+
+    const loadDraft = () => {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+            try {
+                const draft = JSON.parse(saved);
+                i.title.value = draft.title || ''; i.risk.value = draft.risk || 'MEDIUM';
+                i.asset.value = draft.asset || ''; i.exec.value = draft.exec || '';
+                i.impact.value = draft.impact || ''; i.remed.value = draft.remed || '';
+                i.tech.value = draft.tech || ''; i.tlp.value = draft.tlp || 'CLEAR';
+                i.status.value = draft.status || 'OPEN'; i.author.value = draft.author || '';
+                i.mttd.value = draft.mttd || ''; i.mttr.value = draft.mttr || '';
+                checkGdpr.checked = !!draft.gdpr; checkPci.checked = !!draft.pci; checkNis2.checked = !!draft.nis2;
+                return true;
+            } catch (e) { console.error("Error cargando borrador:", e); }
+        }
+        return false;
+    };
+
+    // 2. ACTUALIZACIÓN EN VIVO
+    const updatePreview = () => {
+        o.title.innerText = i.title.value || (lang === 'es' ? '[ INSERTE TÍTULO ]' : '[ INSERT TITLE ]');
+        o.asset.innerText = i.asset.value || 'N/A';
+        o.exec.innerText = i.exec.value || '...';
+        o.impact.innerText = i.impact.value || (lang === 'es' ? 'No se ha registrado impacto crítico directo.' : 'No direct critical impact registered.');
+        o.remed.innerText = i.remed.value || '...';
+        o.tech.innerText = i.tech.value || '...';
+        o.author.innerText = i.author.value || 'System Generated';
+        o.mttd.innerText = i.mttd.value || 'N/A';
+        o.mttr.innerText = i.mttr.value || 'N/A';
+        
+        o.risk.className = 'badge-pill pill-' + i.risk.value;
+        o.risk.innerText = i.risk.value;
+
+        o.tlp.className = 'tlp-badge tlp-' + i.tlp.value;
+        o.tlp.innerText = 'TLP:' + i.tlp.value;
+        // Lógica del Aviso Legal Dinámico según TLP
+        const legalTexts = {
+            'RED': lang === 'es' 
+                ? 'ESTRICTAMENTE CONFIDENCIAL: Este documento contiene información clasificada TLP:RED. Prohibida su distribución fuera de las partes explícitamente autorizadas en esta investigación. La filtración de este documento puede acarrear acciones legales severas.' 
+                : 'STRICTLY CONFIDENTIAL: This document contains TLP:RED classified intelligence. Not for disclosure or distribution outside explicitly authorized parties. Unauthorized leakage may result in severe legal action.',
+            'AMBER': lang === 'es'
+                ? 'USO RESTRINGIDO: Información clasificada TLP:AMBER. Puede compartirse únicamente dentro de la propia organización y con los clientes afectados directamente para tomar medidas defensivas. No distribuir públicamente.'
+                : 'RESTRICTED USE: TLP:AMBER intelligence. May be shared only within the organization and with directly affected clients to take defensive actions. Do not distribute publicly.',
+            'GREEN': lang === 'es'
+                ? 'USO INTERNO: Información TLP:GREEN. Puede compartirse libremente con todos los socios y comunidad de la organización, pero no a través de canales de acceso público generales.'
+                : 'INTERNAL USE: TLP:GREEN intelligence. May be freely shared within the organization’s partners and community, but not via general public-accessible channels.',
+            'CLEAR': lang === 'es'
+                ? 'PÚBLICO: TLP:CLEAR. Esta información no está clasificada. Se permite su distribución sin restricciones sujeta a derechos de autor estándar.'
+                : 'PUBLIC: TLP:CLEAR. Unclassified information. Unrestricted distribution is permitted subject to standard copyright.'
+        };
+        
+        const legalFooter = document.getElementById('out-legal');
+        if(legalFooter) legalFooter.innerText = legalTexts[i.tlp.value];
+
+        o.status.className = 'meta-val status-' + i.status.value;
+        o.status.innerText = i.status.options[i.status.selectedIndex].text;
+
+        // Render de Compliance Tags
+        let compHTML = [];
+        if (checkGdpr.checked) compHTML.push('<span class="comp-chip comp-active">GDPR</span>');
+        if (checkPci.checked) compHTML.push('<span class="comp-chip comp-active">PCI-DSS</span>');
+        if (checkNis2.checked) compHTML.push('<span class="comp-chip comp-active">NIS 2</span>');
+        
+        o.compliance.innerHTML = compHTML.length > 0 ? compHTML.join('') : (lang === 'es' ? 'Ninguna' : 'None');
+
+        saveDraft();
+    };
+
+    [i.title, i.risk, i.asset, i.exec, i.impact, i.remed, i.tech, i.tlp, i.status, i.author, i.mttd, i.mttr].forEach(el => {
+        el.addEventListener('input', updatePreview);
+        el.addEventListener('change', updatePreview);
+    });
+    [checkGdpr, checkPci, checkNis2].forEach(el => el.addEventListener('change', updatePreview));
+
+    // Logo Reader
+    const logoUpload = document.getElementById('inp-logo-upload');
+    const previewLogo = document.getElementById('preview-user-logo');
+    const logoContainer = document.getElementById('user-logo-container');
+
+    logoUpload?.addEventListener('change', function(e) {
+        if (this.files && this.files[0]) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                previewLogo.src = event.target.result;
+                logoContainer.style.display = 'block';
+            };
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+
+    // 3. SMART LOOKUP (MITRE / CVE)
+    const smartSearch = document.getElementById('inp-smart-search');
+    const btnLookup = document.getElementById('btn-smart-lookup');
+
+    btnLookup?.addEventListener('click', async () => {
+        const query = smartSearch.value.trim().toUpperCase();
+        if (!query) return;
+        btnLookup.innerText = "...";
+
+        try {
+            if (query.startsWith('CVE-')) {
+                const response = await fetch(`${baseUrl}/scripts/get-cve.php?id=${query}`);
+                if (!response.ok) throw new Error("CVE_NOT_FOUND");
+                const data = await response.json();
+
+                if (data.cveMetadata && data.cveMetadata.cveId) {
+                    const cna = data.containers?.cna;
+                    const descObj = cna?.descriptions?.find(d => d.lang === 'en') || cna?.descriptions?.[0];
+                    const desc = descObj ? descObj.value : 'No official description.';
+
+                    let risk = "HIGH"; let score = "N/A";
+                    if (cna?.metrics) {
+                        const metric = cna.metrics.find(m => m.cvssV3_1 || m.cvssV3_0 || m.cvssV2_0);
+                        if (metric) {
+                            const cvss = metric.cvssV3_1 || metric.cvssV3_0 || metric.cvssV2_0;
+                            if (cvss && cvss.baseScore) {
+                                score = cvss.baseScore;
+                                if (score >= 9.0) risk = "CRITICAL";
+                                else if (score >= 7.0) risk = "HIGH";
+                                else if (score >= 4.0) risk = "MEDIUM";
+                                else risk = "LOW";
+                            }
+                        }
+                    }
+
+                    i.title.value = lang === 'es' ? `Vulnerabilidad: ${query}` : `Vulnerability: ${query}`;
+                    i.risk.value = risk; i.tlp.value = "AMBER"; i.status.value = "OPEN";
+                    i.asset.value = "Pending Identification"; i.mttd.value = "0 mins"; i.mttr.value = "Pending";
+                    checkGdpr.checked = true; checkNis2.checked = true; checkPci.checked = false;
+
+                    i.exec.value = `[CVE Alert - ${query}]\n\nOfficial Description:\n${desc}`;
+                    i.impact.value = lang === 'es' ? "Riesgo extremo de ejecución remota de comandos. Alto peligro regulatorio." : "Extreme remote code execution risk. High regulatory exposure.";
+                    i.remed.value = "Apply official vendor security patch immediately.";
+                    i.tech.value = `ID: ${query}\nCVSS Score: ${score}\nDatabase: MITRE CVE API`;
+
+                    updatePreview();
+                    smartSearch.style.borderColor = "#00d45a";
+                } else { throw new Error("CVE_NOT_FOUND"); }
+            } 
+            else {
+                const response = await fetch(`${baseUrl}/assets/data/mitre-cache.json?v=${new Date().getTime()}`);
+                if(!response.ok) throw new Error("LOCAL_DB_ERROR");
+                
+                const data = await response.json();
+                const technique = data.techniques.find(t => t.id.toUpperCase() === query || t.name.toUpperCase().includes(query));
+
+                if (technique) {
+                    i.title.value = technique.name; i.risk.value = "HIGH"; i.tlp.value = "GREEN"; i.status.value = "CONTAINED";
+                    const platforms = Array.isArray(technique.platforms) ? technique.platforms.join(', ') : 'General';
+                    i.asset.value = platforms; i.mttd.value = "12 mins"; i.mttr.value = "1h 05m";
+                    checkGdpr.checked = false; checkNis2.checked = true; checkPci.checked = false;
+                    
+                    i.exec.value = `[MITRE Technique ${technique.id}]\n\n${technique.desc}`;
+                    i.impact.value = "Technique allows threat actors to move laterally or compromise defense stability.";
+                    i.remed.value = "Enforce endpoint containment policies.";
+                    i.tech.value = `MITRE ID: ${technique.id}\nTactic: ${technique.tactic_shortname}`;
+                    
+                    updatePreview();
+                    smartSearch.style.borderColor = "#00d45a";
+                } else { throw new Error("MITRE_NOT_FOUND"); }
+            }
+        } catch (error) {
+            console.error(error); smartSearch.style.borderColor = "#ff2a2a";
+            alert("Search failed or threat not found.");
+        } finally { btnLookup.innerText = lang === 'es' ? "BUSCAR" : "SEARCH"; }
+    });
+
+    // 4. PLANTILLAS CORPORATIVAS AVANZADAS
+    const templates = {
+        phish: {
+            title: "Phishing Campaign: Executive Credential Theft",
+            risk: "HIGH", tlp: "AMBER", status: "CONTAINED", asset: "Office 365 / Azure AD Tenant", mttd: "8 mins", mttr: "35 mins",
+            gdpr: true, pci: false, nis2: true,
+            exec: "A spear-phishing attack successfully harvested corporate credentials from members of the finance department using a look-alike domain.",
+            impact: "Compromise of 3 email accounts. Fraudulent wire attempt detected and blocked. Potential PII exposure under GDPR regulation laws.",
+            remed: "1. Trigger immediate user session revocation.\n2. Enable mandatory FIDO2 hardware MFA tokens.\n3. Implement brand protection anti-spoofing controls.",
+            tech: "Phishing Link: https://login-microsoft-auth-verify.com/login.php\nHarvested Accounts: finance-manager@company.com"
+        },
+        ddos: {
+            title: "Volumetric DDoS Attack: Public Services Outage",
+            risk: "CRITICAL", tlp: "GREEN", status: "MITIGATED", asset: "Public Web App Gateway Cluster", mttd: "2 mins", mttr: "18 mins",
+            gdpr: false, pci: true, nis2: true,
+            exec: "A massive Layer 7 HTTP flood attack saturated server connection pools, making the checkout and transaction portals entirely unavailable to the public.",
+            impact: "Operational Downtime: 18 minutes.\nEstimated revenue loss: €24,500 based on average transaction volumes per minute during peak hours.",
+            remed: "1. Upgrade global CDN rate-limiting profiles.\n2. Deploy Cloudflare Advanced Under-Attack scrubbing challenges.\n3. Restructure API gateway connection drop timeouts.",
+            tech: "Attack Type: HTTP GET Flood / Cloudflare Bypass Attempt\nMax Velocity: 140,000 requests per second"
+        },
+        insider: {
+            title: "Insider Threat: Intellectual Property Exfiltration",
+            risk: "CRITICAL", tlp: "RED", status: "OPEN", asset: "Engineering Core File Server (WIN-FS01)", mttd: "2 hours", mttr: "Active",
+            gdpr: true, pci: false, nis2: false,
+            exec: "An employee with valid corporate admin credentials executed an unauthorized backup and bulk download of core industrial blueprints outside shift hours.",
+            impact: "Exfiltration of 18GB of proprietary product blueprints and active client NDAs. Legal, compliance, and corporate risk vectors triggered.",
+            remed: "1. Revoke active directory domain credentials.\n2. Terminate active enterprise VPN connections.\n3. Enforce endpoint DLP block rules for physical storage devices.",
+            tech: "SIEM Alert: Access anomalies detected on network share 'D:\\Industrial_Core_Vault\\'\nActive Directory User Account: s.miller"
+        },
+        breach: {
+            title: "Data Breach: Misconfigured NoSQL Cluster",
+            risk: "CRITICAL", tlp: "RED", status: "CONTAINED", asset: "Production ElasticSearch Backend Cluster", mttd: "0 mins", mttr: "4 mins",
+            gdpr: true, pci: true, nis2: true,
+            exec: "A DevOps deployment error left an active production indexing server exposed to the public internet without firewall rules or active authentication settings.",
+            impact: "Exposure of 1.4 million corporate accounts. Regulatory exposure: Major severity under GDPR and PCI compliance laws (fines up to 4% of revenue).",
+            remed: "1. Enforce strict security group firewall drops on port 9200.\n2. Enable unified x-pack cluster authentication.\n3. Initiate public data breach incident disclosure protocol.",
+            tech: "Exposed IP: 54.210.x.x:9200\nExposed Document Index: /customer_vault_live/"
+        }
+    };
+
+    const loadTemplate = (k) => {
+        const t = templates[k];
+        i.title.value = t.title; i.risk.value = t.risk; i.tlp.value = t.tlp; i.status.value = t.status;
+        i.asset.value = t.asset; i.exec.value = t.exec; i.impact.value = t.impact; i.remed.value = t.remed; i.tech.value = t.tech;
+        i.mttd.value = t.mttd; i.mttr.value = t.mttr;
+        checkGdpr.checked = t.gdpr; checkPci.checked = t.pci; checkNis2.checked = t.nis2;
+        updatePreview();
+    };
+
+    document.getElementById('tpl-phish')?.addEventListener('click', () => loadTemplate('phish'));
+    document.getElementById('tpl-ddos')?.addEventListener('click', () => loadTemplate('ddos'));
+    document.getElementById('tpl-insider')?.addEventListener('click', () => loadTemplate('insider'));
+    document.getElementById('tpl-breach')?.addEventListener('click', () => loadTemplate('breach'));
+    document.getElementById('tpl-clear')?.addEventListener('click', () => {
+        Object.values(i).forEach(el => { if(el.tagName==='INPUT' || el.tagName==='TEXTAREA') el.value = ''; });
+        i.tlp.value = "CLEAR"; i.status.value = "OPEN"; i.risk.value = "MEDIUM";
+        checkGdpr.checked = false; checkPci.checked = false; checkNis2.checked = false;
+        previewLogo.src = ''; logoContainer.style.display = 'none'; logoUpload.value = '';
+        localStorage.removeItem(STORAGE_KEY);
+        updatePreview();
+    });
+// 5. EXPORTAR A PDF (Cumpliendo la estricta política CSP)
+    const btnExportPdf = document.getElementById('btn-export-pdf');
+    btnExportPdf?.addEventListener('click', () => {
+        window.print();
+    });
+    loadDraft();
+    updatePreview();
+});
 })();

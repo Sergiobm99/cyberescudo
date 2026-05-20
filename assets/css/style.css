@@ -2649,3 +2649,145 @@ body {
 .nav-dropdown > a::after {
     display: none !important;
 }
+
+    /* ─── ENTERPRISE EXECUTIVE REPORT STYLES v4.1 (Print Fixes) ─── */
+    .report-container { max-width: 1600px; margin: 2rem auto; padding: 0 1.5rem; }
+    .report-header { text-align: center; margin-bottom: 2rem; }
+    .report-title { font-family: var(--mono); color: var(--cyan); font-size: clamp(2rem, 4vw, 2.5rem); text-transform: uppercase; letter-spacing: 1px; }
+
+    .report-layout { display: grid; grid-template-columns: 1fr; gap: 2rem; align-items: start; }
+    @media (min-width: 1200px) { .report-layout { grid-template-columns: 450px 1fr; } }
+
+    /* PANEL DE CONTROL */
+    .input-panel { background: rgba(10, 15, 20, 0.95); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+    .form-group { margin-bottom: 1.2rem; }
+    .form-label { display: block; font-family: var(--mono); font-size: 0.75rem; color: var(--cyan); margin-bottom: 0.4rem; text-transform: uppercase; }
+    .form-control { width: 100%; background: #000; border: 1px solid #333; border-radius: 6px; padding: 0.8rem; color: #fff; font-size: 0.9rem; }
+    .form-control:focus { border-color: var(--cyan); outline: none; }
+    
+    .template-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1.5rem; }
+    .btn-tpl { background: #1a1a1a; border: 1px solid #333; color: #888; padding: 0.5rem; font-size: 0.7rem; border-radius: 4px; cursor: pointer; text-align: left; transition: 0.2s; }
+    .btn-tpl:hover { border-color: var(--cyan); color: #fff; background: rgba(0,255,255,0.05); }
+
+    /* EL FOLIO A4 */
+    .output-panel { background: #0a0a0a; padding: 3rem; border-radius: 12px; display: flex; justify-content: center; overflow-x: auto; }
+    
+    .paper-a4 {
+        background: #fff; color: #1a202c; width: 210mm; min-height: 297mm; padding: 25mm;
+        position: relative; font-family: 'Inter', sans-serif; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    }
+
+    .paper-a4::before {
+        content: ''; position: absolute; top: 0; left: 0; width: 12px; height: 100%;
+        background: linear-gradient(to bottom, #1a365d, #3182ce);
+    }
+
+    .p-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #edf2f7; padding-bottom: 1.5rem; margin-bottom: 2.5rem; }
+    .p-brand-container { display: flex; align-items: center; gap: 1.5rem; }
+    .p-user-logo { max-width: 60px; border-right: 1px solid #edf2f7; padding-right: 1.5rem; display: none; }
+    .p-brand { font-size: 1.5rem; font-weight: 900; color: #1a365d; line-height: 1; }
+    .p-meta { text-align: right; font-size: 0.8rem; color: #718096; line-height: 1.5; }
+
+    /* TLP Badges */
+    .tlp-badge { display: inline-block; padding: 0.2rem 0.5rem; font-weight: bold; font-size: 0.7rem; border-radius: 3px; border: 1px solid; margin-bottom: 0.5rem;}
+    .tlp-RED { background: #000; color: #ff3333; border-color: #ff3333; }
+    .tlp-AMBER { background: #000; color: #ffbf00; border-color: #ffbf00; }
+    .tlp-GREEN { background: #000; color: #33ff33; border-color: #33ff33; }
+    .tlp-CLEAR { background: #000; color: #ffffff; border-color: #ffffff; }
+
+    .p-title { font-size: 2.4rem; font-weight: 850; color: #1a202c; letter-spacing: -1px; margin-bottom: 1.5rem; line-height: 1.1; }
+    
+    .p-grid-meta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; background: #f8fafc; padding: 1rem; border-radius: 6px; border: 1px solid #e2e8f0; }
+    .meta-box { display: flex; flex-direction: column; }
+    .meta-lbl { font-size: 0.65rem; font-weight: 700; color: #718096; text-transform: uppercase; margin-bottom: 0.2rem; }
+    .meta-val { font-size: 0.85rem; font-weight: 700; color: #2d3748; }
+
+    .badge-pill { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 99px; font-weight: 800; font-size: 0.65rem; letter-spacing: 0.5px; text-transform: uppercase; }
+    .pill-CRITICAL { background: #fed7d7; color: #9b2c2c; }
+    .pill-HIGH { background: #feebc8; color: #9c4221; }
+    .pill-MEDIUM { background: #faf089; color: #744210; }
+    .pill-LOW { background: #c6f6d5; color: #22543d; }
+
+    .status-OPEN { color: #e53e3e; }
+    .status-CONTAINED { color: #d69e2e; }
+    .status-MITIGATED { color: #3182ce; }
+    .status-CLOSED { color: #38a169; }
+
+    .comp-chip { display: inline-block; background: #e2e8f0; color: #4a5568; padding: 0.15rem 0.5rem; font-size: 0.7rem; font-weight: 700; border-radius: 4px; margin-right: 0.3rem; margin-top: 0.2rem; }
+    .comp-active { background: #ebf8ff; color: #2b6cb0; border: 1px solid #bee3f8; }
+
+    .p-section { margin-bottom: 2rem; }
+    .p-h3 { font-size: 0.9rem; font-weight: 800; color: #2b6cb0; margin-bottom: 0.8rem; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 10px; }
+    .p-h3::after { content: ''; flex: 1; height: 1px; background: #edf2f7; }
+    .p-text { font-size: 0.95rem; line-height: 1.6; color: #2d3748; white-space: pre-wrap; }
+    
+    .p-impact-box { background: #fff5f5; border-left: 4px solid #e53e3e; padding: 1rem; margin-top: 0.5rem; }
+    .p-code { background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #cbd5e0; padding: 1rem; border-radius: 0 6px 6px 0; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #4a5568; white-space: pre-wrap; }
+
+    .p-footer { position: absolute; bottom: 15mm; left: 25mm; right: 25mm; border-top: 1px solid #edf2f7; padding-top: 1rem; display: flex; justify-content: space-between; font-size: 0.7rem; color: #a0aec0; }
+
+    /* ─── MOTOR DE IMPRESIÓN (PDF FIXES) ─── */
+    @media print {
+        body * { visibility: hidden; }
+        .output-panel, .paper-a4, .paper-a4 * { visibility: visible; }
+        
+        .output-panel { 
+            position: absolute; left: 0; top: 0; width: 100%; 
+            padding: 0; background: #fff; display: block; overflow: visible;
+        }
+        
+        /* Permitimos que el folio crezca libremente sin restricciones */
+        .paper-a4 { 
+            box-shadow: none; width: 100%; 
+            height: auto !important; min-height: auto !important; 
+            padding: 15mm !important; border: none; margin: 0;
+        }
+        
+        /* Mantiene la línea azul lateral en todas las páginas impresas */
+        .paper-a4::before { 
+            position: fixed; 
+            top: 0; left: 0; bottom: 0; 
+            height: 100vh; width: 8px; 
+        }
+        
+        /* 🛡️ MAGIA: Evita que las secciones se corten por la mitad entre dos páginas */
+        .p-section, .p-code, .p-grid-meta, .p-impact-box, .p-header {
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        /* 🛡️ MAGIA: Transforma el pie de página de absoluto a relativo para que siempre quede al final */
+        .p-footer {
+            position: relative !important;
+            bottom: auto !important;
+            left: auto !important;
+            right: auto !important;
+            margin-top: 3rem;
+            page-break-inside: avoid;
+        }
+
+        /* Configuración de los márgenes nativos del folio */
+        @page { size: A4; margin: 10mm; }
+    }
+    .p-code { background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #cbd5e0; padding: 1rem; border-radius: 0 6px 6px 0; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #4a5568; white-space: pre-wrap; }
+
+    /* NUEVO: Bloque de Firmas */
+    .p-signatures { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; margin-top: 3rem; margin-bottom: 2rem; page-break-inside: avoid; }
+    .sig-block { border-top: 1px solid #cbd5e0; padding-top: 0.5rem; }
+    .sig-title { font-size: 0.7rem; font-weight: 800; color: #4a5568; text-transform: uppercase; letter-spacing: 1px; }
+    .sig-name { font-size: 0.85rem; color: #2d3748; margin-top: 0.2rem; min-height: 1.2rem; font-family: var(--mono); }
+
+    /* NUEVO: Disclaimer Footer */
+    .p-footer-legal { font-size: 0.6rem; color: #718096; text-align: justify; line-height: 1.4; margin-bottom: 1rem; }
+    
+    .p-footer { position: absolute; bottom: 15mm; left: 25mm; right: 25mm; border-top: 1px solid #edf2f7; padding-top: 1rem; display: flex; justify-content: space-between; font-size: 0.7rem; color: #a0aec0; }
+    
+    /* FIX DE IMPRESIÓN */
+    @media print {
+        /* ... tu código de @media print anterior ... */
+        .p-section, .p-code, .p-grid-meta, .p-impact-box, .p-header, .p-signatures {
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+        .p-footer { position: relative !important; margin-top: 2rem; page-break-inside: avoid; }
+    }

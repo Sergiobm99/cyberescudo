@@ -36,7 +36,7 @@ header(
     "font-src 'self' https://fonts.gstatic.com; " .
     "script-src 'self' 'nonce-{$cspNonce}' https://*.googletagmanager.com; " .
     "img-src 'self' data: https://*.googletagmanager.com https://*.google-analytics.com; " .
-   "connect-src 'self' https://ipwho.is https://cloudflare-dns.com https://internetdb.shodan.io https://networkcalc.com https://archive.org https://*.archive.org https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://api.rss2json.com; " .
+   "connect-src 'self' https://ipwho.is https://cloudflare-dns.com https://internetdb.shodan.io https://networkcalc.com https://archive.org https://*.archive.org https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://api.rss2json.com https://cve.circl.lu; " .
     "frame-src 'none'; " .
     "object-src 'none'; " .
     "base-uri 'self'; " .
