@@ -54,6 +54,7 @@
             <a href="<?= BASE_URL ?>/projects/skill-tree" class="dropdown-item">🌳 <?= $lang === 'es' ? 'Árbol de Habilidades' : 'Skill Tree' ?></a>
             <a href="<?= BASE_URL ?>/projects/ransomware-tabletop" style="color: #ff2a2a; font-weight: bold;">🚨 <?= $lang === 'es' ? 'Simulador IR: Ransomware' : 'IR Simulator: Ransomware' ?></a>
             <a href="<?= BASE_URL ?>/projects/mitre-mapper" style="color: #b400ff; font-weight: bold; text-shadow: 0 0 8px rgba(180,0,255,0.4);">🗺️ <?= $lang==='es' ? 'MITRE ATT&CK Mapper' : 'MITRE ATT&CK Mapper' ?></a>
+            <a href="<?= BASE_URL ?>/projects/cve-tracker" style="color: #b400ff; font-weight: bold; text-shadow: 0 0 8px rgba(180,0,255,0.4);">🐛 <?= $lang==='es' ? 'CVE Tracker' : 'CVE Tracker' ?></a>
             <a href="<?= BASE_URL ?>/projects/report-generator" style="color: #f0c000; font-weight: bold;">📄 <?= $lang==='es' ? 'Generador Informes C-Level' : 'C-Level Report Generator' ?></a>
         </div>
       </li>
@@ -153,6 +154,7 @@
               <li><a href="<?= BASE_URL ?>/projects/skill-tree">🌳 <?= $lang === 'es' ? 'Árbol de Habilidades' : 'Skill Tree' ?></a></li>
               <li><a href="<?= BASE_URL ?>/projects/ransomware-tabletop" style="color: #ff2a2a; font-weight: bold;">🚨 <?= $lang === 'es' ? 'Simulador IR: Ransomware' : 'IR Simulator: Ransomware' ?></a></li>
               <li><a href="<?= BASE_URL ?>/projects/mitre-mapper" style="color: #b400ff; font-weight: bold; text-shadow: 0 0 8px rgba(180,0,255,0.4);">🗺️ <?= $lang==='es' ? 'MITRE ATT&CK Mapper' : 'MITRE ATT&CK Mapper' ?></a></li>
+              <li><a href="<?= BASE_URL ?>/projects/cve-tracker" style="color: #b400ff; font-weight: bold; text-shadow: 0 0 8px rgba(180,0,255,0.4);">🐛 <?= $lang==='es' ? 'CVE Tracker' : 'CVE Tracker' ?></a></li>
               <li><a href="<?= BASE_URL ?>/projects/report-generator" style="color: #f0c000; font-weight: bold;">📄 <?= $lang==='es' ? 'Generador Informes C-Level' : 'C-Level Report Generator' ?></a></li>
           </ul>
       </li>
