@@ -2791,10 +2791,41 @@ body {
         }
         .p-footer { position: relative !important; margin-top: 2rem; page-break-inside: avoid; }
     }
+    /* ESTILOS GENERALES DEL RADAR */
     .cve-radar-container { max-width: 1600px; margin: 2rem auto; padding: 0 1.5rem; }
-    .cve-radar-header { text-align: center; margin-bottom: 2rem; }
-    .cve-radar-title { font-family: var(--mono); color: var(--cyan); font-size: clamp(2rem, 4vw, 2.5rem); text-transform: uppercase; letter-spacing: 1px; }
+    .cve-radar-header { text-align: center; margin-bottom: 2rem; position: relative; }
+    .cve-radar-title { font-family: var(--mono); color: var(--cyan); font-size: clamp(2rem, 4vw, 2.5rem); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; }
 
+    /* 🔥 NUEVO: ESTILOS DEL BADGE DE SINCRONIZACIÓN 🔥 */
+    .sync-badge-container { display: flex; justify-content: center; margin-top: 1rem; z-index: 10; }
+    
+    /* Magia para pantallas de PC: Lo anclamos arriba a la derecha */
+    @media (min-width: 1024px) {
+        .sync-badge-container {
+            position: absolute;
+            top: 0;
+            right: 0;
+            margin-top: 0;
+        }
+    }
+    .sync-badge {
+        display: inline-flex; align-items: center; gap: 10px;
+        background: rgba(0, 255, 0, 0.05); border: 1px solid #00ff00; color: #00ff00;
+        padding: 0.5rem 1.2rem; border-radius: 50px;
+        font-family: var(--mono); font-size: 0.85rem; font-weight: bold;
+        box-shadow: 0 0 10px rgba(0, 255, 0, 0.1);
+    }
+    .sync-dot {
+        width: 10px; height: 10px; background-color: #00ff00; border-radius: 50%;
+        box-shadow: 0 0 8px #00ff00; animation: pulse-green 2s infinite;
+    }
+    @keyframes pulse-green {
+        0% { box-shadow: 0 0 0 0 rgba(0, 255, 0, 0.7); }
+        70% { box-shadow: 0 0 0 8px rgba(0, 255, 0, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(0, 255, 0, 0); }
+    }
+
+    /* LAYOUT DEL PANEL */
     .radar-layout { display: grid; grid-template-columns: 1fr; gap: 1.5rem; height: 75vh; }
     @media (min-width: 1024px) { .radar-layout { grid-template-columns: 400px 1fr; } }
     @media (min-width: 1400px) { .radar-layout { grid-template-columns: 500px 1fr; } }
