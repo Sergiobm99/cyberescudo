@@ -12,16 +12,24 @@
     onScroll();
   }
 
-  // ── Mobile menu toggle ─────────────────────────────────────────────────────
+// ── Mobile menu toggle ─────────────────────────────────────────────────────
   var burger = document.getElementById('burger');
   var mobileMenu = document.getElementById('mobile-menu');
+  
   if (burger && mobileMenu) {
-    burger.addEventListener('click', function () {
-      mobileMenu.classList.toggle('open');
+    burger.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation(); // Protege el clic de interferencias
+      burger.classList.toggle('active'); // Anima la X
+      mobileMenu.classList.toggle('active'); // Muestra el menú
+      mobileMenu.classList.toggle('open'); // Por si tu CSS usa 'open'
     });
-    // Close when clicking a link
+    
+    // Cierra el menú al hacer clic en un enlace
     mobileMenu.querySelectorAll('a').forEach(function (link) {
       link.addEventListener('click', function () {
+        burger.classList.remove('active');
+        mobileMenu.classList.remove('active');
         mobileMenu.classList.remove('open');
       });
     });
