@@ -56,6 +56,7 @@
             <a href="<?= BASE_URL ?>/projects/mitre-mapper" style="color: #b400ff; font-weight: bold; text-shadow: 0 0 8px rgba(180,0,255,0.4);">🗺️ <?= $lang==='es' ? 'MITRE ATT&CK Mapper' : 'MITRE ATT&CK Mapper' ?></a>
             <a href="<?= BASE_URL ?>/projects/cve-tracker" style="color: #b400ff; font-weight: bold; text-shadow: 0 0 8px rgba(180,0,255,0.4);">🐛 <?= $lang==='es' ? 'CVE Tracker' : 'CVE Tracker' ?></a>
             <a href="<?= BASE_URL ?>/projects/report-generator" style="color: #f0c000; font-weight: bold;">📄 <?= $lang==='es' ? 'Generador Informes C-Level' : 'C-Level Report Generator' ?></a>
+            <a href="<?= BASE_URL ?>/projects/sentinel-lab" class="dropdown-item">🛡️ <?= $lang === 'es' ? 'Sentinel D&R Lab' : 'Sentinel D&R Lab' ?></a>
         </div>
       </li>
       
@@ -156,6 +157,7 @@
               <li><a href="<?= BASE_URL ?>/projects/mitre-mapper" style="color: #b400ff; font-weight: bold; text-shadow: 0 0 8px rgba(180,0,255,0.4);">🗺️ <?= $lang==='es' ? 'MITRE ATT&CK Mapper' : 'MITRE ATT&CK Mapper' ?></a></li>
               <li><a href="<?= BASE_URL ?>/projects/cve-tracker" style="color: #b400ff; font-weight: bold; text-shadow: 0 0 8px rgba(180,0,255,0.4);">🐛 <?= $lang==='es' ? 'CVE Tracker' : 'CVE Tracker' ?></a></li>
               <li><a href="<?= BASE_URL ?>/projects/report-generator" style="color: #f0c000; font-weight: bold;">📄 <?= $lang==='es' ? 'Generador Informes C-Level' : 'C-Level Report Generator' ?></a></li>
+              <li><a href="<?= BASE_URL ?>/projects/sentinel-lab" class="dropdown-item">🛡️ <?= $lang === 'es' ? 'Sentinel D&R Lab' : 'Sentinel D&R Lab' ?></a></li>
           </ul>
       </li>
         

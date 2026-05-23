@@ -2292,150 +2292,173 @@ document.addEventListener('DOMContentLoaded', () => {
     updatePreview();
 });
 /* ==========================================================================
-   MÓDULO: LIVE THREAT INTEL RADAR (LOCAL DB + FALLBACK 7 ITEMS)
+   MENÚ MÓVIL (HAMBURGUESA) - GLOBAL
    ========================================================================== */
 document.addEventListener('DOMContentLoaded', () => {
-    const radarContainer = document.getElementById('cve-radar-tool');
-    if (!radarContainer) return;
+    // Busca el botón de la hamburguesa y el menú de navegación
+    const hamburgerBtn = document.querySelector('.hamburger, .menu-toggle, .mobile-btn, [class*="hamburger"]');
+    const mobileNav = document.querySelector('.nav-links, .nav-menu, .mobile-nav, .menu');
 
-    const baseUrl = radarContainer.getAttribute('data-url') || '';
-    const lang = document.documentElement.lang || 'es';
-    
-    const cveListEl = document.getElementById('cve-list');
-    const cveDetailsEl = document.getElementById('cve-details');
-    const btnRefresh = document.getElementById('btn-refresh-feed');
-
-    const t = {
-        loading: lang === 'es' ? '[ LEYENDO BASE DE DATOS LOCAL... ]' : '[ READING LOCAL DATABASE... ]',
-        fallbackMode: lang === 'es' ? 'MODO OFFLINE (FALLBACK ACTIVADO)' : 'OFFLINE MODE (FALLBACK ACTIVE)',
-        noDesc: lang === 'es' ? 'Descripción no proporcionada.' : 'Description not provided.',
-        noRefs: lang === 'es' ? 'Sin referencias disponibles.' : 'No references available.',
-        update: lang === 'es' ? 'Publicado' : 'Published',
-        lastUpdate: lang === 'es' ? 'Fecha de publicación' : 'Publish Date',
-        tacSummary: lang === 'es' ? '01. RESUMEN TÁCTICO' : '01. TACTICAL SUMMARY',
-        refs: lang === 'es' ? '02. REFERENCIAS Y EXPLOITS' : '02. REFERENCES & EXPLOITS'
-    };
-
-    if(btnRefresh) btnRefresh.innerText = lang === 'es' ? '↻ REFRESCAR' : '↻ REFRESH';
-
-    // 🛡️ MODO EMERGENCIA: 7 Vulnerabilidades (Por si el archivo JSON falla)
-    const mockFallbackData = [
-        { CVE: "CVE-2024-3094", cvss3_score: "10.0", public_date: "2024-03-29T12:00:00Z", bugzilla_description: "Malicious code discovered in the upstream tarballs of xz, starting with version 5.6.0. Through a series of complex obfuscations, the liblzma build process extracts a prebuilt object file which modifies specific functions, allowing remote code execution (RCE).", resource_url: "https://nvd.nist.gov/vuln/detail/CVE-2024-3094" },
-        { CVE: "CVE-2023-4966", cvss3_score: "9.4", public_date: "2023-10-23T09:15:00Z", bugzilla_description: "Citrix NetScaler ADC and NetScaler Gateway contain a sensitive information disclosure vulnerability (Citrix Bleed). This allows an unauthenticated remote attacker to hijack existing authenticated sessions.", resource_url: "https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-325a" },
-        { CVE: "CVE-2023-44487", cvss3_score: "7.5", public_date: "2023-10-10T14:30:00Z", bugzilla_description: "The HTTP/2 protocol allows a denial of service (Rapid Reset) because request cancellation can reset many streams quickly. This was exploited in the wild to launch the largest DDoS attacks in history.", resource_url: "https://cloud.google.com/blog/products/identity-security/how-it-works-the-novel-http2-rapid-reset-ddos-attack" },
-        { CVE: "CVE-2021-44228", cvss3_score: "10.0", public_date: "2021-12-10T10:00:00Z", bugzilla_description: "Apache Log4j2 JNDI features used in configuration do not protect against attacker controlled LDAP endpoints (Log4Shell). An attacker who can control log messages can execute arbitrary code loaded from LDAP servers.", resource_url: "https://logging.apache.org/log4j/2.x/security.html" },
-        { CVE: "CVE-2024-21338", cvss3_score: "7.8", public_date: "2024-02-13T00:00:00Z", bugzilla_description: "Windows Kernel Elevation of Privilege Vulnerability. An attacker who successfully exploited this vulnerability could gain SYSTEM privileges.", resource_url: "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2024-21338" },
-        { CVE: "CVE-2024-21412", cvss3_score: "8.1", public_date: "2024-02-13T00:00:00Z", bugzilla_description: "Internet Shortcut Files Security Feature Bypass Vulnerability. An unauthenticated attacker could send the targeted user a specially crafted file that is designed to bypass displayed security checks.", resource_url: "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2024-21412" },
-        { CVE: "CVE-2023-20198", cvss3_score: "10.0", public_date: "2023-10-16T00:00:00Z", bugzilla_description: "Cisco IOS XE Web UI Privilege Escalation Vulnerability. A vulnerability could allow an unauthenticated, remote attacker to create an account on an affected system with privilege level 15 access.", resource_url: "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-iosxe-webui-privesc-j22SaA4z" }
-    ];
-
-    const getSeverity = (score) => {
-        if (!score || score === "N/A") return { level: 'UNKNOWN', class: 'UNKNOWN' };
-        const num = parseFloat(score);
-        if (num >= 9.0) return { level: 'CRITICAL', class: 'CRITICAL' };
-        if (num >= 7.0) return { level: 'HIGH', class: 'HIGH' };
-        if (num >= 4.0) return { level: 'MEDIUM', class: 'MEDIUM' };
-        return { level: 'LOW', class: 'LOW' };
-    };
-
-    const renderDetails = (cve) => {
-        try {
-            document.querySelectorAll('.feed-item').forEach(el => el.classList.remove('active'));
-            const activeItem = document.getElementById(`item-${cve.CVE}`);
-            if(activeItem) activeItem.classList.add('active');
-
-            const score = cve.cvss3_score || "N/A";
-            const sev = getSeverity(score);
-            
-            const dateObj = new Date(cve.public_date);
-            const dateStr = isNaN(dateObj.getTime()) ? 'N/A' : dateObj.toLocaleString(lang === 'es' ? 'es-ES' : 'en-US');
-
-            const refLink = cve.resource_url ? `<li><a href="${cve.resource_url}" target="_blank" style="word-break: break-all;">${cve.resource_url}</a></li>` : `<li>${t.noRefs}</li>`;
-
-            cveDetailsEl.innerHTML = `
-                <div class="dp-header">
-                    <div>
-                        <div class="dp-title">${cve.CVE || 'CVE-UNKNOWN'} <span class="sev-badge bg-${sev.class}">${sev.level}</span></div>
-                        <div class="dp-meta">${t.lastUpdate}: ${dateStr}</div>
-                    </div>
-                    <div class="dp-cvss-box">
-                        <div class="dp-cvss-score" style="color: var(--${sev.class === 'CRITICAL' ? 'red' : 'cyan'})">${score}</div>
-                        <div class="dp-cvss-label">CVSS Score</div>
-                    </div>
-                </div>
-                <div class="dp-section-title">${t.tacSummary}</div>
-                <div class="dp-text">${cve.bugzilla_description || t.noDesc}</div>
-                <div class="dp-section-title">${t.refs}</div>
-                <ul class="dp-refs">${refLink}</ul>
-            `;
-        } catch (err) {
-            console.error(err);
-        }
-    };
-
-    const renderFeedList = (data, isFallback = false) => {
-        cveListEl.innerHTML = ''; 
-        
-        if (isFallback) {
-            const fallbackMsg = document.createElement('div');
-            fallbackMsg.style.cssText = "padding: 0.8rem; text-align: center; color: #000; background-color: #ffb86c; font-size: 0.85rem; font-weight: bold; border-radius: 4px; margin-bottom: 1rem;";
-            fallbackMsg.innerText = `⚠️ ${t.fallbackMode}`;
-            cveListEl.appendChild(fallbackMsg);
-        }
-
-        let firstValidCve = null;
-
-        data.forEach((cve) => {
-            try {
-                if (!cve || !cve.CVE) return;
-                
-                const score = cve.cvss3_score || "N/A";
-                const sev = getSeverity(score);
-                const dateObj = new Date(cve.public_date);
-                const dateStr = isNaN(dateObj.getTime()) ? 'N/A' : dateObj.toLocaleDateString(lang === 'es' ? 'es-ES' : 'en-US');
-                
-                const item = document.createElement('div');
-                item.className = `feed-item sev-${sev.class}`;
-                item.id = `item-${cve.CVE}`;
-                
-                item.innerHTML = `
-                    <div class="fi-id">${cve.CVE} <span style="float:right; font-size:0.8rem; font-weight:normal; color:#888;">${score}</span></div>
-                    <div class="fi-date">${t.update}: ${dateStr}</div>
-                    <div class="fi-summary">${cve.bugzilla_description || t.noDesc}</div>
-                `;
-                
-                item.addEventListener('click', () => renderDetails(cve));
-                cveListEl.appendChild(item);
-
-                if (!firstValidCve) firstValidCve = cve;
-            } catch (err) {}
+    if (hamburgerBtn && mobileNav) {
+        hamburgerBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Alterna las clases para abrir/cerrar el menú
+            mobileNav.classList.toggle('active');
+            mobileNav.classList.toggle('open');
+            hamburgerBtn.classList.toggle('active');
         });
+    }
+});
+/* ==========================================================================
+   CIBERESCUDO - SENTINEL LAB (VERSIÓN 2 FASES)
+   ========================================================================== */
+document.addEventListener('DOMContentLoaded', () => {
+    const lang = document.documentElement.lang || 'es';
 
-        if (firstValidCve) renderDetails(firstValidCve);
-    };
+    // ----------------------------------------------------------------------
+    // FASE 1: PESTAÑAS (TABS)
+    // ----------------------------------------------------------------------
+    const tabs = document.querySelectorAll('.snt-tab-btn');
+    const panes = document.querySelectorAll('.snt-pane');
 
-    const loadFeed = async () => {
-        cveListEl.innerHTML = `<div style="padding: 2rem; text-align: center; color: var(--cyan); font-family: var(--mono);">${t.loading}</div>`;
-        
-        try {
-            // Intentamos leer el archivo local primero
-            const response = await fetch(`${baseUrl}/assets/data/cve-cache.json?nocache=${new Date().getTime()}`);
-            if (!response.ok) throw new Error("Local JSON not found");
+    tabs.forEach(tab => {
+        tab.addEventListener('click', (e) => {
+            e.preventDefault();
             
-            const data = await response.json();
-            if (!Array.isArray(data) || data.length === 0) throw new Error("Local JSON is empty");
-            
-            // Si el JSON se lee perfectamente, renderizamos (sin cartel naranja)
-            renderFeedList(data, false);
-            
-        } catch (error) {
-            console.warn("Fallo al leer cve-cache.json. Activando Fallback con 7 elementos.", error);
-            // Si no encuentra el JSON, carga nuestras 7 vulnerabilidades de emergencia
-            renderFeedList(mockFallbackData, true);
-        }
-    };
+            tabs.forEach(t => t.classList.remove('active'));
+            panes.forEach(p => p.classList.remove('active'));
 
-    if (btnRefresh) btnRefresh.addEventListener('click', loadFeed);
-    loadFeed();
+            tab.classList.add('active');
+            const targetId = tab.getAttribute('data-target');
+            const targetPane = document.getElementById(targetId);
+            if (targetPane) targetPane.classList.add('active');
+
+            if (targetId === 'pane-rule') {
+                const kqlInput = document.getElementById('kql-input');
+                const alertPreview = document.getElementById('alert-query-preview');
+                if (kqlInput && alertPreview) alertPreview.value = kqlInput.value;
+            }
+        });
+    });
+
+    // ----------------------------------------------------------------------
+    // FASE 2: MOTOR KQL
+    // ----------------------------------------------------------------------
+    const btnRunKql = document.getElementById('btn-run-kql');
+    if (btnRunKql) {
+        btnRunKql.addEventListener('click', (e) => {
+            e.preventDefault();
+            const kqlInput = document.getElementById('kql-input');
+            const kqlTbody = document.getElementById('kql-tbody');
+            const kqlMeta = document.getElementById('kql-results-meta');
+
+            if (!kqlInput || !kqlTbody || !kqlMeta) return;
+
+            const mockEvents = [
+                { TimeGenerated: "2026-05-22T08:00:01Z", EventID: 4624, Account: "SYSTEM", IpAddress: "127.0.0.1", Activity: "Logon Success (System)" },
+                { TimeGenerated: "2026-05-22T08:15:22Z", EventID: 4624, Account: "a.rodriguez", IpAddress: "192.168.1.55", Activity: "Logon Success (Interactive)" },
+                { TimeGenerated: "2026-05-22T08:30:00Z", EventID: 4688, Account: "a.rodriguez", IpAddress: "-", Activity: "Process Created: C:\\Windows\\System32\\chrome.exe" },
+                { TimeGenerated: "2026-05-22T09:05:11Z", EventID: 4634, Account: "a.rodriguez", IpAddress: "192.168.1.55", Activity: "Logoff" },
+                { TimeGenerated: "2026-05-22T09:10:00Z", EventID: 4624, Account: "m.garcia", IpAddress: "192.168.1.102", Activity: "Logon Success (Network)" },
+                { TimeGenerated: "2026-05-22T10:17:10Z", EventID: 4625, Account: "admin", IpAddress: "45.33.22.11", Activity: "Logon Failed (Bad Password)" },
+                { TimeGenerated: "2026-05-22T10:18:20Z", EventID: 4688, Account: "administrator", IpAddress: "45.33.22.11", Activity: "Process Created: powershell.exe -ExecutionPolicy Bypass..." },
+                { TimeGenerated: "2026-05-22T10:20:00Z", EventID: 4720, Account: "administrator", IpAddress: "-", Activity: "User Account Created: svc_backdoor" },
+                { TimeGenerated: "2026-05-22T10:25:00Z", EventID: 1102, Account: "administrator", IpAddress: "-", Activity: "Audit Log Cleared (Defense Evasion)" }
+            ];
+
+            let query = kqlInput.value.split('\n').filter(line => !line.trim().startsWith('//')).join(' ').trim();
+            kqlTbody.innerHTML = '';
+            if (!query) return;
+
+            const parts = query.split('|').map(p => p.trim()).filter(p => p !== '');
+            if (parts[0] !== 'SecurityEvent') {
+                kqlTbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#f85149;">Table not found. Use 'SecurityEvent'</td></tr>`;
+                return;
+            }
+
+            let results = [...mockEvents];
+            for (let i = 1; i < parts.length; i++) {
+                const cmd = parts[i];
+                if (cmd.startsWith('where ')) {
+                    const condition = cmd.substring(6).trim();
+                    if (condition.includes('==')) {
+                        let [field, value] = condition.split('==').map(s => s.trim());
+                        value = value.replace(/['"]/g, '');
+                        results = results.filter(row => String(row[field]) === String(value));
+                    } else if (condition.toLowerCase().includes(' contains ')) {
+                        let [field, value] = condition.toLowerCase().split(' contains ').map(s => s.trim());
+                        value = value.replace(/['"]/g, '');
+                        results = results.filter(row => String(row[field]).toLowerCase().includes(value));
+                    }
+                }
+            }
+
+            kqlMeta.innerHTML = `✅ ${lang==='es'?'Resultados':'Results'}: ${results.length} records`;
+            results.forEach(row => {
+                const tr = document.createElement('tr');
+                const isAlert = (row.EventID == 4625 || row.EventID == 1102 || row.EventID == 4720 || row.Activity.includes("powershell"));
+                tr.innerHTML = `<td>${row.TimeGenerated}</td><td style="color:${isAlert?'#f85149':'#c9d1d9'}; font-weight:bold;">${row.EventID}</td><td>${row.Account}</td><td>${row.IpAddress}</td><td>${row.Activity}</td>`;
+                kqlTbody.appendChild(tr);
+            });
+        });
+    }
+
+    // ----------------------------------------------------------------------
+    // FASE 3: ALERT BUILDER
+    // ----------------------------------------------------------------------
+    const btnSaveRule = document.getElementById('btn-save-rule');
+    if (btnSaveRule) {
+        btnSaveRule.addEventListener('click', (e) => {
+            e.preventDefault();
+            const nameInput = document.getElementById('rule-name-input');
+            const name = nameInput && nameInput.value.trim() ? nameInput.value.trim() : "Untitled Rule";
+            
+            const sevSelect = document.getElementById('rule-severity');
+            const severity = sevSelect ? sevSelect.options[sevSelect.selectedIndex].text : "Medium";
+            
+            const tagsContainer = document.getElementById('mitre-tags-container');
+            let tags = tagsContainer && tagsContainer.children.length > 0 
+                       ? Array.from(tagsContainer.children).map(t => t.innerText).join(', ') : "None";
+
+            btnSaveRule.innerText = "Deploying...";
+            btnSaveRule.style.background = "#8b949e";
+            btnSaveRule.disabled = true;
+
+            setTimeout(() => {
+                btnSaveRule.innerText = "✅ Analytics Rule Active";
+                btnSaveRule.style.background = "#238636";
+                
+                const activeContainer = document.getElementById('active-rules-container');
+                const activeTbody = document.getElementById('active-rules-tbody');
+                if (activeContainer) activeContainer.style.display = "block";
+                
+                if (activeTbody) {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `<td style="color:#fff; font-weight:bold;">${name}</td><td>${severity}</td><td><span class="m-tag" style="background:transparent; border-color:#30363d;">${tags}</span></td><td style="color:#2ea043; font-weight:bold;">▶ Running</td>`;
+                    activeTbody.prepend(tr);
+                }
+
+                setTimeout(() => {
+                    btnSaveRule.innerText = lang === 'es' ? "Crear Regla de Detección" : "Create Detection Rule";
+                    btnSaveRule.style.background = "#0078d4";
+                    btnSaveRule.disabled = false;
+                }, 2000);
+            }, 1000);
+        });
+    }
+
+    const mitreSelector = document.getElementById('mitre-selector');
+    if (mitreSelector) {
+        mitreSelector.addEventListener('change', (e) => {
+            const val = e.target.value;
+            if (val) {
+                const container = document.getElementById('mitre-tags-container');
+                if (container && !container.innerHTML.includes(val)) {
+                    container.insertAdjacentHTML('beforeend', `<span class="m-tag">${val}</span>`);
+                }
+                e.target.value = "";
+            }
+        });
+    }
 });
 })();

@@ -2878,3 +2878,73 @@ body {
 
     .btn-refresh { background: transparent; border: 1px solid var(--cyan); color: var(--cyan); padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; font-family: var(--mono); transition: 0.3s; }
     .btn-refresh:hover { background: var(--cyan); color: #000; }
+     /* ─── SENTINEL LAB BASE STYLES ─── */
+    .snt-container { max-width: 1600px; margin: 2rem auto; padding: 0 1.5rem; font-family: 'Inter', sans-serif; }
+    .snt-header { text-align: center; margin-bottom: 2rem; }
+    .snt-title { font-family: var(--mono); color: #0078d4; font-size: clamp(2rem, 4vw, 2.5rem); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; }
+    .snt-subtitle { color: var(--gray); font-size: 0.95rem; }
+
+    /* TABS DE NAVEGACIÓN */
+    .snt-tabs { display: flex; gap: 1rem; border-bottom: 1px solid #333; margin-bottom: 2rem; overflow-x: auto; }
+    .snt-tab-btn { 
+        background: transparent; border: none; color: #888; padding: 1rem 1.5rem; font-size: 0.9rem; 
+        font-family: var(--mono); font-weight: bold; cursor: pointer; transition: 0.3s;
+        border-bottom: 3px solid transparent; white-space: nowrap;
+    }
+    .snt-tab-btn:hover { color: #fff; }
+    .snt-tab-btn.active { color: #0078d4; border-bottom-color: #0078d4; }
+
+    /* CONTENEDORES DE PESTAÑAS */
+    .snt-pane { display: none; animation: fadeIn 0.4s ease; }
+    .snt-pane.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* KQL FORGE (EDITOR Y RESULTADOS) */
+    .kql-layout { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+    .kql-editor-box { background: #0d1117; border: 1px solid #30363d; border-radius: 6px; overflow: hidden; }
+    .kql-toolbar { background: #161b22; padding: 0.8rem 1rem; border-bottom: 1px solid #30363d; display: flex; justify-content: space-between; align-items: center; }
+    .kql-run-btn { 
+        background: #238636; color: #fff; border: none; padding: 0.4rem 1rem; border-radius: 4px; 
+        font-weight: bold; font-family: var(--mono); font-size: 0.8rem; cursor: pointer; transition: 0.2s;
+        display: flex; align-items: center; gap: 5px;
+    }
+    .kql-run-btn:hover { background: #2ea043; }
+    .kql-textarea { 
+        width: 100%; height: 150px; background: #0d1117; color: #c9d1d9; border: none; padding: 1rem; 
+        font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; resize: vertical; outline: none; line-height: 1.5;
+    }
+
+    .kql-results-box { background: #0d1117; border: 1px solid #30363d; border-radius: 6px; overflow: hidden; min-height: 300px; display: flex; flex-direction: column; }
+    .kql-results-header { background: #161b22; padding: 0.8rem 1rem; border-bottom: 1px solid #30363d; font-family: var(--mono); font-size: 0.8rem; color: #8b949e; }
+    
+    .kql-table-wrapper { overflow-x: auto; flex: 1; padding: 0; }
+    .kql-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem; }
+    .kql-table th { background: #161b22; color: #c9d1d9; padding: 0.8rem; border-bottom: 1px solid #30363d; font-family: var(--mono); position: sticky; top: 0; }
+    .kql-table td { padding: 0.8rem; border-bottom: 1px solid #21262d; color: #8b949e; font-family: 'JetBrains Mono', monospace; }
+    .kql-table tr:hover td { background: rgba(0, 120, 212, 0.1); color: #c9d1d9; }
+    .empty-state { padding: 3rem; text-align: center; color: #484f58; font-family: var(--mono); }
+
+    /* ─── ALERT BUILDER STYLES ─── */
+    .ab-layout { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+    @media(min-width: 1024px) { .ab-layout { grid-template-columns: 2fr 1fr; } }
+    
+    .ab-card { background: #0d1117; border: 1px solid #30363d; border-radius: 6px; padding: 1.5rem; }
+    .ab-card-title { color: #c9d1d9; font-family: var(--mono); font-size: 1.1rem; margin-bottom: 1.5rem; border-bottom: 1px dashed #30363d; padding-bottom: 0.5rem; }
+    
+    .ab-form-group { margin-bottom: 1.2rem; }
+    .ab-label { display: block; color: #8b949e; font-size: 0.85rem; margin-bottom: 0.5rem; font-weight: bold; }
+    .ab-input, .ab-select, .ab-textarea { 
+        width: 100%; background: #161b22; color: #c9d1d9; border: 1px solid #30363d; 
+        padding: 0.8rem; border-radius: 4px; font-family: 'Inter', sans-serif; font-size: 0.9rem; outline: none;
+    }
+    .ab-input:focus, .ab-select:focus, .ab-textarea:focus { border-color: #0078d4; }
+    .ab-textarea.kql-readonly { font-family: 'JetBrains Mono', monospace; color: #8b949e; background: #0a0c10; cursor: not-allowed; height: 100px; }
+    
+    .ab-btn-save { 
+        width: 100%; background: #0078d4; color: #fff; border: none; padding: 1rem; border-radius: 4px; 
+        font-weight: bold; font-family: var(--mono); cursor: pointer; transition: 0.2s; font-size: 1rem; margin-top: 1rem;
+    }
+    .ab-btn-save:hover { background: #006abc; }
+    
+    .mitre-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+    .m-tag { background: rgba(0, 120, 212, 0.15); color: #58a6ff; border: 1px solid #0078d4; padding: 0.2rem 0.6rem; border-radius: 50px; font-size: 0.75rem; font-weight: bold; }

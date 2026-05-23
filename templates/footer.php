@@ -53,7 +53,7 @@
     </div>
     
 </div>
-<script src="/assets/js/main.js?v=<?= time() ?>"></script>
+<script src="<?= BASE_URL ?>/assets/js/main.js?v=<?= time() ?>"></script>
 <script src="<?= BASE_URL ?>/assets/js/html2pdf.min.js"></script>
 </body>
 </html>
