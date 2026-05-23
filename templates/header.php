@@ -219,6 +219,7 @@
 
 <script nonce="<?= e($cspNonce) ?>">
 document.addEventListener('DOMContentLoaded', () => {
+    // 1. Buscador del menú (El código original que ya tenías)
     const setupMenuSearch = (inputId, listSelector) => {
         const input = document.getElementById(inputId);
         if (!input) return;
@@ -237,14 +238,37 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
         
-        // Evitar que el menú se cierre al hacer clic en el buscador (Escritorio)
         input.addEventListener('click', (e) => e.stopPropagation());
     };
 
-    // Aplicar al menú de PC
     setupMenuSearch('megamenu-search', '.megamenu-sublist li');
-    // Aplicar al menú de móvil (ignorando los títulos)
     setupMenuSearch('mobile-menu-search', '.mobile-submenu li:not(.mobile-menu-title):not(.mobile-search-wrap)');
+
+    // 2. LÓGICA BLINDADA DEL MENÚ MÓVIL
+    const burgerBtn = document.getElementById('burger');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    if (burgerBtn && mobileMenu) {
+        burgerBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            // 🔥 LA LÍNEA MÁGICA: Bloquea cualquier código viejo en main.js que intente cerrar el menú
+            e.stopImmediatePropagation(); 
+            
+            burgerBtn.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+            mobileMenu.classList.toggle('open');
+        });
+
+        // Cerrar el menú automáticamente si haces clic en un enlace interno
+        const mobileLinks = mobileMenu.querySelectorAll('a');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                burgerBtn.classList.remove('active');
+                mobileMenu.classList.remove('active');
+                mobileMenu.classList.remove('open');
+            });
+        });
+    }
 });
 </script>
 <script src="<?= BASE_URL ?>/assets/js/main.js?v=<?= time() ?>"></script>
