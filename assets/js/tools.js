@@ -2512,10 +2512,16 @@ document.addEventListener('DOMContentLoaded', function() {
             cveStatus.innerHTML = `<span style="color:var(--cyan);">⏳ ${lang === 'es' ? 'Consultando base de datos del NIST NVD (puede tardar unos segundos)...' : 'Querying NIST NVD database (may take a few seconds)...'}</span>`;
             btnSearch.disabled = true;
 
+            // Límite de tiempo (15 seg) para evitar que se quede colgado
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 15000);
+
             try {
                 // Hacemos la petición a NUESTRO proxy PHP local
                 const url = `?api_cve=${encodeURIComponent(query)}`;
-                const response = await fetch(url);
+                const response = await fetch(url, { signal: controller.signal });
+                
+                clearTimeout(timeoutId);
 
                 if (!response.ok) {
                     // Intentar leer el error enviado por PHP
@@ -2523,7 +2529,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     throw new Error(errData.error || `HTTP Error: ${response.status}`);
                 }
 
-                const data = await response.json();
+                // Prevenimos fallos si PHP devuelve HTML en lugar de JSON (ej: un Warning del servidor)
+                const responseText = await response.text();
+                let data;
+                try {
+                    data = JSON.parse(responseText);
+                } catch (e) {
+                    throw new Error(lang === 'es' ? 'El servidor no devolvió un JSON válido. Comprueba el proxy PHP.' : 'Server did not return valid JSON. Check PHP proxy.');
+                }
+                
                 const vulns = data.vulnerabilities || [];
 
                 if (vulns.length === 0) {
@@ -2581,7 +2595,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 cveResults.innerHTML = html;
 
             } catch (error) {
-                cveStatus.innerHTML = `<span style="color:#ff5050;">❌ ${escapeHTML(error.message)}</span>`;
+                if (error.name === 'AbortError') {
+                    cveStatus.innerHTML = `<span style="color:#ff5050;">❌ ${lang === 'es' ? 'Tiempo de espera agotado. La API del NIST está caída o muy lenta.' : 'Timeout. NIST API is down or too slow.'}</span>`;
+                } else {
+                    cveStatus.innerHTML = `<span style="color:#ff5050;">❌ ${escapeHTML(error.message)}</span>`;
+                }
             } finally {
                 btnSearch.disabled = false;
             }
