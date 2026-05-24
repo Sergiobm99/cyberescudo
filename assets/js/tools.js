@@ -2477,15 +2477,23 @@ document.addEventListener('DOMContentLoaded', function() {
     // 25. Herramienta: CVE & Exploit Finder Integrado
     // =========================================================
     (function() {
+        // Barrera de seguridad: Solo ejecutamos si la URL contiene 'cve'
+        const isCvePage = window.location.pathname.includes('cve');
+        if (!isCvePage) return;
+
         const cveInput = document.getElementById('cve-input');
-        if (!cveInput) return;
-
-        console.log("✅ CVE & Exploit Finder cargado.");
-
         const btnSearch = document.getElementById('btn-cve-search');
         const cveStatus = document.getElementById('cve-status');
         const cveResults = document.getElementById('cve-results');
-        const lang = window.LANG || 'es';
+
+        if (!cveInput || !btnSearch || !cveResults) {
+            if (cveStatus) cveStatus.innerHTML = "<span style='color:#ff5050;'>❌ Error: Faltan IDs HTML (cve-input, btn-cve-search). Revisa el código de tu archivo PHP.</span>";
+            return;
+        }
+
+        console.log("✅ CVE Tracker (Conexión Directa Anti-Bloqueos) Iniciado.");
+
+        const lang = (typeof window.LANG !== 'undefined') ? window.LANG : (document.documentElement.lang || 'es');
 
         function escapeHTML(s) {
             const d = document.createElement('div');
@@ -2493,10 +2501,10 @@ document.addEventListener('DOMContentLoaded', function() {
             return d.innerHTML;
         }
 
-        // Determinar el color y etiqueta según el CVSS v3 Score
         function getSeverityBadge(score) {
-            if (!score && score !== 0) return `<span class="cvss-badge cvss-none">N/A</span>`;
+            if (score === null || score === undefined || score === '') return `<span class="cvss-badge cvss-none">N/A</span>`;
             const s = parseFloat(score);
+            if (isNaN(s)) return `<span class="cvss-badge cvss-none">N/A</span>`;
             if (s >= 9.0) return `<span class="cvss-badge cvss-crit">CRÍTICO (${s})</span>`;
             if (s >= 7.0) return `<span class="cvss-badge cvss-high">ALTO (${s})</span>`;
             if (s >= 4.0) return `<span class="cvss-badge cvss-med">MEDIO (${s})</span>`;
@@ -2504,95 +2512,61 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         async function searchCVEs(isInitialLoad = false) {
-            const query = cveInput.value.trim();
-            if (!query && !isInitialLoad) return;
-
-            // Limpiamos la pantalla y mostramos el "Cargando..."
-            cveResults.innerHTML = '';
-            cveStatus.innerHTML = `<span style="color:var(--cyan);">⏳ ${lang === 'es' ? 'Consultando base de datos...' : 'Querying database...'}</span>`;
-            btnSearch.disabled = true;
-
-            // Límite de tiempo (15 seg) para evitar que se quede colgado
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 15000);
-
             try {
-                // Hacemos la petición a NUESTRO proxy PHP local o al archivo de Caché
-                let url = `?api_cve=${encodeURIComponent(query)}`;
-                if (isInitialLoad && !query) {
-                    url = `/assets/data/cve-cache.json?v=${new Date().getTime()}`;
+                const query = cveInput.value.trim();
+                if (!query && !isInitialLoad) return;
+
+                cveResults.innerHTML = '';
+                if (cveStatus) cveStatus.innerHTML = `<span style="color:var(--cyan);">⏳ ${lang === 'es' ? 'Conectando directamente con Inteligencia de RedHat...' : 'Connecting directly to RedHat Intel...'}</span>`;
+                btnSearch.disabled = true;
+
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+                // LLAMADA DIRECTA AL API PÚBLICO (Bypass Total de Plesk)
+                let url = 'https://access.redhat.com/hydra/rest/securitydata/cve.json?per_page=15';
+                if (query) {
+                    if (query.toUpperCase().startsWith('CVE-')) {
+                        url = `https://access.redhat.com/hydra/rest/securitydata/cve.json?cve=${encodeURIComponent(query.toUpperCase())}`;
+                    } else {
+                        url = `https://access.redhat.com/hydra/rest/securitydata/cve.json?bugzilla_description=${encodeURIComponent(query)}&per_page=15`;
+                    }
                 }
                 
-                let response = await fetch(url, { signal: controller.signal });
-                
-                // Si falla el archivo JSON en carga inicial, usamos un endpoint por defecto
-                if (isInitialLoad && !response.ok) {
-                    url = `?api_cve=latest`;
-                    response = await fetch(url, { signal: controller.signal });
-                }
+                const response = await fetch(url, { signal: controller.signal });
                 
                 clearTimeout(timeoutId);
 
-                if (!response.ok) {
-                    // Intentar leer el error enviado por PHP
-                    const errData = await response.json().catch(() => ({}));
-                    throw new Error(errData.error || `HTTP Error: ${response.status}`);
-                }
+                if (!response || !response.ok) throw new Error(`API Connection Failed (${response.status})`);
 
-                // Prevenimos fallos si PHP devuelve HTML en lugar de JSON (ej: un Warning del servidor)
-                const responseText = await response.text();
-                let data;
-                try {
-                    data = JSON.parse(responseText);
-                } catch (e) {
-                    throw new Error(lang === 'es' ? 'El servidor no devolvió un JSON válido. Comprueba la caché o el proxy PHP.' : 'Server did not return valid JSON.');
-                }
+                const data = await response.json();
                 
-                // Soportar tanto formato NVD como arrays planos cacheados por sync-cves.php
-                const vulns = data.vulnerabilities || (Array.isArray(data) ? data : []);
+                const vulns = Array.isArray(data) ? data : (data.vulnerabilities || []);
 
                 if (vulns.length === 0) {
-                    if (isInitialLoad) {
-                        cveStatus.innerHTML = `<span style="color:var(--gray-dark);">⏳ ${lang === 'es' ? 'Base de datos conectada. Esperando búsqueda...' : 'Database connected. Waiting for search...'}</span>`;
-                    } else {
-                        cveStatus.innerHTML = `<span style="color:#00d45a;">✅ ${lang === 'es' ? 'No se encontraron vulnerabilidades para:' : 'No vulnerabilities found for:'} "${escapeHTML(query)}"</span>`;
+                    if (cveStatus) {
+                        cveStatus.innerHTML = isInitialLoad
+                            ? `<span style="color:var(--gray-dark);">⏳ ${lang === 'es' ? 'Sistemas listos. Esperando búsqueda...' : 'Ready. Waiting for search...'}</span>`
+                            : `<span style="color:#ffb74d;">⚠️ ${lang === 'es' ? 'No se encontraron resultados para:' : 'No results found for:'} "${escapeHTML(query)}"</span>`;
                     }
                     btnSearch.disabled = false;
                     return;
                 }
 
-                if (isInitialLoad && !query) {
-                    cveStatus.innerHTML = `✅ ${lang === 'es' ? 'Base de datos sincronizada. Mostrando los últimos registros.' : 'Database synced. Showing recent records.'}`;
-                } else {
-                    cveStatus.innerHTML = `${lang === 'es' ? 'Mostrando los últimos' : 'Showing the latest'} ${vulns.length} ${lang === 'es' ? 'resultados para' : 'results for'}: "${escapeHTML(query)}"`;
+                if (cveStatus) {
+                    cveStatus.innerHTML = isInitialLoad && !query
+                        ? `✅ ${lang === 'es' ? 'Conexión Directa Establecida. Mostrando los últimos registros.' : 'Direct Connection Established. Showing recent records.'}`
+                        : `✅ ${lang === 'es' ? 'Mostrando resultados para' : 'Showing results for'}: "${escapeHTML(query)}"`;
                 }
 
                 let html = '';
                 vulns.forEach(item => {
                     const cve = item.cve || item;
-                    const cveId = cve.id || cve.cveId || cve.idCVE || cve.CVE || "CVE-UNKNOWN";
+                    const cveId = cve.CVE || cve.id || "CVE-UNKNOWN";
                     
-                    // Extraer descripción tolerando distintos formatos
-                    let desc = "No description available.";
-                    if (cve.descriptions && cve.descriptions.length > 0) {
-                        const enDesc = cve.descriptions.find(d => d.lang === 'en');
-                        desc = enDesc ? enDesc.value : cve.descriptions[0].value;
-                    } else if (cve.description || cve.desc) {
-                        desc = cve.description || cve.desc;
-                    } else if (cve.bugzilla_description) {
-                        desc = cve.bugzilla_description;
-                    }
+                    let desc = cve.bugzilla_description || cve.description || "No description available.";
 
-                    let cvssScore = null;
-                    if (cve.metrics) {
-                        if (cve.metrics.cvssMetricV31) cvssScore = cve.metrics.cvssMetricV31[0].cvssData.baseScore;
-                        else if (cve.metrics.cvssMetricV30) cvssScore = cve.metrics.cvssMetricV30[0].cvssData.baseScore;
-                        else if (cve.metrics.cvssMetricV2) cvssScore = cve.metrics.cvssMetricV2[0].cvssData.baseScore;
-                    } else if (cve.cvss !== undefined || cve.cvssScore !== undefined) {
-                        cvssScore = cve.cvssScore || cve.cvss;
-                    } else if (cve.cvss3_score !== undefined || cve.cvss_score !== undefined) {
-                        cvssScore = cve.cvss3_score || cve.cvss_score;
-                    }
+                    let cvssScore = cve.cvss3_score || cve.cvss_score || null;
 
                     const exploitDbId = cveId ? cveId.replace('CVE-', '') : '';
 
@@ -2607,10 +2581,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <a href="https://nvd.nist.gov/vuln/detail/${cveId}" target="_blank" class="cve-action-btn">
                                 🏛️ NIST Details
                             </a>
-                            <a href="https://github.com/search?q=${cveId}+poc&type=repositories" target="_blank" class="cve-action-btn" style="border-color: rgba(0, 255, 255, 0.3);">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                                GitHub PoC
-                            </a>
+                            <a href="https://github.com/search?q=${cveId}+poc&type=repositories" target="_blank" class="cve-action-btn" style="border-color: rgba(0, 255, 255, 0.3);">GitHub PoC</a>
                             <a href="https://www.exploit-db.com/search?cve=${exploitDbId}" target="_blank" class="cve-action-btn">
                                 🎯 Exploit-DB
                             </a>
@@ -2621,12 +2592,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 cveResults.innerHTML = html;
 
             } catch (error) {
-                if (isInitialLoad && !query) {
-                    cveStatus.innerHTML = `<span style="color:#f0a000;">⚠️ ${lang === 'es' ? 'Esperando búsqueda manual...' : 'Waiting for manual search...'}</span>`;
-                } else if (error.name === 'AbortError') {
-                    cveStatus.innerHTML = `<span style="color:#ff5050;">❌ ${lang === 'es' ? 'Tiempo de espera agotado.' : 'Timeout.'}</span>`;
-                } else {
-                    cveStatus.innerHTML = `<span style="color:#ff5050;">❌ ${escapeHTML(error.message)}</span>`;
+                console.error("[CVE Tracker Error]", error);
+                if (cveStatus) {
+                    cveStatus.innerHTML = `<span style="color:#ff5050;">❌ API Error: ${escapeHTML(error.message)}. ${lang === 'es' ? 'Inténtalo de nuevo.' : 'Try again.'}</span>`;
                 }
             } finally {
                 btnSearch.disabled = false;
@@ -2638,8 +2606,8 @@ document.addEventListener('DOMContentLoaded', function() {
             if (e.key === 'Enter') searchCVEs(false);
         });
 
-        // 🚀 EJECUCIÓN AUTOMÁTICA AL CARGAR LA HERRAMIENTA 🚀
-        searchCVEs(true);
+        // 🚀 EJECUCIÓN AUTOMÁTICA CON RETRASO PARA ASENTAR EL DOM 🚀
+        setTimeout(() => searchCVEs(true), 250);
 
     })();
     // =========================================================
