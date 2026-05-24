@@ -2570,7 +2570,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 let html = '';
                 vulns.forEach(item => {
                     const cve = item.cve || item;
-                    const cveId = cve.id || cve.cveId || cve.idCVE || cve.CVE || "CVE-UNKNOWN";
+                    const cveId = cve.id || cve.cveId || cve.idCVE || "CVE-UNKNOWN";
                     
                     // Extraer descripción tolerando distintos formatos
                     let desc = "No description available.";
@@ -2579,8 +2579,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         desc = enDesc ? enDesc.value : cve.descriptions[0].value;
                     } else if (cve.description || cve.desc) {
                         desc = cve.description || cve.desc;
-                    } else if (cve.bugzilla_description) {
-                        desc = cve.bugzilla_description;
                     }
 
                     let cvssScore = null;
@@ -2590,8 +2588,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         else if (cve.metrics.cvssMetricV2) cvssScore = cve.metrics.cvssMetricV2[0].cvssData.baseScore;
                     } else if (cve.cvss !== undefined || cve.cvssScore !== undefined) {
                         cvssScore = cve.cvssScore || cve.cvss;
-                    } else if (cve.cvss3_score !== undefined || cve.cvss_score !== undefined) {
-                        cvssScore = cve.cvss3_score || cve.cvss_score;
                     }
 
                     const exploitDbId = cveId ? cveId.replace('CVE-', '') : '';
@@ -3258,7 +3254,7 @@ document.addEventListener('DOMContentLoaded', function() {
         renderPorts();
     })();
     /* ─── ACTUALIZACIÓN EN TIEMPO REAL (REVERSE SHELL) ─── */
-    (function() {
+document.addEventListener('DOMContentLoaded', function() {
     // 1. Buscamos las cajas de texto de tu web usando los IDs que pusiste en el PHP
     const ipInput = document.getElementById('rs-ip');
     const portInput = document.getElementById('rs-port');
@@ -3292,9 +3288,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // 4. Ejecutamos la función una vez al cargar la página para que la caja no empiece vacía
         updateRealTime();
     }
-    })();
+});
 /* ─── SISTEMA DE EXPORTACIÓN A PDF Y DONACIONES ─── */
-    (function() {
+document.addEventListener('DOMContentLoaded', () => {
     // Busca el botón que dispara la acción (tienes que añadir id="btn-export-pdf" a tu botón en el HTML de la herramienta)
     const btnExport = document.getElementById('btn-export-pdf');
     const modal = document.getElementById('donation-modal');
@@ -3343,6 +3339,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if(e.target === modal) modal.classList.add('hidden');
         });
     }
-    })();
+});
 
 });
