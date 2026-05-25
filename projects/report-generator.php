@@ -6,7 +6,7 @@ require __DIR__ . '/../templates/header.php';
 
 <div class="report-container" id="modern-report-tool" data-lang="<?= $lang ?>" data-url="<?= BASE_URL ?>">
     <div class="report-header hide-on-print">
-        <h1 class="report-title"><?= $lang === 'es' ? 'Enterprise Report Generator v4.0' : 'Enterprise Report Generator v4.0' ?></h1>
+        <h1 class="report-title"><?= $lang === 'es' ? 'Enterprise Report Generator' : 'Enterprise Report Generator' ?></h1>
     </div>
 
     <div class="report-layout">
