@@ -297,6 +297,7 @@
             printLine("&nbsp;&nbsp;<strong style='color:#fff'>clear</strong>&nbsp;&nbsp;&nbsp;&nbsp;- Limpia la pantalla");
             printLine("&nbsp;&nbsp;<strong style='color:#fff'>osint</strong>&nbsp;&nbsp;&nbsp;&nbsp;- Atajo a OSINT Recon");
             printLine("&nbsp;&nbsp;<strong style='color:#fff'>submit</strong>&nbsp;&nbsp;&nbsp;- Canjear banderas CTF");
+            printLine("&nbsp;&nbsp;<strong style='color:#fff'>cv</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Ver información del administrador");
             printLine("&nbsp;&nbsp;<strong style='color:#fff'>exit</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Cierra la terminal");
             break;
         case 'clear':
@@ -306,7 +307,20 @@
             printLine("guest@cyberescudo - Nivel de privilegio: bajo");
             break;
         case 'sudo':
-            printLine("¿En serio? Tu intento de escalada de privilegios ha sido registrado.", "cmd-error");
+            printLine("¿Intentando escalar privilegios en mi portfolio? Me gusta tu actitud ofensiva.", "cmd-error");
+            printLine("Si quieres darme permisos de root en tu equipo de ciberseguridad, envíame un mensaje por LinkedIn. 😉", "cmd-echo");
+            break;
+        case 'hire-me':
+        case 'cv':
+            printLine("========================================", "cmd-echo");
+            printLine("👤 SERGIO BELMONTE MORALES", "cmd-echo");
+            printLine("🛡️ Cybersecurity Analyst & SOC Operator", "cmd-echo");
+            printLine("📜 Certs: eCPPT, eJPT, SC-200", "cmd-echo");
+            printLine("========================================", "cmd-echo");
+            printLine("Descargando currículum vitae...");
+            setTimeout(() => {
+                window.location.href = "/generate-cv.php?lang=es";
+            }, 1500);
             break;
         case 'matrix':
             printLine("Despierta, Neo...", "cmd-echo");
