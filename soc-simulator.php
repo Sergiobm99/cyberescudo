@@ -142,6 +142,43 @@ require __DIR__ . '/templates/header.php';
         cursor: not-allowed; 
     }
 
+    .btn-analyze {
+        background: transparent; 
+        color: var(--cyan); 
+        border: 1px solid var(--cyan); 
+        padding: 15px; 
+        font-size: 1.1rem; 
+        font-weight: bold; 
+        cursor: pointer; 
+        border-radius: 4px; 
+        font-family: var(--mono); 
+        text-transform: uppercase; 
+        transition: all 0.3s; 
+    }
+    .btn-analyze:hover:not(:disabled) {
+        background: var(--cyan); 
+        color: #000;
+        box-shadow: 0 0 15px rgba(0, 255, 255, 0.4); 
+    }
+    .btn-analyze:disabled {
+        border-color: #333; 
+        color: #555; 
+        cursor: not-allowed; 
+    }
+
+    .analysis-box {
+        display: none; 
+        margin-top: 5px; 
+        padding: 15px; 
+        background: rgba(0, 255, 255, 0.05); 
+        border: 1px solid var(--cyan); 
+        border-radius: 6px; 
+        font-family: var(--mono);
+        font-size: 0.85rem;
+        color: #fff;
+        line-height: 1.5;
+    }
+
     .alert-msg { 
         padding: 12px; 
         border-radius: 4px; 
@@ -203,9 +240,16 @@ require __DIR__ . '/templates/header.php';
                 [ <?= $lang === 'es' ? 'HAZ CLIC EN UN LOG PARA ANALIZARLO' : 'CLICK ON A LOG TO ANALYZE' ?> ]
             </div>
 
-            <button class="btn-block" id="btn-block" disabled>
-                <?= $lang === 'es' ? '🛑 BLOQUEAR IP OBJETIVO' : '🛑 BLOCK TARGET IP' ?>
-            </button>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-analyze" id="btn-analyze" disabled style="flex: 1;">
+                    <?= $lang === 'es' ? '🔍 ANALIZAR PAYLOAD' : '🔍 ANALYZE PAYLOAD' ?>
+                </button>
+                <button class="btn-block" id="btn-block" disabled style="flex: 1;">
+                    <?= $lang === 'es' ? '🛑 BLOQUEAR IP' : '🛑 BLOCK IP' ?>
+                </button>
+            </div>
+
+            <div id="analysis-box" class="analysis-box"></div>
 
             <div id="alert-box" class="alert-msg"></div>
 

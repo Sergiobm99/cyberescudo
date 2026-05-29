@@ -86,6 +86,7 @@
           <li class="megamenu-col">
             <span class="megamenu-title"><?= $lang==='es'?'🏴‍☠️ Pentesting & Defensa':'🏴‍☠️ Pentesting & Defense' ?></span>
             <ul class="megamenu-sublist">
+              <li><a href="<?= BASE_URL ?>/tool-threat-map" style="color: #ff2a2a; font-weight: bold; text-shadow: 0 0 8px rgba(255,42,42,0.6);">⚡ <?= $lang==='es' ? 'Live Threat Map' : 'Live Threat Map' ?></a></li>
               <li><a href="<?= BASE_URL ?>/soc-arsenal" style="color: #00d45a; font-weight: bold;">🛡️ <?= $lang==='es' ? 'Arsenal SOC (KQL)' : 'SOC Arsenal (KQL)' ?></a></li>
               <li><a href="<?= BASE_URL ?>/projects/phishing-sandbox" style="color: #ff2a2a; font-weight: bold;">🎣 <?= $lang==='es' ? 'Simulador SOC' : 'SOC Simulator' ?></a></li>
               <li><a href="<?= BASE_URL ?>/tool-scanner">🎯 <?= $lang==='es' ? 'Escáner Perimetral' : 'Perimeter Scanner' ?></a></li>
@@ -173,6 +174,7 @@
               </div>
 
               <li class="mobile-menu-title"><?= $lang==='es'?'🛡️ Defensa & SOC':'🛡️ Defense & SOC' ?></li>
+              <li><a href="<?= BASE_URL ?>/tool-threat-map" style="color: #ff2a2a; font-weight: bold;">⚡ <?= $lang==='es' ? 'Live Threat Map' : 'Live Threat Map' ?></a></li>
               <li><a href="<?= BASE_URL ?>/soc-arsenal" style="color: #00d45a;">🛡️ <?= $lang==='es' ? 'Arsenal SOC (KQL)' : 'SOC Arsenal (KQL)' ?></a></li>
               <li><a href="<?= BASE_URL ?>/projects/phishing-sandbox" style="color: #ff2a2a;">🎣 <?= $lang==='es' ? 'Simulador SOC' : 'SOC Simulator' ?></a></li>
               
