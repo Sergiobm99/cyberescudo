@@ -11,19 +11,27 @@ require __DIR__ . '/templates/header.php';
     }
     
     .map-container {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 0;
+        display: flex;
+        flex-direction: column;
         width: 100%;
-        height: calc(100vh - 4rem); /* Ocupa el resto de la pantalla debajo del nav */
-        overflow: hidden;
+        min-height: calc(100vh - 4rem);
+        overflow-y: auto;
         position: relative;
     }
     
     @media (min-width: 1024px) {
         .map-container {
-            grid-template-columns: 3fr 1fr;
+            flex-direction: row;
+            height: calc(100vh - 4rem);
+            overflow: hidden;
         }
+    }
+
+    .canvas-wrapper {
+        flex: 1;
+        position: relative;
+        min-height: 400px;
+        background: radial-gradient(circle at center, #05101a 0%, #000000 100%);
     }
 
     #threat-canvas {
@@ -33,7 +41,6 @@ require __DIR__ . '/templates/header.php';
         width: 100%;
         height: 100%;
         display: block;
-        background: radial-gradient(circle at center, #05101a 0%, #000000 100%);
     }
 
     .live-logs-panel {
@@ -132,9 +139,7 @@ require __DIR__ . '/templates/header.php';
 </style>
 
 <div class="map-container">
-    
-    <!-- CANVAS ZONE -->
-    <div style="position: relative; width: 100%; height: 100%;">
+    <div class="canvas-wrapper">
         <canvas id="threat-canvas"></canvas>
         <div class="stats-overlay">
             <div class="stat-box">

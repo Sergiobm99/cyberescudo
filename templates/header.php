@@ -71,6 +71,7 @@
           <li class="megamenu-col">
             <span class="megamenu-title"><?= $lang==='es'?'🔍 Auditoría & OSINT':'🔍 Audit & OSINT' ?></span>
             <ul class="megamenu-sublist">
+              <li><a href="<?= BASE_URL ?>/tool-auditor" style="color: #b400ff; font-weight: bold; text-shadow: 0 0 8px rgba(180,0,255,0.6);">👁️ <?= $lang==='es' ? 'Visual Code Auditor' : 'Visual Code Auditor' ?></a></li>
               <li><a href="<?= BASE_URL ?>/tool-recon">🔍 OSINT Quick Recon</a></li>
               <li><a href="<?= BASE_URL ?>/tool-takeover">🏴‍☠️ Subdomain Takeover</a></li>
               <li><a href="<?= BASE_URL ?>/tool-cloud">☁️ Cloud Enum</a></li>
@@ -86,6 +87,7 @@
           <li class="megamenu-col">
             <span class="megamenu-title"><?= $lang==='es'?'🏴‍☠️ Pentesting & Defensa':'🏴‍☠️ Pentesting & Defense' ?></span>
             <ul class="megamenu-sublist">
+              <li><a href="<?= BASE_URL ?>/tool-c2" style="color: #ff2a2a; font-weight: bold; text-shadow: 0 0 8px rgba(255,42,42,0.6);">💻 <?= $lang==='es' ? 'C2 Web Simulator' : 'C2 Web Simulator' ?></a></li>
               <li><a href="<?= BASE_URL ?>/tool-sandbox" style="color: #ff2a2a; font-weight: bold; text-shadow: 0 0 8px rgba(255,42,42,0.6);">☣️ <?= $lang==='es' ? 'Sandbox-X Malware Analyzer' : 'Sandbox-X Malware Analyzer' ?></a></li>
               <li><a href="<?= BASE_URL ?>/tool-bloodhound" style="color: #00d45a; font-weight: bold; text-shadow: 0 0 8px rgba(0,212,90,0.6);">🐕 <?= $lang==='es' ? 'BloodHound AD Simulator' : 'BloodHound AD Simulator' ?></a></li>
               <li><a href="<?= BASE_URL ?>/tool-threat-map" style="color: #ff2a2a; font-weight: bold; text-shadow: 0 0 8px rgba(255,42,42,0.6);">⚡ <?= $lang==='es' ? 'Live Threat Map' : 'Live Threat Map' ?></a></li>
@@ -176,6 +178,7 @@
               </div>
 
               <li class="mobile-menu-title"><?= $lang==='es'?'🛡️ Defensa & SOC':'🛡️ Defense & SOC' ?></li>
+              <li><a href="<?= BASE_URL ?>/tool-c2" style="color: #ff2a2a; font-weight: bold;">💻 <?= $lang==='es' ? 'C2 Web Simulator' : 'C2 Web Simulator' ?></a></li>
               <li><a href="<?= BASE_URL ?>/tool-sandbox" style="color: #ff2a2a; font-weight: bold;">☣️ <?= $lang==='es' ? 'Sandbox-X Malware Analyzer' : 'Sandbox-X Malware Analyzer' ?></a></li>
               <li><a href="<?= BASE_URL ?>/tool-bloodhound" style="color: #00d45a; font-weight: bold;">🐕 <?= $lang==='es' ? 'BloodHound AD Simulator' : 'BloodHound AD Simulator' ?></a></li>
               <li><a href="<?= BASE_URL ?>/tool-threat-map" style="color: #ff2a2a; font-weight: bold;">⚡ <?= $lang==='es' ? 'Live Threat Map' : 'Live Threat Map' ?></a></li>
@@ -183,6 +186,7 @@
               <li><a href="<?= BASE_URL ?>/projects/phishing-sandbox" style="color: #ff2a2a;">🎣 <?= $lang==='es' ? 'Simulador SOC' : 'SOC Simulator' ?></a></li>
               
               <li class="mobile-menu-title"><?= $lang==='es'?'🔍 Auditoría & OSINT':'🔍 Audit & OSINT' ?></li>
+              <li><a href="<?= BASE_URL ?>/tool-auditor" style="color: #b400ff; font-weight: bold;">👁️ <?= $lang==='es' ? 'Visual Code Auditor' : 'Visual Code Auditor' ?></a></li>
               <li><a href="<?= BASE_URL ?>/tool-recon">🔍 OSINT Quick Recon</a></li>
               <li><a href="<?= BASE_URL ?>/tool-takeover">🏴‍☠️ Subdomain Takeover</a></li>
               <li><a href="<?= BASE_URL ?>/tool-cloud">☁️ Cloud Enum</a></li>

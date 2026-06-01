@@ -47,6 +47,8 @@ require __DIR__ . '/templates/header.php';
     <option value="<?= BASE_URL ?>/tool-recon.php" <?= $current_page==='tool-recon.php' ? 'selected' : '' ?>>🔍 <?= $lang==='es' ? 'Reconocimiento rápido OSINT' : 'OSINT Quick Recon' ?></option>
     <option value="<?= BASE_URL ?>/tool-ssh.php" <?= $current_page==='/tool-ssh.php' ? 'selected' : '' ?>>🔑 <?= $lang==='es' ? 'Analizador SSH' : 'SSH Analyzer' ?></option>
     <option value="<?= BASE_URL ?>/tool-ports.php" <?= $current_page==='/tool-ports.php' ? 'selected' : '' ?>>📋 <?= $lang==='es' ? 'Puertos de referencia' : 'Port Reference' ?></option>
+    <option value="<?= BASE_URL ?>/tool-c2.php" <?= $current_page==='tool-c2.php' ? 'selected' : '' ?>>💻 <?= $lang==='es' ? 'C2 Web Simulator' : 'C2 Web Simulator' ?></option>
+    <option value="<?= BASE_URL ?>/tool-auditor.php" <?= $current_page==='tool-auditor.php' ? 'selected' : '' ?>>👁️ <?= $lang==='es' ? 'Visual Code Auditor' : 'Visual Code Auditor' ?></option>
     </select>
   </div>
 

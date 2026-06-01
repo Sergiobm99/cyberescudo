@@ -2970,6 +2970,7 @@ document.addEventListener('DOMContentLoaded', () => {
         resizeBH();
 
         // Data Definition (Scenarios)
+        const LANG = document.documentElement.lang || 'es';
         const scenarios = {
             "gpo": {
                 nodes: [
@@ -2979,15 +2980,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     { id: "DEF_DC_POLICY", type: "gpo", label: "Default DC Policy", x: 0, y: 0, vx: 0, vy: 0 },
                     { id: "USER_BOB", type: "user", label: "Bob (Helpdesk)", x: 0, y: 0, vx: 0, vy: 0, compromised: true },
                     { id: "IT_GROUP", type: "group", label: "IT Helpdesk", x: 0, y: 0, vx: 0, vy: 0 },
-                    { id: "COMP_DC01", type: "computer", label: "DC-01.cyberescudo.local", x: 0, y: 0, vx: 0, vy: 0 }
+                    { id: "COMP_DC01", type: "computer", label: "DC-01", x: 0, y: 0, vx: 0, vy: 0 },
+                    { id: "COMP_DC02", type: "computer", label: "DC-02", x: 0, y: 0, vx: 0, vy: 0 },
+                    { id: "USER_ADMIN", type: "user", label: "Admin_01", x: 0, y: 0, vx: 0, vy: 0 },
+                    { id: "GPO_WS", type: "gpo", label: "Workstations Policy", x: 0, y: 0, vx: 0, vy: 0 },
+                    { id: "OU_WS", type: "ou", label: "Workstations OU", x: 0, y: 0, vx: 0, vy: 0 }
                 ],
                 edges: [
                     { source: "DA_GROUP", target: "DOMAIN", type: "GenericAll" },
                     { source: "COMP_DC01", target: "DC_OU", type: "Contains" },
+                    { source: "COMP_DC02", target: "DC_OU", type: "Contains" },
                     { source: "DEF_DC_POLICY", target: "DC_OU", type: "GPLink" },
+                    { source: "GPO_WS", target: "OU_WS", type: "GPLink" },
                     { source: "USER_BOB", target: "IT_GROUP", type: "MemberOf" },
                     { source: "IT_GROUP", target: "DEF_DC_POLICY", type: "GenericWrite" },
-                    { source: "COMP_DC01", target: "DOMAIN", type: "MemberOf" }
+                    { source: "COMP_DC01", target: "DOMAIN", type: "MemberOf" },
+                    { source: "COMP_DC02", target: "DOMAIN", type: "MemberOf" },
+                    { source: "USER_ADMIN", target: "DA_GROUP", type: "MemberOf" }
                 ],
                 attackPath: {
                     nodes: ["USER_BOB", "IT_GROUP", "DEF_DC_POLICY", "DC_OU", "COMP_DC01", "DOMAIN"],
@@ -2999,11 +3008,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         { source: "COMP_DC01", target: "DOMAIN" }
                     ],
                     steps: [
-                        { title: "1. Compromise User", edge: "Initial Access", text: "El atacante compromete la cuenta de Bob mediante un ataque de Phishing o Password Spraying." },
-                        { title: "2. Group Membership", edge: "MemberOf", text: "Bob hereda privilegios por ser miembro del grupo 'IT Helpdesk'." },
-                        { title: "3. GPO Abuse", edge: "GenericWrite", text: "El grupo IT Helpdesk tiene permisos 'GenericWrite' mal configurados sobre la 'Default DC Policy'." },
-                        { title: "4. GPO Execution", edge: "GPLink", text: "El atacante inyecta una Tarea Programada (Scheduled Task) maliciosa dentro de la GPO." },
-                        { title: "5. Domain Compromise", edge: "Execution", text: "La GPO se despliega en todos los Controladores de Dominio (DC-01), otorgando privilegios de SYSTEM al atacante." }
+                        { title: LANG==='es'?"1. Comprometer Usuario":"1. Compromise User", edge: "Initial Access", text: LANG==='es'?"El atacante compromete la cuenta de Bob mediante un ataque de Phishing o Password Spraying.":"The attacker compromises Bob's account via Phishing or Password Spraying." },
+                        { title: LANG==='es'?"2. Membresía de Grupo":"2. Group Membership", edge: "MemberOf", text: LANG==='es'?"Bob hereda privilegios por ser miembro del grupo 'IT Helpdesk'.":"Bob inherits privileges as a member of the 'IT Helpdesk' group." },
+                        { title: LANG==='es'?"3. Abuso de GPO":"3. GPO Abuse", edge: "GenericWrite", text: LANG==='es'?"El grupo IT Helpdesk tiene permisos 'GenericWrite' mal configurados sobre la 'Default DC Policy'.":"The IT Helpdesk group has misconfigured 'GenericWrite' permissions on the 'Default DC Policy'." },
+                        { title: LANG==='es'?"4. Ejecución de GPO":"4. GPO Execution", edge: "GPLink", text: LANG==='es'?"El atacante inyecta una Tarea Programada (Scheduled Task) maliciosa dentro de la GPO.":"The attacker injects a malicious Scheduled Task into the GPO." },
+                        { title: LANG==='es'?"5. Compromiso del Dominio":"5. Domain Compromise", edge: "Execution", text: LANG==='es'?"La GPO se despliega en todos los Controladores de Dominio (DC-01), otorgando privilegios de SYSTEM al atacante.":"The GPO is deployed to all Domain Controllers (DC-01), granting SYSTEM privileges to the attacker." }
                     ]
                 }
             },
@@ -3013,13 +3022,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     { id: "DA_GROUP", type: "group", label: "Domain Admins", x: 0, y: 0, vx: 0, vy: 0 },
                     { id: "USER_ALICE", type: "user", label: "Alice (DA)", x: 0, y: 0, vx: 0, vy: 0 },
                     { id: "USER_SVC", type: "user", label: "svc_sql (Service)", x: 0, y: 0, vx: 0, vy: 0, compromised: true },
-                    { id: "COMP_SRV01", type: "computer", label: "SQL-SRV.cyberescudo.local", x: 0, y: 0, vx: 0, vy: 0 }
+                    { id: "COMP_SRV01", type: "computer", label: "SQL-SRV-01", x: 0, y: 0, vx: 0, vy: 0 },
+                    { id: "COMP_SRV02", type: "computer", label: "SQL-SRV-02", x: 0, y: 0, vx: 0, vy: 0 },
+                    { id: "USER_DBA", type: "user", label: "John (DBA)", x: 0, y: 0, vx: 0, vy: 0 },
+                    { id: "GROUP_DBA", type: "group", label: "Database Admins", x: 0, y: 0, vx: 0, vy: 0 }
                 ],
                 edges: [
                     { source: "DA_GROUP", target: "DOMAIN", type: "GenericAll" },
                     { source: "USER_ALICE", target: "DA_GROUP", type: "MemberOf" },
                     { source: "USER_SVC", target: "DOMAIN", type: "GetChangesAll" },
-                    { source: "USER_SVC", target: "COMP_SRV01", type: "AdminTo" }
+                    { source: "USER_SVC", target: "COMP_SRV01", type: "AdminTo" },
+                    { source: "USER_SVC", target: "COMP_SRV02", type: "AdminTo" },
+                    { source: "USER_DBA", target: "GROUP_DBA", type: "MemberOf" },
+                    { source: "GROUP_DBA", target: "COMP_SRV01", type: "AdminTo" }
                 ],
                 attackPath: {
                     nodes: ["USER_SVC", "DOMAIN", "USER_ALICE"],
@@ -3028,9 +3043,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         { source: "DOMAIN", target: "USER_ALICE" }
                     ],
                     steps: [
-                        { title: "1. Initial Compromise", edge: "Kerberoasting", text: "El atacante solicita el ticket TGS de svc_sql y lo crackea offline extrayendo su contraseña (Kerberoasting)." },
-                        { title: "2. DCSync Attack", edge: "GetChangesAll", text: "La cuenta de servicio tiene el privilegio de replicación GetChangesAll. Se usa Mimikatz (DCSync) para simular ser un Controlador de Dominio." },
-                        { title: "3. Dump Credentials", edge: "Dump", text: "El atacante solicita la replicación del hash NTLM de Alice (Domain Admin) sin ejecutar código en el servidor, comprometiendo todo el entorno." }
+                        { title: LANG==='es'?"1. Compromiso Inicial":"1. Initial Compromise", edge: "Kerberoasting", text: LANG==='es'?"El atacante solicita el ticket TGS de svc_sql y lo crackea offline extrayendo su contraseña (Kerberoasting).":"The attacker requests the TGS ticket for svc_sql and cracks it offline to extract the password (Kerberoasting)." },
+                        { title: LANG==='es'?"2. Ataque DCSync":"2. DCSync Attack", edge: "GetChangesAll", text: LANG==='es'?"La cuenta de servicio tiene el privilegio de replicación GetChangesAll. Se usa Mimikatz (DCSync) para simular ser un Controlador de Dominio.":"The service account has the GetChangesAll replication privilege. Mimikatz (DCSync) is used to simulate a Domain Controller." },
+                        { title: LANG==='es'?"3. Volcado de Credenciales":"3. Dump Credentials", edge: "Dump", text: LANG==='es'?"El atacante solicita la replicación del hash NTLM de Alice (Domain Admin) sin ejecutar código en el servidor, comprometiendo todo el entorno.":"The attacker requests replication of Alice's (Domain Admin) NTLM hash without executing code on the server, compromising the entire environment." }
                     ]
                 }
             },
@@ -3055,10 +3070,178 @@ document.addEventListener('DOMContentLoaded', () => {
                         { source: "COMP_DC01", target: "COMP_PKI" }
                     ],
                     steps: [
-                        { title: "1. Coerce Authentication", edge: "PetitPotam", text: "Eve fuerza a DC-01 a autenticarse contra la máquina del atacante explotando RPC/MS-EFSR (PetitPotam)." },
-                        { title: "2. NTLM Relay (ESC8)", edge: "NTLMRelay", text: "Se captura la petición de autenticación NTLM del DC-01 y se redirige (Relay) hacia el endpoint HTTP del servidor AD CS (PKI-SRV)." },
-                        { title: "3. Certificate Request", edge: "Enroll", text: "El atacante solicita un certificado de autenticación de cliente en nombre de DC-01." },
-                        { title: "4. Domain Takeover", edge: "PassTheCert", text: "Con el certificado emitido para DC-01$, se solicita un TGT kerberos (Rubeus) obteniendo acceso absoluto al dominio." }
+                        { title: LANG==='es'?"1. Coerción de Autenticación":"1. Coerce Authentication", edge: "PetitPotam", text: LANG==='es'?"Eve fuerza a DC-01 a autenticarse contra la máquina del atacante explotando RPC/MS-EFSR (PetitPotam).":"Eve coerces DC-01 to authenticate to the attacker's machine by exploiting RPC/MS-EFSR (PetitPotam)." },
+                        { title: LANG==='es'?"2. NTLM Relay (ESC8)":"2. NTLM Relay (ESC8)", edge: "NTLMRelay", text: LANG==='es'?"Se captura la petición de autenticación NTLM del DC-01 y se redirige (Relay) hacia el endpoint HTTP del servidor AD CS (PKI-SRV).":"DC-01's NTLM authentication request is captured and relayed to the AD CS server's HTTP endpoint (PKI-SRV)." },
+                        { title: LANG==='es'?"3. Solicitud de Certificado":"3. Certificate Request", edge: "Enroll", text: LANG==='es'?"El atacante solicita un certificado de autenticación de cliente en nombre de DC-01.":"The attacker requests a client authentication certificate on behalf of DC-01." },
+                        { title: LANG==='es'?"4. Toma de Control del Dominio":"4. Domain Takeover", edge: "PassTheCert", text: LANG==='es'?"Con el certificado emitido para DC-01$, se solicita un TGT kerberos (Rubeus) obteniendo acceso absoluto al dominio.":"Using the certificate issued to DC-01$, a Kerberos TGT is requested (Rubeus), gaining absolute access to the domain." }
+                    ]
+                }
+            },
+            "asrep": {
+                nodes: [
+                    { id: "DOMAIN", type: "domain", label: "CYBERESCUDO.LOCAL", x: 0, y: 0, vx: 0, vy: 0 },
+                    { id: "USER_GUEST", type: "user", label: "Guest (Unprivileged)", x: 0, y: 0, vx: 0, vy: 0, compromised: true },
+                    { id: "USER_ADMIN", type: "user", label: "Admin_Backup", x: 0, y: 0, vx: 0, vy: 0 },
+                    { id: "DA_GROUP", type: "group", label: "Domain Admins", x: 0, y: 0, vx: 0, vy: 0 }
+                ],
+                edges: [
+                    { source: "DA_GROUP", target: "DOMAIN", type: "GenericAll" },
+                    { source: "USER_ADMIN", target: "DA_GROUP", type: "MemberOf" }
+                ],
+                attackPath: {
+                    nodes: ["USER_GUEST", "USER_ADMIN", "DA_GROUP", "DOMAIN"],
+                    edges: [
+                        { source: "USER_GUEST", target: "USER_ADMIN" },
+                        { source: "USER_ADMIN", target: "DA_GROUP" }
+                    ],
+                    steps: [
+                        { title: LANG==='es'?"1. Enumeración Inicial":"1. Initial Enumeration", edge: "LDAP Query", text: LANG==='es'?"El atacante enumera usuarios del dominio buscando la flag 'DONT_REQ_PREAUTH'.":"The attacker enumerates domain users looking for the 'DONT_REQ_PREAUTH' flag." },
+                        { title: LANG==='es'?"2. AS-REP Roasting":"2. AS-REP Roasting", edge: "GetASREP", text: LANG==='es'?"Se identifica a Admin_Backup vulnerable. El atacante solicita el TGT y recibe la porción AS-REP cifrada con el hash de la contraseña.":"Admin_Backup is identified as vulnerable. The attacker requests the TGT and receives the AS-REP portion encrypted with the password hash." },
+                        { title: LANG==='es'?"3. Cracking Offline":"3. Offline Cracking", edge: "Crack", text: LANG==='es'?"Se extrae la contraseña en claro del hash usando Hashcat.":"The cleartext password is extracted from the hash using Hashcat." },
+                        { title: LANG==='es'?"4. Toma de Control del Dominio":"4. Domain Takeover", edge: "Login", text: LANG==='es'?"El atacante inicia sesión con las credenciales extraídas, obteniendo privilegios de Domain Admin.":"The attacker logs in with the extracted credentials, gaining Domain Admin privileges." }
+                    ]
+                }
+            },
+            "laps": {
+                nodes: [
+                    { id: "DOMAIN", type: "domain", label: "CYBERESCUDO.LOCAL", x: 0, y: 0, vx: 0, vy: 0 },
+                    { id: "USER_DEV", type: "user", label: "Dev_Lead", x: 0, y: 0, vx: 0, vy: 0, compromised: true },
+                    { id: "COMP_SRV02", type: "computer", label: "WEB-SRV02", x: 0, y: 0, vx: 0, vy: 0 },
+                    { id: "COMP_DC01", type: "computer", label: "DC-01.cyberescudo.local", x: 0, y: 0, vx: 0, vy: 0 }
+                ],
+                edges: [
+                    { source: "USER_DEV", target: "COMP_SRV02", type: "ReadLAPSPassword" },
+                    { source: "COMP_SRV02", target: "COMP_DC01", type: "HasSession" },
+                    { source: "COMP_DC01", target: "DOMAIN", type: "GenericAll" }
+                ],
+                attackPath: {
+                    nodes: ["USER_DEV", "COMP_SRV02", "COMP_DC01", "DOMAIN"],
+                    edges: [
+                        { source: "USER_DEV", target: "COMP_SRV02" },
+                        { source: "COMP_SRV02", target: "COMP_DC01" }
+                    ],
+                    steps: [
+                        { title: LANG==='es'?"1. Comprometer Usuario":"1. Compromise User", edge: "Initial Access", text: LANG==='es'?"El usuario Dev_Lead es comprometido.":"The user Dev_Lead is compromised." },
+                        { title: LANG==='es'?"2. Lectura de LAPS":"2. Read LAPS", edge: "ReadLAPSPassword", text: LANG==='es'?"Debido a una mala configuración, Dev_Lead puede leer el atributo ms-Mcs-AdmPwd (LAPS) de WEB-SRV02.":"Due to a misconfiguration, Dev_Lead can read the ms-Mcs-AdmPwd (LAPS) attribute of WEB-SRV02." },
+                        { title: LANG==='es'?"3. Movimiento Lateral":"3. Lateral Movement", edge: "Pass-The-Hash", text: LANG==='es'?"Se obtiene la contraseña del Administrador Local y se conecta al servidor mediante WinRM.":"The Local Administrator password is obtained and used to connect to the server via WinRM." },
+                        { title: LANG==='es'?"4. Volcado de Credenciales":"4. Credential Dumping", edge: "Dump", text: LANG==='es'?"Un Domain Admin tenía sesión en WEB-SRV02. Se vuelca su hash de memoria (Mimikatz).":"A Domain Admin had a session on WEB-SRV02. Their hash is dumped from memory (Mimikatz)." },
+                        { title: LANG==='es'?"5. Compromiso del Dominio":"5. Domain Compromise", edge: "Pass-The-Hash", text: LANG==='es'?"Se usa el hash del DA para comprometer el Controlador de Dominio.":"The DA's hash is used to compromise the Domain Controller." }
+                    ]
+                }
+            },
+            "rbcd": {
+                nodes: [
+                    { id: "DOMAIN", type: "domain", label: "CYBERESCUDO.LOCAL", x: 0, y: 0, vx: 0, vy: 0 },
+                    { id: "USER_EVE", type: "user", label: "Eve (Attacker)", x: 0, y: 0, vx: 0, vy: 0, compromised: true },
+                    { id: "COMP_FAKE", type: "computer", label: "FAKE-PC$", x: 0, y: 0, vx: 0, vy: 0 },
+                    { id: "COMP_TARGET", type: "computer", label: "SRV-TARGET", x: 0, y: 0, vx: 0, vy: 0 },
+                    { id: "GROUP_USERS", type: "group", label: "Domain Users", x: 0, y: 0, vx: 0, vy: 0 },
+                    { id: "USER_ALICE", type: "user", label: "Alice", x: 0, y: 0, vx: 0, vy: 0 },
+                    { id: "USER_BOB", type: "user", label: "Bob", x: 0, y: 0, vx: 0, vy: 0 },
+                    { id: "COMP_WS01", type: "computer", label: "WS-01", x: 0, y: 0, vx: 0, vy: 0 },
+                    { id: "COMP_WS02", type: "computer", label: "WS-02", x: 0, y: 0, vx: 0, vy: 0 }
+                ],
+                edges: [
+                    { source: "USER_EVE", target: "COMP_TARGET", type: "GenericWrite" },
+                    { source: "USER_EVE", target: "DOMAIN", type: "AddMachineQuota" },
+                    { source: "USER_EVE", target: "COMP_FAKE", type: "Owns" },
+                    { source: "COMP_FAKE", target: "COMP_TARGET", type: "AllowedToAct" },
+                    { source: "USER_ALICE", target: "GROUP_USERS", type: "MemberOf" },
+                    { source: "USER_BOB", target: "GROUP_USERS", type: "MemberOf" },
+                    { source: "USER_EVE", target: "GROUP_USERS", type: "MemberOf" },
+                    { source: "COMP_WS01", target: "DOMAIN", type: "Contains" },
+                    { source: "COMP_WS02", target: "DOMAIN", type: "Contains" },
+                    { source: "USER_ALICE", target: "COMP_WS01", type: "HasSession" },
+                    { source: "USER_BOB", target: "COMP_WS02", type: "HasSession" }
+                ],
+                attackPath: {
+                    nodes: ["USER_EVE", "DOMAIN", "COMP_FAKE", "COMP_TARGET"],
+                    edges: [
+                        { source: "USER_EVE", target: "DOMAIN" },
+                        { source: "USER_EVE", target: "COMP_TARGET" },
+                        { source: "COMP_FAKE", target: "COMP_TARGET" }
+                    ],
+                    steps: [
+                        { title: LANG==='es'?"1. Abuso de MachineAccountQuota":"1. MachineAccountQuota Abuse", edge: "AddMachineQuota", text: LANG==='es'?"Eve usa sus privilegios básicos para crear una cuenta de máquina falsa (FAKE-PC$) en el dominio.":"Eve uses basic privileges to create a fake machine account (FAKE-PC$) in the domain." },
+                        { title: LANG==='es'?"2. Configuración de RBCD":"2. RBCD Configuration", edge: "GenericWrite", text: LANG==='es'?"Eve tiene permisos GenericWrite sobre SRV-TARGET y configura su atributo msDS-AllowedToActOnBehalfOfOtherIdentity apuntando a FAKE-PC$.":"Eve has GenericWrite over SRV-TARGET and configures its msDS-AllowedToActOnBehalfOfOtherIdentity attribute to point to FAKE-PC$." },
+                        { title: LANG==='es'?"3. Solicitud S4U2Self/S4U2Proxy":"3. S4U2Self/S4U2Proxy Request", edge: "S4U2Proxy", text: LANG==='es'?"Usando el hash de FAKE-PC$, Eve solicita un ticket de servicio para suplantar a un Domain Admin hacia SRV-TARGET.":"Using FAKE-PC$'s hash, Eve requests a service ticket to impersonate a Domain Admin towards SRV-TARGET." },
+                        { title: LANG==='es'?"4. Toma de Control del Servidor":"4. Server Takeover", edge: "PassTheTicket", text: LANG==='es'?"Eve inyecta el ticket y obtiene ejecución de comandos como SYSTEM en SRV-TARGET.":"Eve injects the ticket and gains command execution as SYSTEM on SRV-TARGET." }
+                    ]
+                }
+            },
+            "shadowcred": {
+                nodes: [
+                    { id: "DOMAIN", type: "domain", label: "CYBERESCUDO.LOCAL", x: 0, y: 0, vx: 0, vy: 0 },
+                    { id: "USER_ALICE", type: "user", label: "Alice (Attacker)", x: 0, y: 0, vx: 0, vy: 0, compromised: true },
+                    { id: "USER_TARGET", type: "user", label: "Domain_Admin_01", x: 0, y: 0, vx: 0, vy: 0 },
+                    { id: "COMP_DC01", type: "computer", label: "DC-01 (KDC)", x: 0, y: 0, vx: 0, vy: 0 },
+                    { id: "GROUP_IT", type: "group", label: "IT Support", x: 0, y: 0, vx: 0, vy: 0 },
+                    { id: "COMP_SRV01", type: "computer", label: "FILE-SRV", x: 0, y: 0, vx: 0, vy: 0 },
+                    { id: "COMP_SRV02", type: "computer", label: "MAIL-SRV", x: 0, y: 0, vx: 0, vy: 0 },
+                    { id: "USER_JOHN", type: "user", label: "John_Doe", x: 0, y: 0, vx: 0, vy: 0 }
+                ],
+                edges: [
+                    { source: "USER_ALICE", target: "USER_TARGET", type: "GenericWrite" },
+                    { source: "USER_TARGET", target: "COMP_DC01", type: "HasSession" },
+                    { source: "USER_TARGET", target: "DOMAIN", type: "GenericAll" },
+                    { source: "USER_ALICE", target: "GROUP_IT", type: "MemberOf" },
+                    { source: "USER_JOHN", target: "GROUP_IT", type: "MemberOf" },
+                    { source: "GROUP_IT", target: "COMP_SRV01", type: "AdminTo" },
+                    { source: "USER_TARGET", target: "COMP_SRV02", type: "AdminTo" },
+                    { source: "COMP_SRV01", target: "DOMAIN", type: "Contains" },
+                    { source: "COMP_SRV02", target: "DOMAIN", type: "Contains" }
+                ],
+                attackPath: {
+                    nodes: ["USER_ALICE", "USER_TARGET", "COMP_DC01", "DOMAIN"],
+                    edges: [
+                        { source: "USER_ALICE", target: "USER_TARGET" },
+                        { source: "USER_TARGET", target: "COMP_DC01" },
+                        { source: "USER_TARGET", target: "DOMAIN" }
+                    ],
+                    steps: [
+                        { title: LANG==='es'?"1. Inyección de Clave Pública":"1. Public Key Injection", edge: "GenericWrite", text: LANG==='es'?"Alice tiene GenericWrite sobre Domain_Admin_01 e inyecta el hash de un certificado generado por ella en el atributo msDS-KeyCredentialLink (Whisker).":"Alice has GenericWrite over Domain_Admin_01 and injects the hash of a self-generated certificate into the msDS-KeyCredentialLink attribute (Whisker)." },
+                        { title: LANG==='es'?"2. Autenticación PKINIT":"2. PKINIT Authentication", edge: "PKINIT", text: LANG==='es'?"Alice usa el certificado y su clave privada para autenticarse en el KDC solicitando un TGT en nombre del Domain Admin (Rubeus asktgt).":"Alice uses the certificate and private key to authenticate to the KDC, requesting a TGT on behalf of the Domain Admin (Rubeus asktgt)." },
+                        { title: LANG==='es'?"3. Extracción de Credenciales":"3. Credential Extraction", edge: "UnPAC-the-Hash", text: LANG==='es'?"Al obtener el TGT, el KDC adjunta el hash NTLM del administrador en el PAC, lo que permite extraerlo directamente.":"Upon receiving the TGT, the KDC attaches the administrator's NTLM hash in the PAC, allowing direct extraction." },
+                        { title: LANG==='es'?"4. Compromiso del Dominio":"4. Domain Compromise", edge: "PassTheHash", text: LANG==='es'?"Se usa el hash NTLM (o el TGT) para comprometer todo el bosque.":"The NTLM hash (or TGT) is used to compromise the entire forest." }
+                    ]
+                }
+            },
+            "foresttrust": {
+                nodes: [
+                    { id: "DOMAIN_PARENT", type: "domain", label: "CORP.LOCAL (Parent)", x: 0, y: 0, vx: 0, vy: 0 },
+                    { id: "DOMAIN_CHILD", type: "domain", label: "DEV.CORP.LOCAL (Child)", x: 0, y: 0, vx: 0, vy: 0, compromised: true },
+                    { id: "GROUP_EA", type: "group", label: "Enterprise Admins", x: 0, y: 0, vx: 0, vy: 0 },
+                    { id: "USER_KRBTGT", type: "user", label: "krbtgt (Child)", x: 0, y: 0, vx: 0, vy: 0, compromised: true },
+                    { id: "COMP_PARENT_DC", type: "computer", label: "DC-PARENT", x: 0, y: 0, vx: 0, vy: 0 },
+                    { id: "COMP_CHILD_DC", type: "computer", label: "DC-CHILD", x: 0, y: 0, vx: 0, vy: 0, compromised: true },
+                    { id: "USER_ADMIN_CHILD", type: "user", label: "Admin_Dev", x: 0, y: 0, vx: 0, vy: 0, compromised: true },
+                    { id: "GROUP_DA_CHILD", type: "group", label: "Domain Admins (Child)", x: 0, y: 0, vx: 0, vy: 0, compromised: true },
+                    { id: "COMP_SRV_PARENT", type: "computer", label: "DB-SRV-PARENT", x: 0, y: 0, vx: 0, vy: 0 }
+                ],
+                edges: [
+                    { source: "DOMAIN_CHILD", target: "DOMAIN_PARENT", type: "TrustedBy" },
+                    { source: "GROUP_EA", target: "DOMAIN_PARENT", type: "GenericAll" },
+                    { source: "GROUP_EA", target: "COMP_PARENT_DC", type: "AdminTo" },
+                    { source: "USER_KRBTGT", target: "DOMAIN_CHILD", type: "Contains" },
+                    { source: "USER_ADMIN_CHILD", target: "GROUP_DA_CHILD", type: "MemberOf" },
+                    { source: "GROUP_DA_CHILD", target: "DOMAIN_CHILD", type: "GenericAll" },
+                    { source: "COMP_CHILD_DC", target: "DOMAIN_CHILD", type: "Contains" },
+                    { source: "COMP_SRV_PARENT", target: "DOMAIN_PARENT", type: "Contains" },
+                    { source: "GROUP_EA", target: "COMP_SRV_PARENT", type: "AdminTo" }
+                ],
+                attackPath: {
+                    nodes: ["USER_KRBTGT", "DOMAIN_CHILD", "GROUP_EA", "DOMAIN_PARENT", "COMP_PARENT_DC"],
+                    edges: [
+                        { source: "USER_KRBTGT", target: "DOMAIN_CHILD" },
+                        { source: "DOMAIN_CHILD", target: "GROUP_EA" },
+                        { source: "GROUP_EA", target: "DOMAIN_PARENT" },
+                        { source: "DOMAIN_PARENT", target: "COMP_PARENT_DC" }
+                    ],
+                    steps: [
+                        { title: LANG==='es'?"1. Compromiso de Dominio Hijo":"1. Child Domain Compromise", edge: "DCSync", text: LANG==='es'?"El atacante ya tiene control total del dominio hijo y extrae el hash del usuario krbtgt local.":"The attacker already has full control of the child domain and extracts the hash of the local krbtgt user." },
+                        { title: LANG==='es'?"2. Falsificación de Golden Ticket":"2. Golden Ticket Forgery", edge: "Forge", text: LANG==='es'?"Se crea un Golden Ticket. La magia ocurre al añadir el SID de Enterprise Admins (del bosque padre) al campo sIDHistory del ticket.":"A Golden Ticket is created. The magic happens by adding the Enterprise Admins SID (from the parent forest) to the sIDHistory field of the ticket." },
+                        { title: LANG==='es'?"3. Cruce de Relación de Confianza":"3. Crossing the Trust", edge: "TrustAbuse", text: LANG==='es'?"El atacante usa el ticket inter-realm para acceder a los recursos del dominio padre. Como el ticket tiene el SID de Enterprise Admin, el padre lo valida.":"The attacker uses the inter-realm ticket to access parent domain resources. Since the ticket has the EA SID, the parent validates it." },
+                        { title: LANG==='es'?"4. Toma de Control del Bosque":"4. Forest Takeover", edge: "DCSync", text: LANG==='es'?"El atacante ejecuta DCSync contra el DC del bosque padre, logrando el control total de toda la infraestructura AD.":"The attacker executes DCSync against the parent forest DC, achieving total control of the entire AD infrastructure." }
                     ]
                 }
             }
@@ -3069,6 +3252,14 @@ document.addEventListener('DOMContentLoaded', () => {
         let attackPath = [];
         let highlightedNodes = new Set();
         const explPanel = document.getElementById('attack-explanation');
+        
+        let hoverNode = null;
+        let scale = 1;
+        let offsetX = 0;
+        let offsetY = 0;
+        let isPanning = false;
+        let panStartX = 0;
+        let panStartY = 0;
 
         function loadScenario(scenarioKey) {
             const data = scenarios[scenarioKey];
@@ -3084,6 +3275,10 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('stat-g').innerText = currentNodes.filter(n => n.type === 'group').length;
             document.getElementById('stat-d').innerText = currentNodes.filter(n => n.type === 'domain').length;
 
+            scale = 1;
+            offsetX = 0;
+            offsetY = 0;
+
             currentNodes.forEach(n => {
                 n.x = width/2 + (Math.random() - 0.5) * 200;
                 n.y = height/2 + (Math.random() - 0.5) * 200;
@@ -3095,6 +3290,12 @@ document.addEventListener('DOMContentLoaded', () => {
         selector.addEventListener('change', (e) => {
             loadScenario(e.target.value);
         });
+
+        if (btnReset) {
+            btnReset.addEventListener('click', () => {
+                loadScenario(selector.value);
+            });
+        }
         
         loadScenario('gpo');
 
@@ -3211,10 +3412,12 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.fill();
         }
 
-        let hoverNode = null;
-
         function renderTick() {
             ctx.clearRect(0, 0, width, height);
+            
+            ctx.save();
+            ctx.translate(offsetX, offsetY);
+            ctx.scale(scale, scale);
             
             currentEdges.forEach(e => {
                 const s = currentNodes.find(n => n.id === e.source);
@@ -3231,14 +3434,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 ctx.beginPath();
                 ctx.arc(n.x, n.y, isHover ? 20 : 15, 0, Math.PI*2);
                 ctx.fillStyle = isHighlighted ? "#ff2a2a" : colors[n.type];
+                
                 if (n.compromised && !isHighlighted) {
-                    const pulse = 15 + Math.sin(Date.now() / 200) * 5;
-                    ctx.fillStyle = "#00ff41";
-                    ctx.shadowColor = "#00ff41";
-                    ctx.shadowBlur = 20;
+                    const pulse = 15 + Math.sin(Date.now() / 200) * 4;
+                    ctx.fillStyle = "#ff2a2a";
+                    ctx.shadowColor = "#ff2a2a";
+                    ctx.shadowBlur = 15;
+                    ctx.beginPath();
                     ctx.arc(n.x, n.y, pulse, 0, Math.PI*2);
                     ctx.fill();
                     ctx.shadowBlur = 0;
+                    
+                    // Reset path for the main circle so stroke applies correctly
+                    ctx.beginPath();
+                    ctx.arc(n.x, n.y, isHover ? 20 : 15, 0, Math.PI*2);
+                    ctx.fillStyle = "#ff2a2a"; 
                 }
                 ctx.fill();
                 
@@ -3254,9 +3464,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 ctx.fillStyle = "#000";
                 ctx.textBaseline = "middle";
-                ctx.font = "10px Arial";
-                ctx.fillText(iconMap[n.type], n.x, n.y);
+                ctx.font = n.compromised ? "14px Arial" : "10px Arial";
+                ctx.fillText(n.compromised ? "☠" : iconMap[n.type], n.x, n.y);
             });
+            
+            ctx.restore();
         }
 
         function loop() {
@@ -3271,11 +3483,20 @@ document.addEventListener('DOMContentLoaded', () => {
             mouseX = e.clientX - rect.left;
             mouseY = e.clientY - rect.top;
             
+            if (isPanning) {
+                offsetX = mouseX - panStartX;
+                offsetY = mouseY - panStartY;
+                return;
+            }
+            
+            const canvasX = (mouseX - offsetX) / scale;
+            const canvasY = (mouseY - offsetY) / scale;
+            
             let found = null;
             for(let i=currentNodes.length-1; i>=0; i--) {
                 const n = currentNodes[i];
-                const dx = mouseX - n.x;
-                const dy = mouseY - n.y;
+                const dx = canvasX - n.x;
+                const dy = canvasY - n.y;
                 if(dx*dx + dy*dy < 400) {
                     found = n;
                     break;
@@ -3295,20 +3516,29 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             if(hoverNode) {
-                tooltip.style.left = (mouseX + 15) + 'px';
-                tooltip.style.top = (mouseY + 15) + 'px';
+                tooltip.style.left = (e.clientX + 15) + 'px';
+                tooltip.style.top = (e.clientY + 15) + 'px';
             }
             
             if(isDragging && dragNode) {
-                dragNode.x = mouseX;
-                dragNode.y = mouseY;
+                dragNode.x = canvasX;
+                dragNode.y = canvasY;
             }
         });
 
-        bhCanvas.addEventListener('mousedown', () => {
+        bhCanvas.addEventListener('mousedown', (e) => {
             if(hoverNode) {
                 isDragging = true;
                 dragNode = hoverNode;
+                bhCanvas.style.cursor = 'grabbing';
+                showNodeInfo(hoverNode);
+            } else {
+                isPanning = true;
+                const rect = bhCanvas.getBoundingClientRect();
+                mouseX = e.clientX - rect.left;
+                mouseY = e.clientY - rect.top;
+                panStartX = mouseX - offsetX;
+                panStartY = mouseY - offsetY;
                 bhCanvas.style.cursor = 'grabbing';
             }
         });
@@ -3316,11 +3546,143 @@ document.addEventListener('DOMContentLoaded', () => {
         window.addEventListener('mouseup', () => {
             isDragging = false;
             dragNode = null;
+            isPanning = false;
             if(!hoverNode) bhCanvas.style.cursor = 'grab';
             else bhCanvas.style.cursor = 'pointer';
         });
 
+        bhCanvas.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const zoomSensitivity = 0.001;
+            const delta = e.deltaY * zoomSensitivity;
+            const newScale = Math.min(Math.max(0.2, scale - delta), 4);
+            
+            const rect = bhCanvas.getBoundingClientRect();
+            const mx = e.clientX - rect.left;
+            const my = e.clientY - rect.top;
+            
+            offsetX = mx - (mx - offsetX) * (newScale / scale);
+            offsetY = my - (my - offsetY) * (newScale / scale);
+            scale = newScale;
+        }, {passive: false});
+
+        // --- NODE INFO PANEL LOGIC ---
+        const infoPanel = document.getElementById('node-info-panel');
+        const infoTitle = document.getElementById('node-info-title');
+        const infoIcon = document.getElementById('node-info-icon');
+        const infoBody = document.getElementById('node-info-body');
+        
+        document.getElementById('btn-close-info').addEventListener('click', () => {
+            infoPanel.style.display = 'none';
+        });
+        
+        function showNodeInfo(node) {
+            infoPanel.style.display = 'flex';
+            infoTitle.innerText = node.label;
+            
+            let iconClass = 'fas ';
+            if(node.type === 'user') iconClass += 'fa-user';
+            else if(node.type === 'computer') iconClass += 'fa-desktop';
+            else if(node.type === 'group') iconClass += 'fa-users';
+            else if(node.type === 'domain') iconClass += 'fa-globe';
+            else iconClass += 'fa-folder';
+            
+            infoIcon.className = iconClass;
+            
+            // Generate realistic fake AD properties
+            let html = '';
+            const addRow = (k, v) => { html += `<div class="node-info-row"><span class="node-info-label">${k}:</span> ${v}</div>`; };
+            
+            addRow('Object ID (SID)', 'S-1-5-21-' + Math.floor(Math.random()*1000000000) + '-' + Math.floor(Math.random()*1000000000));
+            addRow('Compromised', node.compromised ? '<span style="color:red">TRUE ☠️</span>' : 'FALSE');
+            
+            if (node.type === 'user') {
+                addRow('Enabled', 'True');
+                addRow('pwdLastSet', '12/05/2025 10:43:12');
+                addRow('lastLogon', '01/06/2026 08:15:00');
+                if (node.id === 'USER_EVE' || node.id === 'USER_GUEST') {
+                    addRow('UAC Flags', 'DONT_REQ_PREAUTH');
+                } else {
+                    addRow('UAC Flags', 'NORMAL_ACCOUNT');
+                }
+                addRow('Description', node.compromised ? 'Suspicious activity detected' : 'Standard user account');
+            } else if (node.type === 'computer') {
+                addRow('Operating System', 'Windows Server 2022 Standard');
+                addRow('LAPS Enabled', Math.random() > 0.5 ? 'True' : 'False');
+                addRow('Unconstrained Delegation', 'False');
+                addRow('lastLogon', '01/06/2026 09:20:00');
+            } else if (node.type === 'group') {
+                addRow('Group Scope', 'Global');
+                addRow('Members', Math.floor(Math.random() * 50) + 1);
+            } else if (node.type === 'domain') {
+                addRow('Domain Functional Level', 'Windows Server 2016');
+                addRow('Trusts', '1 Outbound, 0 Inbound');
+            }
+            
+            infoBody.innerHTML = html;
+        }
+
+        // --- SOPORTE TÁCTIL (MOBILE) ---
+        bhCanvas.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // Evita scroll de pantalla
+            const rect = bhCanvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            mouseX = touch.clientX - rect.left;
+            mouseY = touch.clientY - rect.top;
+
+            let found = null;
+            for(let i=currentNodes.length-1; i>=0; i--) {
+                const n = currentNodes[i];
+                const dx = mouseX - n.x;
+                const dy = mouseY - n.y;
+                if(dx*dx + dy*dy < 900) { // Mayor hitbox (30x30) para dedos
+                    found = n;
+                    break;
+                }
+            }
+
+            if(found) {
+                hoverNode = found;
+                isDragging = true;
+                dragNode = found;
+                tooltip.style.display = 'block';
+                tooltip.innerHTML = `<strong>${hoverNode.label}</strong><br>Type: ${hoverNode.type.toUpperCase()}<br>ID: ${hoverNode.id}`;
+                tooltip.style.left = (mouseX + 15) + 'px';
+                tooltip.style.top = (mouseY + 15) + 'px';
+            } else {
+                tooltip.style.display = 'none';
+            }
+        }, {passive: false});
+
+        bhCanvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const rect = bhCanvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            mouseX = touch.clientX - rect.left;
+            mouseY = touch.clientY - rect.top;
+            
+            if(isDragging && dragNode) {
+                dragNode.x = mouseX;
+                dragNode.y = mouseY;
+            }
+            if(hoverNode) {
+                tooltip.style.left = (mouseX + 15) + 'px';
+                tooltip.style.top = (mouseY + 15) + 'px';
+            }
+        }, {passive: false});
+
+        bhCanvas.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            isDragging = false;
+            dragNode = null;
+            hoverNode = null;
+            tooltip.style.display = 'none';
+        }, {passive: false});
+
+
         btnAttackPath.addEventListener('click', () => {
+            btnAttackPath.disabled = true;
+            
             const pathData = scenarios[selector.value].attackPath;
             attackPath = [];
             highlightedNodes.clear();
@@ -3335,7 +3697,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if(idx < pathData.edges.length) {
                     setTimeout(() => {
                         attackPath.push(pathData.edges[idx]);
-                    }, delay + 200);
+                    }, delay + 400);
                 }
                 
                 if (pathData.steps[idx]) {
@@ -3343,26 +3705,281 @@ document.addEventListener('DOMContentLoaded', () => {
                         const step = pathData.steps[idx];
                         const el = document.createElement('div');
                         el.className = 'attack-step';
+                        el.style.opacity = 0;
                         el.innerHTML = `
                             <div class="step-title"><i class="fas fa-skull"></i> ${step.title}</div>
                             <div style="font-size:0.75rem; color:var(--cyan); margin-bottom:5px;">[Edge: ${step.edge}]</div>
                             <div>${step.text}</div>
                         `;
                         explPanel.appendChild(el);
-                        explPanel.scrollTop = explPanel.scrollHeight;
+                        
+                        setTimeout(() => { 
+                            el.style.transition = 'opacity 0.5s ease-in'; 
+                            el.style.opacity = 1; 
+                        }, 50);
+                        
+                        explPanel.scrollTo({ top: explPanel.scrollHeight, behavior: 'smooth' });
                     }, delay);
                 }
 
-                delay += 800;
+                delay += 1500;
             });
-        });
-
-        btnReset.addEventListener('click', () => {
-            attackPath = [];
-            highlightedNodes.clear();
-            explPanel.style.display = 'none';
-            explPanel.innerHTML = '';
+            
+            setTimeout(() => {
+                btnAttackPath.disabled = false;
+            }, delay + 500);
         });
     }
+
+    // ==========================================
+    // C2 WEB SIMULATOR
+    // ==========================================
+    const beaconList = document.getElementById('beacon-list');
+    const c2Terminal = document.getElementById('c2-terminal');
+    const c2Cmd = document.getElementById('c2-cmd');
+    const termHeader = document.getElementById('terminal-header');
+    const beaconCount = document.getElementById('beacon-count');
+    
+    if (beaconList && c2Terminal && c2Cmd) {
+        const LANG = document.documentElement.lang || 'es';
+        let activeBeacon = null;
+        let c2IsTyping = false;
+
+        const fakeBeacons = [
+            { id: 'b-9f8a', ip: '192.168.1.105', user: 'DESKTOP-ADM\\jsmith', os: 'Windows 10', delay: 1000 },
+            { id: 'b-3c2b', ip: '10.0.0.14', user: 'SRV-DB01\\SYSTEM', os: 'Windows Server 2019', delay: 3500 },
+            { id: 'b-7e1f', ip: '172.16.20.5', user: 'LAPTOP-HR\\mjones', os: 'Windows 11', delay: 7000 },
+            { id: 'b-1a9c', ip: '203.0.113.44', user: 'web-front\\www-data', os: 'Linux Ubuntu 22.04', delay: 12000 }
+        ];
+
+        function termPrint(html) {
+            const div = document.createElement('div');
+            div.className = 't-out';
+            div.innerHTML = html;
+            c2Terminal.appendChild(div);
+            c2Terminal.scrollTop = c2Terminal.scrollHeight;
+        }
+
+        function simulateBeaconCheckin(b) {
+            setTimeout(() => {
+                const li = document.createElement('li');
+                li.className = 'beacon-item';
+                li.id = 'li-' + b.id;
+                li.innerHTML = `
+                    <div class="b-icon"><i class="fas fa-desktop"></i></div>
+                    <div class="b-details">
+                        <strong>${b.id}</strong> - ${b.ip}
+                        <span>${b.user} | ${b.os}</span>
+                    </div>
+                    <div class="b-status" title="Alive"></div>
+                `;
+                li.addEventListener('click', () => {
+                    document.querySelectorAll('.beacon-item').forEach(el => el.classList.remove('active'));
+                    li.classList.add('active');
+                    activeBeacon = b;
+                    c2Cmd.disabled = false;
+                    c2Cmd.focus();
+                    termHeader.innerHTML = `<span><i class="fas fa-terminal"></i> ${LANG==='es'?'BEACON ACTIVO':'BEACON INTERACT'}: ${b.id} (${b.ip})</span><span style="color:#00ff41;">LINKED</span>`;
+                    termPrint(`<br><span class="t-sys">[*] ${LANG==='es'?'Interactuando con el beacon':'Interacting with beacon'} ${b.id} at ${new Date().toLocaleTimeString()}</span>`);
+                });
+                beaconList.appendChild(li);
+                beaconCount.textContent = parseInt(beaconCount.textContent) + 1;
+                termPrint(`<span class="t-suc">[+] ${LANG==='es'?'Beacon inicial conectado desde':'Initial beacon check-in from'} ${b.ip} (${b.user})</span>`);
+            }, b.delay);
+        }
+
+        fakeBeacons.forEach(b => simulateBeaconCheckin(b));
+
+        c2Cmd.addEventListener('keydown', (e) => {
+            if(e.key === 'Enter' && c2Cmd.value.trim() !== '' && !c2IsTyping && activeBeacon) {
+                const cmd = c2Cmd.value.trim();
+                c2Cmd.value = '';
+                termPrint(`<span class="t-in">beacon> ${cmd}</span>`);
+                c2IsTyping = true;
+                
+                setTimeout(() => {
+                    processC2Command(cmd.toLowerCase(), activeBeacon);
+                    c2IsTyping = false;
+                }, 500 + Math.random() * 1000);
+            }
+        });
+
+        function processC2Command(cmd, beacon) {
+            if (cmd === 'help') {
+                const helpText = LANG==='es' ? `
+                    Comandos disponibles:<br>
+                    <strong>help</strong>      - Muestra este mensaje<br>
+                    <strong>whoami</strong>    - Muestra el usuario actual<br>
+                    <strong>sysinfo</strong>   - Obtiene detalles del sistema<br>
+                    <strong>ps</strong>        - Lista de procesos en ejecución<br>
+                    <strong>hashdump</strong>  - Extrae hashes SAM (requiere SYSTEM)<br>
+                    <strong>sleep</strong>     - Cambia el tiempo de espera del beacon<br>
+                    <strong>clear</strong>     - Limpia la terminal
+                ` : `
+                    Available commands:<br>
+                    <strong>help</strong>      - Show this message<br>
+                    <strong>whoami</strong>    - Print current user<br>
+                    <strong>sysinfo</strong>   - Get system details<br>
+                    <strong>ps</strong>        - List running processes<br>
+                    <strong>hashdump</strong>  - Dump SAM hashes (requires SYSTEM)<br>
+                    <strong>sleep</strong>     - Change beacon sleep time<br>
+                    <strong>clear</strong>     - Clear terminal
+                `;
+                termPrint(helpText);
+            } else if (cmd === 'whoami') {
+                termPrint(beacon.user);
+            } else if (cmd === 'sysinfo') {
+                termPrint(`OS: ${beacon.os}<br>IP: ${beacon.ip}<br>Arch: x64<br>PID: ${Math.floor(Math.random()*5000)+1000}`);
+            } else if (cmd === 'ps') {
+                termPrint(`
+                    PID   PPID  NAME<br>
+                    ---   ----  ----<br>
+                    4     0     System<br>
+                    512   4     smss.exe<br>
+                    720   600   lsass.exe<br>
+                    ${Math.floor(Math.random()*5000)+1000}  1234  explorer.exe
+                `);
+            } else if (cmd === 'hashdump') {
+                if (beacon.user.includes('SYSTEM') || beacon.user.includes('root')) {
+                    termPrint(`<span class="t-suc">[*] ${LANG==='es'?'Extrayendo hashes del registro...':'Dumping hashes from registry...'}</span><br>Administrator:500:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::<br>Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::`);
+                } else {
+                    termPrint(`<span class="t-err">[-] ${LANG==='es'?'Acceso denegado. No se está ejecutando como SYSTEM.':'Access is denied. Not running as SYSTEM.'}</span>`);
+                }
+            } else if (cmd === 'clear') {
+                c2Terminal.innerHTML = '';
+            } else if (cmd.startsWith('sleep')) {
+                termPrint(`<span class="t-sys">[*] ${LANG==='es'?'Tarea de sleep enviada al beacon.':'Tasked beacon to sleep.'}</span>`);
+            } else {
+                termPrint(`<span class="t-err">[-] ${LANG==='es'?'Comando no encontrado:':'Command not found:'} ${cmd}</span>`);
+            }
+        }
+    }
+
+    // ==========================================
+    // VISUAL CODE AUDITOR
+    // ==========================================
+    const audCode = document.getElementById('auditor-code');
+    const audBtn = document.getElementById('btn-audit');
+    const audList = document.getElementById('findings-list');
+    const audCount = document.getElementById('findings-count');
+    const audTemplate = document.getElementById('auditor-template');
+
+    if (audCode && audBtn && audList) {
+        const LANG = document.documentElement.lang || 'es';
+        
+        const templates = {
+            solidity: `pragma solidity ^0.8.0;
+
+contract VulnerableBank {
+    mapping(address => uint) public balances;
+
+    function deposit() public payable {
+        balances[msg.sender] += msg.value;
+    }
+
+    function withdraw() public {
+        uint bal = balances[msg.sender];
+        require(bal > 0);
+        
+        // VULNERABILITY: Reentrancy (external call before state update)
+        (bool sent, ) = msg.sender.call{value: bal}("");
+        require(sent, "Failed to send Ether");
+
+        balances[msg.sender] = 0;
+    }
+    
+    function selfDestruct(address payable target) public {
+        // VULNERABILITY: Unprotected selfdestruct
+        selfdestruct(target);
+    }
+}`,
+            php: `<?php
+// User profile page
+$id = $_GET['id'];
+
+// VULNERABILITY: SQL Injection
+$query = "SELECT * FROM users WHERE id = " . $id;
+$result = mysqli_query($conn, $query);
+
+$user = mysqli_fetch_assoc($result);
+
+// VULNERABILITY: Cross-Site Scripting (XSS)
+echo "<h1>Welcome back, " . $user['username'] . "</h1>";
+echo "<div>Your bio: " . $_GET['bio'] . "</div>";
+
+// VULNERABILITY: Insecure Deserialization
+$data = unserialize($_COOKIE['prefs']);
+?>`,
+            python: `import os
+from flask import request
+
+@app.route('/ping')
+def ping_host():
+    ip = request.args.get('ip')
+    
+    # VULNERABILITY: Command Injection
+    os.system(f"ping -c 4 {ip}")
+    
+    # VULNERABILITY: Hardcoded secrets
+    AWS_SECRET = "AKIAIOSFODNN7EXAMPLE"
+    
+    return "Ping executed"`
+        };
+
+        const rules = [
+            // Solidity
+            { regex: /\.call\{value:/g, type: 'critical', title: 'Reentrancy Risk', desc: 'Low-level call with value before updating state. Can lead to reentrancy attacks.' },
+            { regex: /selfdestruct\(/g, type: 'high', title: 'Unprotected Selfdestruct', desc: 'Ensure selfdestruct is protected by access controls (e.g. onlyOwner).' },
+            { regex: /tx\.origin/g, type: 'high', title: 'tx.origin Auth', desc: 'Using tx.origin for authorization is vulnerable to phishing.' },
+            
+            // PHP
+            { regex: /SELECT.*WHERE.*\$.*/gi, type: 'critical', title: 'SQL Injection', desc: 'Concatenating variables into SQL queries. Use Prepared Statements instead.' },
+            { regex: /echo.*\$_(GET|POST|REQUEST).*/gi, type: 'high', title: 'Cross-Site Scripting (XSS)', desc: 'Directly echoing user input. Use htmlspecialchars() to sanitize.' },
+            { regex: /unserialize\(/g, type: 'critical', title: 'Insecure Deserialization', desc: 'Deserializing untrusted data can lead to Remote Code Execution (RCE).' },
+            
+            // Python / General
+            { regex: /os\.system\(.*f".*\{/g, type: 'critical', title: 'Command Injection', desc: 'Passing user-controlled format strings to os.system. Use subprocess with arrays.' },
+            { regex: /(AKIA[0-9A-Z]{16}|sk_live_[0-9a-zA-Z]{24})/g, type: 'critical', title: 'Hardcoded Secret', desc: 'API Keys or secrets found in code. Use environment variables.' }
+        ];
+
+        audTemplate.addEventListener('change', () => {
+            if (templates[audTemplate.value]) {
+                audCode.value = templates[audTemplate.value];
+            }
+        });
+
+        audBtn.addEventListener('click', () => {
+            const code = audCode.value;
+            if(!code.trim()) return;
+            
+            const lines = code.split('\n');
+            audList.innerHTML = '';
+            let count = 0;
+
+            lines.forEach((line, i) => {
+                const lineNum = i + 1;
+                rules.forEach(rule => {
+                    rule.regex.lastIndex = 0; // Reset regex
+                    if (rule.regex.test(line)) {
+                        count++;
+                        const div = document.createElement('div');
+                        div.className = `finding-card ${rule.type}`;
+                        div.innerHTML = `
+                            <div class="f-title">[${rule.type.toUpperCase()}] ${rule.title}</div>
+                            <div class="f-desc">${rule.desc}</div>
+                            <div class="f-line">${LANG==='es'?'Línea':'Line'} ${lineNum}: ${line.trim().substring(0, 50)}...</div>
+                        `;
+                        audList.appendChild(div);
+                    }
+                });
+            });
+
+            audCount.textContent = count;
+            if (count === 0) {
+                audList.innerHTML = `<div style="text-align:center; color:#00ff41; padding: 20px;"><i class="fas fa-check-circle"></i> ${LANG==='es'?'No se encontraron vulnerabilidades conocidas (RegEx scan).':'No known vulnerabilities found (RegEx scan).'}</div>`;
+            }
+        });
+    }
+
 });
 })();

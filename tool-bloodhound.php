@@ -8,14 +8,17 @@ require __DIR__ . '/templates/header.php';
     .bh-container {
         display: flex;
         flex-direction: column;
-        height: calc(100vh - 70px);
+        min-height: calc(100vh - 70px);
         background: #000;
-        overflow: hidden;
+        overflow-y: auto;
+        overflow-x: hidden;
     }
 
     @media (min-width: 992px) {
         .bh-container {
             flex-direction: row;
+            height: calc(100vh - 70px);
+            overflow: hidden;
         }
     }
 
@@ -82,15 +85,22 @@ require __DIR__ . '/templates/header.php';
     }
 
     .attack-explanation {
-        background: rgba(0,0,0,0.8);
-        border: 1px solid #333;
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        width: 380px;
+        max-height: 500px;
+        overflow-y: auto;
+        background: rgba(10,10,15,0.95);
+        border: 1px solid var(--cyan);
         border-left: 3px solid #ff2a2a;
         padding: 15px;
         font-family: var(--mono);
         font-size: 0.85rem;
         color: #ccc;
-        margin-top: 15px;
         display: none;
+        z-index: 50;
+        box-shadow: 0 0 20px rgba(0,0,0,0.8);
     }
     .attack-step {
         margin-bottom: 10px;
@@ -133,9 +143,13 @@ require __DIR__ . '/templates/header.php';
     /* Graph Canvas Area */
     .bh-graph-area {
         flex: 1;
+        min-height: 500px;
         position: relative;
         background: radial-gradient(circle at center, #0a1118 0%, #000000 100%);
         overflow: hidden;
+    }
+    @media (min-width: 992px) {
+        .bh-graph-area { min-height: auto; }
     }
 
     #bh-canvas {
@@ -179,6 +193,56 @@ require __DIR__ . '/templates/header.php';
         box-shadow: 0 0 15px rgba(0,255,255,0.2);
     }
 
+    .node-info-panel {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        width: 320px;
+        background: rgba(10, 10, 15, 0.95);
+        border: 1px solid var(--cyan);
+        box-shadow: 0 0 15px rgba(0, 255, 255, 0.1);
+        color: #fff;
+        z-index: 100;
+        font-family: monospace;
+        display: none;
+        flex-direction: column;
+    }
+    .node-info-header {
+        background: rgba(0, 255, 255, 0.1);
+        padding: 10px;
+        border-bottom: 1px solid var(--cyan);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: bold;
+        font-size: 1.1em;
+    }
+    .node-info-body {
+        padding: 10px;
+        font-size: 0.85em;
+        overflow-y: auto;
+        max-height: 400px;
+    }
+    .node-info-row {
+        margin-bottom: 5px;
+        border-bottom: 1px dashed #333;
+        padding-bottom: 5px;
+    }
+    .node-info-label {
+        color: var(--cyan);
+        font-weight: bold;
+    }
+    .btn-close {
+        background: transparent;
+        border: none;
+        color: var(--danger);
+        font-size: 1.5em;
+        cursor: pointer;
+        outline: none;
+    }
+    .btn-close:hover {
+        color: #ff4d4d;
+    }
 </style>
 
 <div class="bh-container">
@@ -215,6 +279,11 @@ require __DIR__ . '/templates/header.php';
             <option value="gpo"><?= $lang === 'es' ? 'Escenario 1: GPO Abuse & Lateral Movement' : 'Scenario 1: GPO Abuse & Lateral Movement' ?></option>
             <option value="dcsync"><?= $lang === 'es' ? 'Escenario 2: Kerberos Delegation & DCSync' : 'Scenario 2: Kerberos Delegation & DCSync' ?></option>
             <option value="adcs"><?= $lang === 'es' ? 'Escenario 3: AD CS ESC8 (NTLM Relay)' : 'Scenario 3: AD CS ESC8 (NTLM Relay)' ?></option>
+            <option value="asrep"><?= $lang === 'es' ? 'Escenario 4: AS-REP Roasting (No Pre-Auth)' : 'Scenario 4: AS-REP Roasting (No Pre-Auth)' ?></option>
+            <option value="laps"><?= $lang === 'es' ? 'Escenario 5: LAPS Password Read & Pass-The-Hash' : 'Scenario 5: LAPS Password Read & Pass-The-Hash' ?></option>
+            <option value="rbcd"><?= $lang === 'es' ? 'Escenario 6: Resource-Based Constrained Delegation (RBCD)' : 'Scenario 6: Resource-Based Constrained Delegation (RBCD)' ?></option>
+            <option value="shadowcred"><?= $lang === 'es' ? 'Escenario 7: Shadow Credentials (Whisker/PKINIT)' : 'Scenario 7: Shadow Credentials (Whisker/PKINIT)' ?></option>
+            <option value="foresttrust"><?= $lang === 'es' ? 'Escenario 8: Cross-Forest Trust Abuse (Golden Ticket)' : 'Scenario 8: Cross-Forest Trust Abuse (Golden Ticket)' ?></option>
         </select>
 
         <button class="bh-btn btn-danger" id="btn-attack-path">
@@ -225,9 +294,7 @@ require __DIR__ . '/templates/header.php';
             <i class="fas fa-undo"></i> <?= $lang === 'es' ? 'Reiniciar Grafo' : 'Reset Graph' ?>
         </button>
 
-        <div class="attack-explanation" id="attack-explanation">
-            <!-- Injected via JS -->
-        </div>
+
 
         <div style="margin-top:auto; font-size:0.8rem; color:#666; font-family:var(--mono);">
             [>] Engine: Native Canvas 2D<br>
@@ -238,6 +305,21 @@ require __DIR__ . '/templates/header.php';
     <!-- Graph Area -->
     <div class="bh-graph-area">
         <canvas id="bh-canvas"></canvas>
+        
+        <div class="attack-explanation" id="attack-explanation">
+            <!-- Injected via JS -->
+        </div>
+        
+        <!-- Node Info Panel -->
+        <div id="node-info-panel" class="node-info-panel">
+            <div class="node-info-header">
+                <div><i id="node-info-icon" class="fas"></i> <span id="node-info-title">Node Name</span></div>
+                <button id="btn-close-info" class="btn-close">&times;</button>
+            </div>
+            <div class="node-info-body" id="node-info-body">
+                <!-- details go here -->
+            </div>
+        </div>
         
         <div class="legend">
             <div class="legend-item"><div class="legend-color" style="background:#00ff41;"></div> User</div>

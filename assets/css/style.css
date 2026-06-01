@@ -2948,3 +2948,27 @@ body {
     
     .mitre-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
     .m-tag { background: rgba(0, 120, 212, 0.15); color: #58a6ff; border: 1px solid #0078d4; padding: 0.2rem 0.6rem; border-radius: 50px; font-size: 0.75rem; font-weight: bold; }
+
+/* ═══════════════════════════════════════════════════════
+   Mobile Global Overrides (Fase 4: Optimización)
+═══════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* Reducir márgenes y paddings globales para aprovechar pantalla */
+  body { font-size: 0.95rem; }
+  .card { padding: 1rem; }
+  
+  /* Cabeceras más compactas */
+  h1 { font-size: clamp(1.8rem, 5vw, 2.5rem); }
+  h2 { font-size: clamp(1.5rem, 4vw, 2rem); }
+  
+  /* Asegurar que las tablas o paneles de código hagan scroll horizontal y no rompan el viewport */
+  pre, code, .terminal-box, .yara-code, .net-logs {
+    overflow-x: auto;
+    font-size: 0.8rem;
+  }
+
+  /* Ajuste específico para toolbars/botones que se salgan de pantalla */
+  .control-panel, .bh-sidebar {
+    padding: 15px;
+  }
+}
